@@ -33,7 +33,7 @@ public class CertifiedCopiesItemController {
         this.certifiedCopyItemService = certifiedCopyItemService;
     }
 
-    @PostMapping("${uk.gov.companieshouse.certified.copies.api.home}")
+    @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
     public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemDTO certificateItemDTO,
                                                  HttpServletRequest request,
                                                  final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {

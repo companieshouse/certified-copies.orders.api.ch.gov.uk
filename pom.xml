@@ -23,6 +23,7 @@
 		<mockito-junit-jupiter-version>2.18.0</mockito-junit-jupiter-version>
 		<hamcrest-all-version>1.3</hamcrest-all-version>
 		<api-security-java.version>0.2.10</api-security-java.version>
+		<api-helper-java.version>1.4.2</api-helper-java.version>
 		<start-class>uk.gov.companieshouse.certifiedcopies.orders.api.CertifiedCopiesApiApplication</start-class>
 	</properties>
 
@@ -60,6 +61,12 @@
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>api-security-java</artifactId>
 			<version>${api-security-java.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.gov.companieshouse</groupId>
+			<artifactId>api-helper-java</artifactId>
+			<version>${api-helper-java.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
