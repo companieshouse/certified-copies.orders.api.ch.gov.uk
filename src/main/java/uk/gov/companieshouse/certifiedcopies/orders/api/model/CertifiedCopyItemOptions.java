@@ -4,13 +4,13 @@ import java.util.List;
 
 public class CertifiedCopyItemOptions {
 
-    private String collectionLocation;
+    private CollectionLocation collectionLocation;
 
     private String contactNumber;
 
-    private String deliveryMethod;
+    private DeliveryMethod deliveryMethod;
 
-    private String deliveryTimescale;
+    private DeliveryTimescale deliveryTimescale;
 
     private List<FilingHistoryDocument> filingHistoryDocuments;
 
@@ -18,11 +18,11 @@ public class CertifiedCopyItemOptions {
 
     private String surname;
 
-    public String getCollectionLocation() {
+    public CollectionLocation getCollectionLocation() {
         return collectionLocation;
     }
 
-    public void setCollectionLocation(String collectionLocation) {
+    public void setCollectionLocation(CollectionLocation collectionLocation) {
         this.collectionLocation = collectionLocation;
     }
 
@@ -34,19 +34,19 @@ public class CertifiedCopyItemOptions {
         this.contactNumber = contactNumber;
     }
 
-    public String getDeliveryMethod() {
+    public DeliveryMethod getDeliveryMethod() {
         return deliveryMethod;
     }
 
-    public void setDeliveryMethod(String deliveryMethod) {
+    public void setDeliveryMethod(DeliveryMethod deliveryMethod) {
         this.deliveryMethod = deliveryMethod;
     }
 
-    public String getDeliveryTimescale() {
+    public DeliveryTimescale getDeliveryTimescale() {
         return deliveryTimescale;
     }
 
-    public void setDeliveryTimescale(String deliveryTimescale) {
+    public void setDeliveryTimescale(DeliveryTimescale deliveryTimescale) {
         this.deliveryTimescale = deliveryTimescale;
     }
 

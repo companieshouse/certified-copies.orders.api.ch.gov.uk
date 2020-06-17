@@ -1,22 +1,27 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CollectionLocation;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 
 import java.util.List;
 
+@JsonPropertyOrder(alphabetic = true)
 public class CertifiedCopyItemOptionsDTO {
 
     @JsonProperty("collection_location")
-    private String collectionLocation;
+    private CollectionLocation collectionLocation;
 
     @JsonProperty("contact_number")
     private String contactNumber;
 
     @JsonProperty("delivery_method")
-    private String deliveryMethod;
+    private DeliveryMethod deliveryMethod;
 
     @JsonProperty("delivery_timescale")
-    private String deliveryTimescale;
+    private DeliveryTimescale deliveryTimescale;
 
     @JsonProperty("filing_history_documents")
     private List<FilingHistoryDocumentDTO> filingHistoryDocuments;
@@ -27,11 +32,11 @@ public class CertifiedCopyItemOptionsDTO {
     @JsonProperty("surname")
     private String surname;
 
-    public String getCollectionLocation() {
+    public CollectionLocation getCollectionLocation() {
         return collectionLocation;
     }
 
-    public void setCollectionLocation(String collectionLocation) {
+    public void setCollectionLocation(CollectionLocation collectionLocation) {
         this.collectionLocation = collectionLocation;
     }
 
@@ -43,19 +48,19 @@ public class CertifiedCopyItemOptionsDTO {
         this.contactNumber = contactNumber;
     }
 
-    public String getDeliveryMethod() {
+    public DeliveryMethod getDeliveryMethod() {
         return deliveryMethod;
     }
 
-    public void setDeliveryMethod(String deliveryMethod) {
+    public void setDeliveryMethod(DeliveryMethod deliveryMethod) {
         this.deliveryMethod = deliveryMethod;
     }
 
-    public String getDeliveryTimescale() {
+    public DeliveryTimescale getDeliveryTimescale() {
         return deliveryTimescale;
     }
 
-    public void setDeliveryTimescale(String deliveryTimescale) {
+    public void setDeliveryTimescale(DeliveryTimescale deliveryTimescale) {
         this.deliveryTimescale = deliveryTimescale;
     }
 

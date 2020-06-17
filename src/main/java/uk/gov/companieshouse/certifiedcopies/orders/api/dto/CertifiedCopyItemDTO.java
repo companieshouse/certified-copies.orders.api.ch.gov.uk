@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.Gson;
 
+import javax.validation.constraints.NotNull;
+
 @JsonPropertyOrder(alphabetic = true)
 public class CertifiedCopyItemDTO {
 
+    @NotNull
     @JsonProperty("company_number")
     private String companyNumber;
 
@@ -16,6 +19,7 @@ public class CertifiedCopyItemDTO {
     @JsonProperty("item_options")
     private CertifiedCopyItemOptionsDTO itemOptions;
 
+    @NotNull
     @JsonProperty("quantity")
     private Integer quantity;
 

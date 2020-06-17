@@ -2,8 +2,11 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotNull;
+
 public class FilingHistoryDocumentDTO {
 
+    @NotNull
     @JsonProperty("filing_history_id")
     private String filingHistoryId;
 
