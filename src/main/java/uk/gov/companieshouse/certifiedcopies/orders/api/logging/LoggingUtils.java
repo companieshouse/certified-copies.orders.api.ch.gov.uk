@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.certifiedcopies.api.logging;
+package uk.gov.companieshouse.certifiedcopies.orders.api.logging;
 
 public class LoggingUtils {
     

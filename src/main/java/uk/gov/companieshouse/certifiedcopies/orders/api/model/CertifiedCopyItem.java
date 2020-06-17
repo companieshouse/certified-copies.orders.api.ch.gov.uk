@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.certifiedcopies.api.model;
+package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
 import com.google.gson.Gson;
 import org.springframework.data.annotation.Id;

@@ -1,8 +1,8 @@
-package uk.gov.companieshouse.certifiedcopies.api.service;
+package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.certifiedcopies.api.model.CertifiedCopyItem;
-import uk.gov.companieshouse.certifiedcopies.api.repository.CertifiedCopyItemRepository;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 @Service
 public class CertifiedCopyItemService {
