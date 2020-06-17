@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.companieshouse.api.util.security.EricConstants;
+import uk.gov.companieshouse.api.util.security.RequestUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.mapper.CertifiedCopyItemMapper;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
@@ -36,9 +38,11 @@ public class CertifiedCopiesItemController {
                                                  HttpServletRequest request,
                                                  final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {
         CertifiedCopyItem certifiedCopyItem = mapper.certifiedCopyItemDTOToCertifiedCopyItem(certificateItemDTO);
+        certifiedCopyItem.setUserId(RequestUtils.getRequestHeader(request, EricConstants.ERIC_IDENTITY));
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService.createCertifiedCopyItem(certifiedCopyItem);
+
         System.out.println(createdCertifiedCopyItem);
-        return ResponseEntity.status(CREATED).body("Hello");
+        return ResponseEntity.status(CREATED).body(createdCertifiedCopyItem.getData());
     }
 }

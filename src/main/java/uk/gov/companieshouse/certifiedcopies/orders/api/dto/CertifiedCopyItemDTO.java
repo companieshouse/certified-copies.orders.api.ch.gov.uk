@@ -13,6 +13,9 @@ public class CertifiedCopyItemDTO {
     @JsonProperty("customer_reference")
     private String customerReference;
 
+    @JsonProperty("item_options")
+    private CertifiedCopyItemOptionsDTO itemOptions;
+
     @JsonProperty("quantity")
     private Integer quantity;
 
@@ -30,6 +33,14 @@ public class CertifiedCopyItemDTO {
 
     public void setCustomerReference(String customerReference) {
         this.customerReference = customerReference;
+    }
+
+    public CertifiedCopyItemOptionsDTO getItemOptions() {
+        return itemOptions;
+    }
+
+    public void setItemOptions(CertifiedCopyItemOptionsDTO itemOptions) {
+        this.itemOptions = itemOptions;
     }
 
     public Integer getQuantity() {
