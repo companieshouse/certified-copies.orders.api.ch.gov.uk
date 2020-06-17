@@ -1,28 +1,35 @@
 package uk.gov.companieshouse.certifiedcopies.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.Gson;
 
 @JsonPropertyOrder(alphabetic = true)
 public class CertifiedCopyItemDTO {
-    private String company_number;
-    private String customer_reference;
+
+    @JsonProperty("company_number")
+    private String companyNumber;
+
+    @JsonProperty("customer_reference")
+    private String customerReference;
+
+    @JsonProperty("quantity")
     private Integer quantity;
 
-    public String getCompany_number() {
-        return company_number;
+    public String getCompanyNumber() {
+        return companyNumber;
     }
 
-    public void setCompany_number(String company_number) {
-        this.company_number = company_number;
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
     }
 
-    public String getCustomer_reference() {
-        return customer_reference;
+    public String getCustomerReference() {
+        return customerReference;
     }
 
-    public void setCustomer_reference(String customer_reference) {
-        this.customer_reference = customer_reference;
+    public void setCustomerReference(String customerReference) {
+        this.customerReference = customerReference;
     }
 
     public Integer getQuantity() {

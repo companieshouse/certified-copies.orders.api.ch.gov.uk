@@ -10,7 +10,7 @@ public class CertifiedCopyItemData {
 
     private String companyNumber;
 
-    private String customer_reference;
+    private String customerReference;
 
     private Integer quantity;
 
@@ -38,12 +38,12 @@ public class CertifiedCopyItemData {
         this.companyNumber = companyNumber;
     }
 
-    public String getCustomer_reference() {
-        return customer_reference;
+    public String getCustomerReference() {
+        return customerReference;
     }
 
-    public void setCustomer_reference(String customer_reference) {
-        this.customer_reference = customer_reference;
+    public void setCustomerReference(String customerReference) {
+        this.customerReference = customerReference;
     }
 
     public Integer getQuantity() {
