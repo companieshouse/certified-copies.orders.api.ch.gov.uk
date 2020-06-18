@@ -17,7 +17,15 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.springframework.http.HttpStatus.CREATED;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.CERTIFIED_COPY_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.COMPANY_NUMBER_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.USER_ID_LOG_KEY;
 
 @RestController
 public class CertifiedCopiesItemController {
@@ -36,12 +44,33 @@ public class CertifiedCopiesItemController {
     public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemRequestDTO certificateItemRequestDTO,
                                                  HttpServletRequest request,
                                                  final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {
+        Map<String, Object> logMap = createLoggingDataMap(requestId);
+        LOGGER.infoRequest(request, "create certified copy item request", logMap);
+
         CertifiedCopyItem certifiedCopyItem = mapper.certifiedCopyItemRequestDTOToCertifiedCopyItem(certificateItemRequestDTO);
         certifiedCopyItem.setUserId(AuthorisationUtil.getAuthorisedIdentity(request));
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService.createCertifiedCopyItem(certifiedCopyItem);
 
-        System.out.println(createdCertifiedCopyItem);
+        logMap.put(USER_ID_LOG_KEY, createdCertifiedCopyItem.getUserId());
+        logMap.put(COMPANY_NUMBER_LOG_KEY, createdCertifiedCopyItem.getData().getCompanyNumber());
+        logMap.put(CERTIFIED_COPY_ID_LOG_KEY, createdCertifiedCopyItem.getId());
+        logMap.put(STATUS_LOG_KEY, CREATED);
+        LOGGER.infoRequest(request, "certificate item created", logMap);
+
         return ResponseEntity.status(CREATED).body(createdCertifiedCopyItem.getData());
+    }
+
+    /**
+     * method to set up a map for logging purposes and add a value for the
+     * request id
+     *
+     * @param requestId
+     * @return
+     */
+    private Map<String, Object> createLoggingDataMap(final String requestId) {
+        Map<String, Object> logMap = new HashMap<>();
+        logMap.put(REQUEST_ID_LOG_KEY, requestId);
+        return logMap;
     }
 }
