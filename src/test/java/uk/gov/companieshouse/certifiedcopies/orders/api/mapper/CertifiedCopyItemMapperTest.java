@@ -32,7 +32,6 @@ public class CertifiedCopyItemMapperTest {
     private static final String FORENAME = "Bob";
     private static final String SURNAME = "Jones";
     private static final String FILING_HISTORY_ID = "1";
-    private static final String KIND = "item#certified-copy";
 
 
     @Configuration
