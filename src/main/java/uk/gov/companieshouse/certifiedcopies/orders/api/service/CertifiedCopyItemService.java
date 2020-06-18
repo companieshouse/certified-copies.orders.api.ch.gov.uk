@@ -2,9 +2,11 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 @Service
@@ -32,9 +34,19 @@ public class CertifiedCopyItemService {
     }
 
     public CertifiedCopyItem createCertifiedCopyItem(final CertifiedCopyItem certifiedCopyItem) {
+        final LocalDateTime now = LocalDateTime.now();
+        certifiedCopyItem.setCreatedAt(now);
+        certifiedCopyItem.setUpdatedAt(now);
         certifiedCopyItem.setId(autoGenerateId());
         certifiedCopyItem.setEtag(etagGenerator.generateEtag());
         certifiedCopyItem.setLinks(linksGenerator.generateLinks(certifiedCopyItem.getId()));
+
+        if(certifiedCopyItem.getData().getItemOptions().getDeliveryMethod().equals(DeliveryMethod.POSTAL)) {
+            certifiedCopyItem.getData().setPostalDelivery(Boolean.TRUE);
+        } else {
+            certifiedCopyItem.getData().setPostalDelivery(Boolean.FALSE);
+        }
+        certifiedCopyItem.getData().setKind("item#certified-copy");
 
         final CertifiedCopyItem itemSaved = repository.save(certifiedCopyItem);
         return itemSaved;

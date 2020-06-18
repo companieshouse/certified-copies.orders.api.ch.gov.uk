@@ -6,6 +6,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.CollectionLocation
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @JsonPropertyOrder(alphabetic = true)
@@ -23,6 +24,7 @@ public class CertifiedCopyItemOptionsDTO {
     @JsonProperty("delivery_timescale")
     private DeliveryTimescale deliveryTimescale;
 
+    @Valid
     @JsonProperty("filing_history_documents")
     private List<FilingHistoryDocumentDTO> filingHistoryDocuments;
 

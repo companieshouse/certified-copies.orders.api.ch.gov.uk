@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.Gson;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @JsonPropertyOrder(alphabetic = true)
@@ -16,6 +17,7 @@ public class CertifiedCopyItemDTO {
     @JsonProperty("customer_reference")
     private String customerReference;
 
+    @Valid
     @JsonProperty("item_options")
     private CertifiedCopyItemOptionsDTO itemOptions;
 
