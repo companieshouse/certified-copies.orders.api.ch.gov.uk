@@ -11,13 +11,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.util.Arrays;
+import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
@@ -40,12 +47,16 @@ public class CertifiedCopiedControllerIntegrationTest {
     private static final String FORENAME = "Bob";
     private static final String SURNAME = "Jones";
     private static final String FILING_HISTORY_ID = "1";
+    private static final String KIND = "item#certified-copy";
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private CertifiedCopyItemRepository repository;
 
     @Test
     @DisplayName("Successfully creates certified copy item")
@@ -83,7 +94,36 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_id", is(FILING_HISTORY_ID)))
                 .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
+                .andExpect(jsonPath("$.kind", is(KIND)))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
     }
+
+    @Test
+    @DisplayName("Fails to create certified copy item that fails validation")
+    void createCertifiedCopyItemFailsToCreateCertifiedCopyItem() throws Exception {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO = new FilingHistoryDocumentRequestDTO();
+
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest = new CertifiedCopyItemOptionsRequestDTO();
+
+        certifiedCopyItemOptionsDTORequest.setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        final ApiError expectedValidationError =
+                new ApiError(BAD_REQUEST, asList("company_number: must not be null",
+                        "item_options.filing_history_documents[0].filing_history_id: must not be null",
+                        "quantity: must not be null"));
+
+        mockMvc.perform(post(CERTIFIED_COPIED_URL)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedValidationError)));
+
+    }
+
 }
