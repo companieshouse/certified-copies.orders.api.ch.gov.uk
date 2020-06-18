@@ -8,7 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @JsonPropertyOrder(alphabetic = true)
-public class CertifiedCopyItemDTO {
+public class CertifiedCopyItemRequestDTO {
 
     @NotNull
     @JsonProperty("company_number")
@@ -19,7 +19,7 @@ public class CertifiedCopyItemDTO {
 
     @Valid
     @JsonProperty("item_options")
-    private CertifiedCopyItemOptionsDTO itemOptions;
+    private CertifiedCopyItemOptionsRequestDTO itemOptions;
 
     @NotNull
     @JsonProperty("quantity")
@@ -41,11 +41,11 @@ public class CertifiedCopyItemDTO {
         this.customerReference = customerReference;
     }
 
-    public CertifiedCopyItemOptionsDTO getItemOptions() {
+    public CertifiedCopyItemOptionsRequestDTO getItemOptions() {
         return itemOptions;
     }
 
-    public void setItemOptions(CertifiedCopyItemOptionsDTO itemOptions) {
+    public void setItemOptions(CertifiedCopyItemOptionsRequestDTO itemOptions) {
         this.itemOptions = itemOptions;
     }
 

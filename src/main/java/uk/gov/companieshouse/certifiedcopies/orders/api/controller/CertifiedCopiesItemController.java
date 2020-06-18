@@ -5,9 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.companieshouse.api.util.security.EricConstants;
-import uk.gov.companieshouse.api.util.security.RequestUtils;
-import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemDTO;
+import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
+import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.mapper.CertifiedCopyItemMapper;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
@@ -34,11 +33,11 @@ public class CertifiedCopiesItemController {
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
-    public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemDTO certificateItemDTO,
+    public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemRequestDTO certificateItemRequestDTO,
                                                  HttpServletRequest request,
                                                  final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {
-        CertifiedCopyItem certifiedCopyItem = mapper.certifiedCopyItemDTOToCertifiedCopyItem(certificateItemDTO);
-        certifiedCopyItem.setUserId(RequestUtils.getRequestHeader(request, EricConstants.ERIC_IDENTITY));
+        CertifiedCopyItem certifiedCopyItem = mapper.certifiedCopyItemRequestDTOToCertifiedCopyItem(certificateItemRequestDTO);
+        certifiedCopyItem.setUserId(AuthorisationUtil.getAuthorisedIdentity(request));
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService.createCertifiedCopyItem(certifiedCopyItem);
 

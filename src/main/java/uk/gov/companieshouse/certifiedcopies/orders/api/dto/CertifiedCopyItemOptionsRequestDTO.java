@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @JsonPropertyOrder(alphabetic = true)
-public class CertifiedCopyItemOptionsDTO {
+public class CertifiedCopyItemOptionsRequestDTO {
 
     @JsonProperty("collection_location")
     private CollectionLocation collectionLocation;
@@ -26,7 +26,7 @@ public class CertifiedCopyItemOptionsDTO {
 
     @Valid
     @JsonProperty("filing_history_documents")
-    private List<FilingHistoryDocumentDTO> filingHistoryDocuments;
+    private List<FilingHistoryDocumentRequestDTO> filingHistoryDocuments;
 
     @JsonProperty("forename")
     private String forename;
@@ -66,11 +66,11 @@ public class CertifiedCopyItemOptionsDTO {
         this.deliveryTimescale = deliveryTimescale;
     }
 
-    public List<FilingHistoryDocumentDTO> getFilingHistoryDocuments() {
+    public List<FilingHistoryDocumentRequestDTO> getFilingHistoryDocuments() {
         return filingHistoryDocuments;
     }
 
-    public void setFilingHistoryDocuments(List<FilingHistoryDocumentDTO> filingHistoryDocuments) {
+    public void setFilingHistoryDocuments(List<FilingHistoryDocumentRequestDTO> filingHistoryDocuments) {
         this.filingHistoryDocuments = filingHistoryDocuments;
     }
 
