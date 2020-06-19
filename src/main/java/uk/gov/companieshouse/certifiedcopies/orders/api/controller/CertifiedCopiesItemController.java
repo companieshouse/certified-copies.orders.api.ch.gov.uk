@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.mapper.CertifiedCopyItemMapper;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
@@ -58,7 +59,9 @@ public class CertifiedCopiesItemController {
         logMap.put(STATUS_LOG_KEY, CREATED);
         LOGGER.infoRequest(request, "certificate item created", logMap);
 
-        return ResponseEntity.status(CREATED).body(createdCertifiedCopyItem.getData());
+        CertifiedCopyItemResponseDTO certifiedCopyItemResponseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(createdCertifiedCopyItem.getData());
+
+        return ResponseEntity.status(CREATED).body(certifiedCopyItemResponseDTO);
     }
 
     /**
