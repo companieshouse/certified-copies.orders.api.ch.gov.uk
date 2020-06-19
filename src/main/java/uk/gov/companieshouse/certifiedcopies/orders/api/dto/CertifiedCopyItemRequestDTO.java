@@ -18,6 +18,7 @@ public class CertifiedCopyItemRequestDTO {
     private String customerReference;
 
     @Valid
+    @NotNull
     @JsonProperty("item_options")
     private CertifiedCopyItemOptionsRequestDTO itemOptions;
 
