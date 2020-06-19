@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @SpringJUnitConfig(CertifiedCopyItemMapperTest.Config.class)
 public class CertifiedCopyItemMapperTest {
     private static final String COMPANY_NUMBER = "00000000";
-    private static final String CUSTOMER_REFERENCE = "Certificate ordered by NJ.";
+    private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final Integer QUANTITY = 5;
     private static final String CONTACT_NUMBER = "0123456789";
     private static final String FORENAME = "Bob";

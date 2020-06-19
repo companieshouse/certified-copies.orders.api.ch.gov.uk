@@ -39,7 +39,7 @@ public class CertifiedCopiedControllerIntegrationTest {
     private static final String CERTIFIED_COPIED_URL = "/orderable/certified-copies";
 
     private static final String COMPANY_NUMBER = "00000000";
-    private static final String CUSTOMER_REFERENCE = "Certificate ordered by NJ.";
+    private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
     private static final String CONTACT_NUMBER = "0123456789";
     private static final String FORENAME = "Bob";

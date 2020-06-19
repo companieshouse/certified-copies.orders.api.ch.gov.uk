@@ -42,13 +42,13 @@ public class CertifiedCopiesItemController {
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
-    public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemRequestDTO certificateItemRequestDTO,
+    public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemRequestDTO certifiedCopyItemRequestDTO,
                                                  HttpServletRequest request,
                                                  final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {
         Map<String, Object> logMap = createLoggingDataMap(requestId);
         LOGGER.infoRequest(request, "create certified copy item request", logMap);
 
-        CertifiedCopyItem certifiedCopyItem = mapper.certifiedCopyItemRequestDTOToCertifiedCopyItem(certificateItemRequestDTO);
+        CertifiedCopyItem certifiedCopyItem = mapper.certifiedCopyItemRequestDTOToCertifiedCopyItem(certifiedCopyItemRequestDTO);
         certifiedCopyItem.setUserId(AuthorisationUtil.getAuthorisedIdentity(request));
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService.createCertifiedCopyItem(certifiedCopyItem);
@@ -57,7 +57,7 @@ public class CertifiedCopiesItemController {
         logMap.put(COMPANY_NUMBER_LOG_KEY, createdCertifiedCopyItem.getData().getCompanyNumber());
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, createdCertifiedCopyItem.getId());
         logMap.put(STATUS_LOG_KEY, CREATED);
-        LOGGER.infoRequest(request, "certificate item created", logMap);
+        LOGGER.infoRequest(request, "certified copy item created", logMap);
 
         CertifiedCopyItemResponseDTO certifiedCopyItemResponseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(createdCertifiedCopyItem.getData());
 
