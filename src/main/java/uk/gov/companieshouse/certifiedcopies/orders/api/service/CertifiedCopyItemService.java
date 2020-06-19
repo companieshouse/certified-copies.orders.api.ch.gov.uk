@@ -25,8 +25,6 @@ public class CertifiedCopyItemService {
         this.idGenerator = idGenerator;
     }
 
-
-
     public CertifiedCopyItem createCertifiedCopyItem(final CertifiedCopyItem certifiedCopyItem) {
         final LocalDateTime now = LocalDateTime.now();
         certifiedCopyItem.setCreatedAt(now);

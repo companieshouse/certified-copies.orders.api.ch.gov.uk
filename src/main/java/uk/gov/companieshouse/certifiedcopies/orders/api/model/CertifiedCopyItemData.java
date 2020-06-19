@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CertifiedCopyItemData {
+
     @Field("id")
     private String id;
 
@@ -166,8 +167,5 @@ public class CertifiedCopyItemData {
     public void setTotalItemCost(String totalItemCost) {
         this.totalItemCost = totalItemCost;
     }
-
-
-
 
 }

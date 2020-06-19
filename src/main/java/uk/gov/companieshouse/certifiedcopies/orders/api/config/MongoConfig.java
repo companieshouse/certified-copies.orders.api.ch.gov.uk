@@ -42,8 +42,7 @@ public class MongoConfig {
     }
 
     @Bean
-    public MongoCustomConversions customConversions()
-    {
+    public MongoCustomConversions customConversions() {
         final List<ConverterFactory<?, ?>> converters = new ArrayList<>();
         converters.add(new StringToEnumConverterFactory());
         converters.add(new EnumToStringConverterFactory());

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CertifiedCopyItemResponseDTO {
+
     @Field("id")
     private String id;
 
