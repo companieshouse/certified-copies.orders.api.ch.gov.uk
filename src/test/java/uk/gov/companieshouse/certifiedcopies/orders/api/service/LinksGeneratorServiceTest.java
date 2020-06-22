@@ -17,7 +17,7 @@ class LinksGeneratorServiceTest {
     @DisplayName("Generates links correctly with valid inputs")
     void generatesLinksCorrectlyWithValidInputs() {
 
-        final LinksGeneratorService generatorUnderTest =new LinksGeneratorService(SELF_PATH);
+        final LinksGeneratorService generatorUnderTest = new LinksGeneratorService(SELF_PATH);
 
         final Links links = generatorUnderTest.generateLinks(ITEM_ID);
 
