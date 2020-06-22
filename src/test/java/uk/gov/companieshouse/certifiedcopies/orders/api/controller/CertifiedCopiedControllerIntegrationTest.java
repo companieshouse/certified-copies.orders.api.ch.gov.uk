@@ -7,19 +7,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -38,6 +45,8 @@ public class CertifiedCopiedControllerIntegrationTest {
 
     private static final String CERTIFIED_COPIED_URL = "/orderable/certified-copies";
 
+    private static final String CERTIFICATE_COPY_ID = "ORD-123456-123456";
+
     private static final String COMPANY_NUMBER = "00000000";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
@@ -55,6 +64,9 @@ public class CertifiedCopiedControllerIntegrationTest {
 
     @Autowired
     private CertifiedCopyItemRepository repository;
+
+    @MockBean
+    private IdGeneratorService idGeneratorService;
 
     @AfterEach
     void tearDown() {
@@ -82,6 +94,8 @@ public class CertifiedCopiedControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
+
         mockMvc.perform(post(CERTIFIED_COPIED_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
@@ -100,6 +114,8 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(jsonPath("$.kind", is(KIND)))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
+
+        assertItemSavedCorrectly(CERTIFICATE_COPY_ID);
     }
 
     @Test
@@ -111,6 +127,8 @@ public class CertifiedCopiedControllerIntegrationTest {
 
         final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
 
         mockMvc.perform(post(CERTIFIED_COPIED_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
@@ -125,6 +143,8 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
 
+        assertItemSavedCorrectly(CERTIFICATE_COPY_ID);
+
     }
 
     @Test
@@ -137,6 +157,8 @@ public class CertifiedCopiedControllerIntegrationTest {
 
         certifiedCopyItemOptionsDTORequest.setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
 
         final ApiError expectedValidationError =
                 new ApiError(BAD_REQUEST, asList("company_number: must not be null",
@@ -152,6 +174,29 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedValidationError)));
 
+        assertItemWasNotSaved(CERTIFICATE_COPY_ID);
+
+    }
+
+    /**
+     * Verifies that the certified copy item can be retrieved
+     * from the database using its expected ID value.
+     * @param certifiedCopyId the expected ID of the newly created item
+     */
+    private void assertItemSavedCorrectly(final String certifiedCopyId) {
+        final Optional<CertifiedCopyItem> retrievedCertifiedCopyItem = repository.findById(certifiedCopyId);
+        assertThat(retrievedCertifiedCopyItem.isPresent(), is(true));
+        assertThat(retrievedCertifiedCopyItem.get().getId(), is(certifiedCopyId));
+    }
+
+    /**
+     * Verifies that the certified copy item cannot in fact be retrieved
+     * from the database.
+     * @param certifiedCopyId the expected ID of the newly created item
+     */
+    private void assertItemWasNotSaved(final String certifiedCopyId) {
+        final Optional<CertifiedCopyItem> retrievedCertifiedCopyItem = repository.findById(certifiedCopyId);
+        assertThat(retrievedCertifiedCopyItem.isPresent(), is(false));
     }
 
 }
