@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.certifiedcopies.api.controller;
+package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

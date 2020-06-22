@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.certifiedcopies.api.controller;
+package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class HealthcheckController {
-    @GetMapping("${uk.gov.companieshouse.certified.copies.api.health}")
+    @GetMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.health}")
     public ResponseEntity<Void> getHealthCheck (){
         return ResponseEntity.status(HttpStatus.OK).build();
     }
