@@ -12,16 +12,24 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 
 @Mapper(componentModel = "spring")
 public interface CertifiedCopyItemMapper {
-    CertifiedCopyItem certifiedCopyItemRequestDTOToCertifiedCopyItem(CertifiedCopyItemRequestDTO certifiedCopyItemDTO);
-    CertifiedCopyItemResponseDTO certifiedCopyItemDataToCertifiedCopyItemResponseDTO(CertifiedCopyItemData certifiedCopyItemData);
+
+    CertifiedCopyItem certifiedCopyItemRequestDTOToCertifiedCopyItem
+            (CertifiedCopyItemRequestDTO certifiedCopyItemDTO);
+
+    CertifiedCopyItemResponseDTO certifiedCopyItemDataToCertifiedCopyItemResponseDTO
+            (CertifiedCopyItemData certifiedCopyItemData);
 
     @AfterMapping
-    default void setDefaults(CertifiedCopyItemRequestDTO certifiedCopyItemDTO, @MappingTarget CertifiedCopyItem certifiedCopyItem){
+    default void setDefaults(
+            CertifiedCopyItemRequestDTO certifiedCopyItemDTO,
+            @MappingTarget CertifiedCopyItem certifiedCopyItem){
+
         DeliveryMethod deliveryMethod = certifiedCopyItemDTO.getItemOptions().getDeliveryMethod();
         certifiedCopyItem.getData().getItemOptions().setDeliveryMethod(
                 deliveryMethod != null ? deliveryMethod : DeliveryMethod.POSTAL);
 
-        DeliveryTimescale deliveryTimescale = certifiedCopyItemDTO.getItemOptions().getDeliveryTimescale();
+        DeliveryTimescale deliveryTimescale = certifiedCopyItemDTO.getItemOptions()
+                .getDeliveryTimescale();
         certifiedCopyItem.getData().getItemOptions().setDeliveryTimescale(
                 deliveryTimescale != null ? deliveryTimescale : DeliveryTimescale.STANDARD);
 

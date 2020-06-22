@@ -87,15 +87,20 @@ public class CertifiedCopyItemMapperTest {
 
     @Test
     public void testCertifiedCopyItemRequestDTOToCertifiedCopyItem() {
-        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO = new FilingHistoryDocumentRequestDTO();
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
+                = new FilingHistoryDocumentRequestDTO();
         filingHistoryDocumentRequestDTO.setFilingHistoryId(FILING_HISTORY_ID);
 
-        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsRequestDTO = new CertifiedCopyItemOptionsRequestDTO();
-        certifiedCopyItemOptionsRequestDTO.setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsRequestDTO
+                = new CertifiedCopyItemOptionsRequestDTO();
+        certifiedCopyItemOptionsRequestDTO
+                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
         certifiedCopyItemOptionsRequestDTO.setContactNumber(CONTACT_NUMBER);
         certifiedCopyItemOptionsRequestDTO.setDeliveryMethod(DeliveryMethod.POSTAL);
-        certifiedCopyItemOptionsRequestDTO.setDeliveryTimescale(DeliveryTimescale.STANDARD);
-        certifiedCopyItemOptionsRequestDTO.setCollectionLocation(CollectionLocation.CARDIFF);
+        certifiedCopyItemOptionsRequestDTO
+                .setDeliveryTimescale(DeliveryTimescale.STANDARD);
+        certifiedCopyItemOptionsRequestDTO
+                .setCollectionLocation(CollectionLocation.CARDIFF);
         certifiedCopyItemOptionsRequestDTO.setForename(FORENAME);
         certifiedCopyItemOptionsRequestDTO.setSurname(SURNAME);
 
@@ -105,7 +110,8 @@ public class CertifiedCopyItemMapperTest {
         dto.setQuantity(QUANTITY);
         dto.setItemOptions(certifiedCopyItemOptionsRequestDTO);
 
-        final CertifiedCopyItem certifiedCopyItem = mapperUnderTest.certifiedCopyItemRequestDTOToCertifiedCopyItem(dto);
+        final CertifiedCopyItem certifiedCopyItem = mapperUnderTest
+                .certifiedCopyItemRequestDTOToCertifiedCopyItem(dto);
 
         CertifiedCopyItemData item = certifiedCopyItem.getData();
 
@@ -113,10 +119,14 @@ public class CertifiedCopyItemMapperTest {
         assertThat(item.getCompanyNumber(), is(dto.getCompanyNumber()));
         assertThat(item.getCustomerReference(), is(dto.getCustomerReference()));
         assertThat(item.getQuantity(), is(dto.getQuantity()));
-        assertThat(item.getItemOptions().getContactNumber(), is(dto.getItemOptions().getContactNumber()));
-        assertThat(item.getItemOptions().getDeliveryMethod(), is(dto.getItemOptions().getDeliveryMethod()));
-        assertThat(item.getItemOptions().getDeliveryTimescale(), is(dto.getItemOptions().getDeliveryTimescale()));
-        assertThat(item.getItemOptions().getCollectionLocation(), is(dto.getItemOptions().getCollectionLocation()));
+        assertThat(item.getItemOptions().getContactNumber(),
+                is(dto.getItemOptions().getContactNumber()));
+        assertThat(item.getItemOptions().getDeliveryMethod(),
+                is(dto.getItemOptions().getDeliveryMethod()));
+        assertThat(item.getItemOptions().getDeliveryTimescale(),
+                is(dto.getItemOptions().getDeliveryTimescale()));
+        assertThat(item.getItemOptions().getCollectionLocation(),
+                is(dto.getItemOptions().getCollectionLocation()));
         assertThat(item.getItemOptions().getForename(), is(dto.getItemOptions().getForename()));
         assertThat(item.getItemOptions().getSurname(), is(dto.getItemOptions().getSurname()));
         assertThat(item.getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryId(),
@@ -128,7 +138,8 @@ public class CertifiedCopyItemMapperTest {
         final CertifiedCopyItemRequestDTO dto = new CertifiedCopyItemRequestDTO();
         dto.setItemOptions(new CertifiedCopyItemOptionsRequestDTO());
 
-        final CertifiedCopyItem certifiedCopyItem = mapperUnderTest.certifiedCopyItemRequestDTOToCertifiedCopyItem(dto);
+        final CertifiedCopyItem certifiedCopyItem = mapperUnderTest
+                .certifiedCopyItemRequestDTOToCertifiedCopyItem(dto);
 
         CertifiedCopyItemData item = certifiedCopyItem.getData();
         assertThat(item.getItemOptions().getDeliveryMethod(), is(DeliveryMethod.POSTAL));
@@ -155,7 +166,8 @@ public class CertifiedCopyItemMapperTest {
         item.setQuantity(QUANTITY);
         item.setTotalItemCost(TOTAL_ITEM_COST);
 
-        final CertifiedCopyItemResponseDTO dto = mapperUnderTest.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item);
+        final CertifiedCopyItemResponseDTO dto = mapperUnderTest
+                .certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item);
 
         assertThat(dto.getId(), is(item.getId()));
         assertThat(dto.getCompanyName(), is(item.getCompanyName()));
@@ -167,11 +179,16 @@ public class CertifiedCopyItemMapperTest {
         assertThat(dto.getEtag(), is(item.getEtag()));
         assertThat(dto.getItemCosts(), is(item.getItemCosts()));
 
-        assertThat(dto.getItemOptions().getCollectionLocation(), is(item.getItemOptions().getCollectionLocation()));
-        assertThat(dto.getItemOptions().getContactNumber(), is(item.getItemOptions().getContactNumber()));
-        assertThat(dto.getItemOptions().getDeliveryMethod(), is(item.getItemOptions().getDeliveryMethod()));
-        assertThat(dto.getItemOptions().getDeliveryTimescale(), is(item.getItemOptions().getDeliveryTimescale()));
-        assertThat(dto.getItemOptions().getFilingHistoryDocuments().get(0), is(item.getItemOptions().getFilingHistoryDocuments().get(0)));
+        assertThat(dto.getItemOptions().getCollectionLocation(),
+                is(item.getItemOptions().getCollectionLocation()));
+        assertThat(dto.getItemOptions().getContactNumber(),
+                is(item.getItemOptions().getContactNumber()));
+        assertThat(dto.getItemOptions().getDeliveryMethod(),
+                is(item.getItemOptions().getDeliveryMethod()));
+        assertThat(dto.getItemOptions().getDeliveryTimescale(),
+                is(item.getItemOptions().getDeliveryTimescale()));
+        assertThat(dto.getItemOptions().getFilingHistoryDocuments().get(0),
+                is(item.getItemOptions().getFilingHistoryDocuments().get(0)));
         assertThat(dto.getItemOptions().getForename(), is(item.getItemOptions().getForename()));
         assertThat(dto.getItemOptions().getSurname(), is(item.getItemOptions().getSurname()));
 
