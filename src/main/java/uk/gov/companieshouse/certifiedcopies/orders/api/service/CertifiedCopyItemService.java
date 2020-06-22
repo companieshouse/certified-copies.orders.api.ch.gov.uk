@@ -40,7 +40,6 @@ public class CertifiedCopyItemService {
         }
         certifiedCopyItem.getData().setKind("item#certified-copy");
 
-        final CertifiedCopyItem itemSaved = repository.save(certifiedCopyItem);
-        return itemSaved;
+        return repository.save(certifiedCopyItem);
     }
 }

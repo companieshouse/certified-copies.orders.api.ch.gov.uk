@@ -42,7 +42,7 @@ public class CertifiedCopiesItemController {
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
-    public ResponseEntity<?> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemRequestDTO certifiedCopyItemRequestDTO,
+    public ResponseEntity<CertifiedCopyItemResponseDTO> createCertifiedCopy(final @Valid @RequestBody CertifiedCopyItemRequestDTO certifiedCopyItemRequestDTO,
                                                  HttpServletRequest request,
                                                  final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {
         Map<String, Object> logMap = createLoggingDataMap(requestId);
