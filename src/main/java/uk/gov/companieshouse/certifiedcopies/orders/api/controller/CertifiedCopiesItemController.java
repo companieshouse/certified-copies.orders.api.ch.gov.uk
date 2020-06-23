@@ -80,7 +80,7 @@ public class CertifiedCopiesItemController {
             LOGGER.info("certified copy item found", logMap);
             return ResponseEntity.status(OK).body(retrievedCertifiedCopyItemDTO);
         } else {
-            String errorMsg = "certified copy resource not found";
+            final String errorMsg = "certified copy resource not found";
             final List<String> errors = new ArrayList<>();
             errors.add(errorMsg);
             logErrorsWithStatus(logMap, errors, NOT_FOUND);
