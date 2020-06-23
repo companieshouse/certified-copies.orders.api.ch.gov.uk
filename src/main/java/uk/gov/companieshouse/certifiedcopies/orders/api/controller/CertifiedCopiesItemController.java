@@ -66,8 +66,8 @@ public class CertifiedCopiesItemController {
     }
 
     @GetMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}/{id}")
-    public ResponseEntity<Object> getCertifiedCopyItem(final @PathVariable String id,
-                                                       final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId)
+    public ResponseEntity<Object> getCertifiedCopy(final @PathVariable String id,
+                                                   final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId)
     {
         final Map<String, Object> logMap = createLoggingDataMap(requestId);
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
