@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
@@ -87,19 +86,6 @@ public class CertifiedCopiesItemController {
             LOGGER.error(errorMsg, logMap);
             return ResponseEntity.status(NOT_FOUND).body(new ApiError(NOT_FOUND, errors));
         }
-    }
-
-    /**
-     * method to add errors and a bad request status to a map for logging
-     * purposes
-     * @param logMap the map of logging data
-     * @param errors a list of errors
-     */
-    private void logErrorsWithStatus(final Map<String, Object> logMap,
-                                     final List<String> errors,
-                                     final HttpStatus status) {
-        logMap.put(ERRORS_LOG_KEY, errors);
-        logMap.put(STATUS_LOG_KEY, status);
     }
 
 }

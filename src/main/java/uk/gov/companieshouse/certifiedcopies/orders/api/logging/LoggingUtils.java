@@ -1,9 +1,11 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.logging;
 
+import org.springframework.http.HttpStatus;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LoggingUtils {
@@ -38,4 +40,16 @@ public class LoggingUtils {
         return logMap;
     }
 
+    /**
+     * method to add errors and a bad request status to a map for logging
+     * purposes
+     * @param logMap the map of logging data
+     * @param errors a list of errors
+     */
+    public static void logErrorsWithStatus(final Map<String, Object> logMap,
+                                           final List<String> errors,
+                                           final HttpStatus status) {
+        logMap.put(ERRORS_LOG_KEY, errors);
+        logMap.put(STATUS_LOG_KEY, status);
+    }
 }
