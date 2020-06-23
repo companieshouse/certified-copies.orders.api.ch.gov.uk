@@ -40,7 +40,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class CertifiedCopiedControllerIntegrationTest {
+public class CertifiedCopiesItemControllerIntegrationTest {
 
     private static final String CERTIFIED_COPIED_URL = "/orderable/certified-copies";
 
