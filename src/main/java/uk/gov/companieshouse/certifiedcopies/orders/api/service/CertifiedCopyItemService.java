@@ -6,6 +6,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class CertifiedCopyItemService {
@@ -42,4 +43,14 @@ public class CertifiedCopyItemService {
 
         return repository.save(certifiedCopyItem);
     }
+
+    /**
+     * Gets the certified copy item by its ID, and returns it as-is, without decorating it in any way.
+     * @param id the ID of the certified copy item to be retrieved
+     * @return the undecorated item retrieved from the DB
+     */
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
+        return repository.findById(id);
+    }
+
 }
