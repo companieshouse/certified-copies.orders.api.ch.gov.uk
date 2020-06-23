@@ -229,6 +229,37 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Get certified copy item",
+			"item": [
+				{
+					"name": "Get certified copy item",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Request-ID",
+								"type": "text",
+								"value": "f058ebd6-02f7-4d3f-942e-904344e8cde5"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orderable/certified-copies/CCD-857115-929072",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orderable",
+								"certified-copies",
+								"CCD-857115-929072"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {

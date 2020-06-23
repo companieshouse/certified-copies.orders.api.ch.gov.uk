@@ -1,10 +1,8 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
@@ -18,15 +16,11 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.CERTIFIED_COPY_ID_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.COMPANY_NUMBER_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.USER_ID_LOG_KEY;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.*;
 
 @RestController
 public class CertifiedCopiesItemController {
@@ -36,7 +30,8 @@ public class CertifiedCopiesItemController {
     private final CertifiedCopyItemMapper mapper;
     private final CertifiedCopyItemService certifiedCopyItemService;
 
-    public CertifiedCopiesItemController(final CertifiedCopyItemMapper mapper, final CertifiedCopyItemService certifiedCopyItemService) {
+    public CertifiedCopiesItemController(final CertifiedCopyItemMapper mapper,
+                                         final CertifiedCopyItemService certifiedCopyItemService) {
         this.mapper = mapper;
         this.certifiedCopyItemService = certifiedCopyItemService;
     }
@@ -45,7 +40,7 @@ public class CertifiedCopiesItemController {
     public ResponseEntity<CertifiedCopyItemResponseDTO> createCertifiedCopy(
             final @Valid @RequestBody CertifiedCopyItemRequestDTO certifiedCopyItemRequestDTO,
             HttpServletRequest request,
-            final @RequestHeader(LoggingUtils.REQUEST_ID_HEADER_NAME) String requestId) {
+            final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId) {
 
         Map<String, Object> logMap = LoggingUtils.createLoggingDataMap(requestId);
         LoggingUtils.getLogger().infoRequest(request, "create certified copy item request", logMap);
@@ -68,6 +63,43 @@ public class CertifiedCopiesItemController {
                         createdCertifiedCopyItem.getData());
 
         return ResponseEntity.status(CREATED).body(certifiedCopyItemResponseDTO);
+    }
+
+    @GetMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}/{id}")
+    public ResponseEntity<Object> getCertifiedCopyItem(final @PathVariable String id,
+                                                       final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId)
+    {
+        final Map<String, Object> logMap = createLoggingDataMap(requestId);
+        logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
+        LOGGER.info("get certified copy item request", logMap);
+        final Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemById(id);
+        if (item.isPresent()) {
+            final CertifiedCopyItemResponseDTO retrievedCertifiedCopyItemDTO =
+                    mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item.get().getData());
+            logMap.put(STATUS_LOG_KEY, OK);
+            LOGGER.info("certified copy item found", logMap);
+            return ResponseEntity.status(OK).body(retrievedCertifiedCopyItemDTO);
+        } else {
+            String errorMsg = "certified copy resource not found";
+            final List<String> errors = new ArrayList<>();
+            errors.add(errorMsg);
+            logErrorsWithStatus(logMap, errors, NOT_FOUND);
+            LOGGER.error(errorMsg, logMap);
+            return ResponseEntity.status(NOT_FOUND).body(new ApiError(NOT_FOUND, errors));
+        }
+    }
+
+    /**
+     * method to add errors and a bad request status to a map for logging
+     * purposes
+     * @param logMap the map of logging data
+     * @param errors a list of errors
+     */
+    private void logErrorsWithStatus(final Map<String, Object> logMap,
+                                     final List<String> errors,
+                                     final HttpStatus status) {
+        logMap.put(ERRORS_LOG_KEY, errors);
+        logMap.put(STATUS_LOG_KEY, status);
     }
 
 }
