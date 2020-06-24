@@ -52,11 +52,9 @@ public class CertifiedCopiesItemController {
                 .certifiedCopyItemRequestDTOToCertifiedCopyItem(certifiedCopyItemRequestDTO);
 
         final String companyName = companyService.getCompanyName(certifiedCopyItemRequestDTO.getCompanyNumber());
+
         certifiedCopyItem.getData().setCompanyName(companyName);
-
         certifiedCopyItem.setUserId(AuthorisationUtil.getAuthorisedIdentity(request));
-
-
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService
                 .createCertifiedCopyItem(certifiedCopyItem);
