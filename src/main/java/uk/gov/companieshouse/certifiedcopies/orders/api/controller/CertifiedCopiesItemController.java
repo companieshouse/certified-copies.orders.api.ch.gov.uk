@@ -9,6 +9,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.mapper.CertifiedCopyItem
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -28,11 +29,14 @@ public class CertifiedCopiesItemController {
 
     private final CertifiedCopyItemMapper mapper;
     private final CertifiedCopyItemService certifiedCopyItemService;
+    private final CompanyService companyService;
 
     public CertifiedCopiesItemController(final CertifiedCopyItemMapper mapper,
-                                         final CertifiedCopyItemService certifiedCopyItemService) {
+                                         final CertifiedCopyItemService certifiedCopyItemService,
+                                         final CompanyService companyService) {
         this.mapper = mapper;
         this.certifiedCopyItemService = certifiedCopyItemService;
+        this.companyService = companyService;
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
@@ -46,7 +50,13 @@ public class CertifiedCopiesItemController {
 
         CertifiedCopyItem certifiedCopyItem = mapper
                 .certifiedCopyItemRequestDTOToCertifiedCopyItem(certifiedCopyItemRequestDTO);
+
+        final String companyName = companyService.getCompanyName(certifiedCopyItemRequestDTO.getCompanyNumber());
+        certifiedCopyItem.getData().setCompanyName(companyName);
+
         certifiedCopyItem.setUserId(AuthorisationUtil.getAuthorisedIdentity(request));
+
+
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService
                 .createCertifiedCopyItem(certifiedCopyItem);
