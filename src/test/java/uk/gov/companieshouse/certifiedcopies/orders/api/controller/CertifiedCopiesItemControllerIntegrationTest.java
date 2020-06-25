@@ -16,10 +16,12 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemReq
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemData;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
 import java.util.Arrays;
@@ -46,10 +48,11 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
     private static final String CERTIFIED_COPIES_URL = "/orderable/certified-copies";
 
-    private static final String CERTIFIED_COPY_ID = "ORD-123456-123456";
-    private static final String UNKNOWN_CERTIFIED_COPY_ID = "ORD-000000-000000";
+    private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
+    private static final String UNKNOWN_CERTIFIED_COPY_ID = "CCD-000000-000000";
 
     private static final String COMPANY_NUMBER = "00000000";
+    private static final String COMPANY_NAME = "Company Name";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
     private static final String CONTACT_NUMBER = "0123456789";
@@ -77,6 +80,9 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
     @MockBean
     private IdGeneratorService idGeneratorService;
+
+    @MockBean
+    private CompanyService companyService;
 
     @AfterEach
     void tearDown() {
@@ -109,6 +115,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
@@ -118,6 +125,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
+                .andExpect(jsonPath("$.company_name", is(COMPANY_NAME)))
                 .andExpect(jsonPath("$.customer_reference", is(CUSTOMER_REFERENCE)))
                 .andExpect(jsonPath("$.item_options.contact_number", is(CONTACT_NUMBER)))
                 .andExpect(jsonPath("$.item_options.delivery_method",
@@ -243,19 +251,24 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     void getCertifiedCopyItemSuccessfully() throws Exception {
         // Given
         // Create certified copy item in database
+        final CertifiedCopyItemData certifiedCopyItemData = new CertifiedCopyItemData();
+        certifiedCopyItemData.setCompanyName(COMPANY_NAME);
+        certifiedCopyItemData.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemData.setId(CERTIFIED_COPY_ID);
+        certifiedCopyItemData.setQuantity(QUANTITY);
+        certifiedCopyItemData.setCustomerReference(CUSTOMER_REFERENCE);
+        certifiedCopyItemData.setEtag(TOKEN_ETAG);
+        certifiedCopyItemData.setLinks(LINKS);
+        certifiedCopyItemData.setPostageCost(POSTAGE_COST);
         final CertifiedCopyItem newItem = new CertifiedCopyItem();
-        newItem.setCompanyNumber(COMPANY_NUMBER);
         newItem.setId(CERTIFIED_COPY_ID);
-        newItem.setQuantity(QUANTITY);
         newItem.setUserId(ERIC_IDENTITY_VALUE);
-        newItem.setCustomerReference(CUSTOMER_REFERENCE);
-        newItem.setEtag(TOKEN_ETAG);
-        newItem.setLinks(LINKS);
-        newItem.setPostageCost(POSTAGE_COST);
+        newItem.setData(certifiedCopyItemData);
         repository.save(newItem);
 
         final CertifiedCopyItemResponseDTO expectedItem = new CertifiedCopyItemResponseDTO();
         expectedItem.setCompanyNumber(COMPANY_NUMBER);
+        expectedItem.setCompanyName(COMPANY_NAME);
         expectedItem.setQuantity(QUANTITY);
         expectedItem.setId(CERTIFIED_COPY_ID);
         expectedItem.setCustomerReference(CUSTOMER_REFERENCE);
