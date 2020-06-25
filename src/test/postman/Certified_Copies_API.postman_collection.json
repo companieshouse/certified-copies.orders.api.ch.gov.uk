@@ -7,252 +7,305 @@
 	},
 	"item": [
 		{
-			"name": "Create certified copy item",
+			"name": "Certified Copies API",
 			"item": [
 				{
-					"name": "Missing attributes",
-					"item": [
-						{
-							"name": "Create certified copy item - missing company",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/orderable/certified-copies",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"orderable",
-										"certified-copies"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create certified copy item - missing company Copy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/orderable/certified-copies",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"orderable",
-										"certified-copies"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create certified copy item - missing filing history",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/orderable/certified-copies",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"orderable",
-										"certified-copies"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Invalid attributes",
-					"item": [
-						{
-							"name": "Create certified copy item - invalid delivery timescale",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"invalid\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/orderable/certified-copies",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"orderable",
-										"certified-copies"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create certified copy item - invalid delivery method",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"unknown\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/orderable/certified-copies",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"orderable",
-										"certified-copies"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
 					"name": "Create certified copy item",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"item": [
+						{
+							"name": "Missing attributes",
+							"item": [
+								{
+									"name": "Create certified copy item - missing company",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create certified copy item - missing company Copy",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create certified copy item - missing filing history",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
 								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/orderable/certified-copies",
-							"host": [
-								"{{base_url}}"
 							],
-							"path": [
-								"orderable",
-								"certified-copies"
-							]
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Invalid attributes",
+							"item": [
+								{
+									"name": "Create certified copy item - invalid delivery timescale",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"invalid\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create certified copy item - invalid delivery method",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"unknown\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Create certified copy item",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"1\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/orderable/certified-copies",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"orderable",
+										"certified-copies"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get certified copy item",
+					"item": [
+						{
+							"name": "Get certified copy item",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Request-ID",
+										"type": "text",
+										"value": "f058ebd6-02f7-4d3f-942e-904344e8cde5"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/orderable/certified-copies/CCD-857115-929072",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"orderable",
+										"certified-copies",
+										"CCD-857115-929072"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Get certified copy item",
+			"name": "Filing History API",
 			"item": [
 				{
-					"name": "Get certified copy item",
+					"name": "GET filing history",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "X-Request-ID",
-								"type": "text",
-								"value": "f058ebd6-02f7-4d3f-942e-904344e8cde5"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{base_url}}/orderable/certified-copies/CCD-857115-929072",
+							"raw": "{{base_url}}/company/00006400/filing-history",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"orderable",
-								"certified-copies",
-								"CCD-857115-929072"
+								"company",
+								"00006400",
+								"filing-history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET filing history document",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/company/00006400/filing-history/MDAxMTEyNzExOGFkaXF6a2N4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"company",
+								"00006400",
+								"filing-history",
+								"MDAxMTEyNzExOGFkaXF6a2N4"
 							]
 						}
 					},
