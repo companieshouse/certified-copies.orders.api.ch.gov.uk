@@ -10,12 +10,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
@@ -27,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,17 +38,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class CertifiedCopiedControllerIntegrationTest {
+public class CertifiedCopiesItemControllerIntegrationTest {
 
-    private static final String CERTIFIED_COPIED_URL = "/orderable/certified-copies";
+    private static final String CERTIFIED_COPIES_URL = "/orderable/certified-copies";
 
-    private static final String CERTIFICATE_COPY_ID = "ORD-123456-123456";
+    private static final String CERTIFIED_COPY_ID = "ORD-123456-123456";
+    private static final String UNKNOWN_CERTIFIED_COPY_ID = "ORD-000000-000000";
 
     private static final String COMPANY_NUMBER = "00000000";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
@@ -54,6 +57,14 @@ public class CertifiedCopiedControllerIntegrationTest {
     private static final String SURNAME = "Jones";
     private static final String FILING_HISTORY_ID = "1";
     private static final String KIND = "item#certified-copy";
+    private static final String TOKEN_ETAG = "9d39ea69b64c80ca42ed72328b48c303c4445e28";
+    private static final String POSTAGE_COST = "0";
+    private static final Links LINKS;
+
+    static {
+        LINKS = new Links();
+        LINKS.setSelf(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID);
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -97,9 +108,9 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
-        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
 
-        mockMvc.perform(post(CERTIFIED_COPIED_URL)
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
@@ -121,7 +132,7 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
 
-        assertItemSavedCorrectly(CERTIFICATE_COPY_ID);
+        assertItemSavedCorrectly(CERTIFIED_COPY_ID);
     }
 
     @Test
@@ -137,9 +148,9 @@ public class CertifiedCopiedControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.COLLECTION);
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
-        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
 
-        mockMvc.perform(post(CERTIFIED_COPIED_URL)
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
@@ -154,7 +165,7 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(jsonPath("$.postal_delivery", is(false)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
 
-        assertItemSavedCorrectly(CERTIFICATE_COPY_ID);
+        assertItemSavedCorrectly(CERTIFIED_COPY_ID);
 
     }
 
@@ -169,9 +180,9 @@ public class CertifiedCopiedControllerIntegrationTest {
                 = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
-        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
 
-        mockMvc.perform(post(CERTIFIED_COPIED_URL)
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
@@ -186,7 +197,7 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
 
-        assertItemSavedCorrectly(CERTIFICATE_COPY_ID);
+        assertItemSavedCorrectly(CERTIFIED_COPY_ID);
 
     }
 
@@ -206,14 +217,14 @@ public class CertifiedCopiedControllerIntegrationTest {
         certifiedCopyItemDTORequest
                 .setItemOptions(certifiedCopyItemOptionsDTORequest);
 
-        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFICATE_COPY_ID);
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
 
         final ApiError expectedValidationError =
                 new ApiError(BAD_REQUEST, asList("company_number: must not be null",
                 "item_options.filing_history_documents[0].filing_history_id: must not be null",
                 "quantity: must not be null"));
 
-        mockMvc.perform(post(CERTIFIED_COPIED_URL)
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
@@ -223,11 +234,60 @@ public class CertifiedCopiedControllerIntegrationTest {
                 .andExpect(content()
                         .json(objectMapper.writeValueAsString(expectedValidationError)));
 
-        assertItemWasNotSaved(CERTIFICATE_COPY_ID);
+        assertItemWasNotSaved(CERTIFIED_COPY_ID);
 
     }
 
+    @Test
+    @DisplayName("Successfully gets a certified copy item")
+    void getCertifiedCopyItemSuccessfully() throws Exception {
+        // Given
+        // Create certified copy item in database
+        final CertifiedCopyItem newItem = new CertifiedCopyItem();
+        newItem.setCompanyNumber(COMPANY_NUMBER);
+        newItem.setId(CERTIFIED_COPY_ID);
+        newItem.setQuantity(QUANTITY);
+        newItem.setUserId(ERIC_IDENTITY_VALUE);
+        newItem.setCustomerReference(CUSTOMER_REFERENCE);
+        newItem.setEtag(TOKEN_ETAG);
+        newItem.setLinks(LINKS);
+        newItem.setPostageCost(POSTAGE_COST);
+        repository.save(newItem);
 
+        final CertifiedCopyItemResponseDTO expectedItem = new CertifiedCopyItemResponseDTO();
+        expectedItem.setCompanyNumber(COMPANY_NUMBER);
+        expectedItem.setQuantity(QUANTITY);
+        expectedItem.setId(CERTIFIED_COPY_ID);
+        expectedItem.setCustomerReference(CUSTOMER_REFERENCE);
+        expectedItem.setEtag(TOKEN_ETAG);
+        expectedItem.setLinks(LINKS);
+        expectedItem.setPostageCost(POSTAGE_COST);
+
+        // When and then
+        mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedItem)))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("Returns not found when a certified copy item does not exist")
+    void getCertifiedCopyItemReturnsNotFound() throws Exception {
+        // When and then
+        mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
 
     /**
      * Verifies that the certified copy item can be retrieved

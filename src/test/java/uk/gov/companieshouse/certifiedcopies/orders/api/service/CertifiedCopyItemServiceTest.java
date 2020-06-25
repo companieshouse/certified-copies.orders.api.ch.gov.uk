@@ -12,12 +12,11 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests the {@link CertifiedCopyItemService} class.
@@ -64,6 +63,35 @@ public class CertifiedCopyItemServiceTest {
         assertThat(certifiedCopyItem.getId(), is(ID));
         verify(etagGenerator).generateEtag();
         verify(linksGenerator).generateLinks(ID);
+    }
+
+    @Test
+    @DisplayName("getCertifiedCopyItemById retrieves undecorated item")
+    void getCertifiedCopyItemByIdRetrievesItem() {
+
+        // Given
+        final CertifiedCopyItem item = new CertifiedCopyItem();
+        when(repository.findById(ID)).thenReturn(Optional.of(item));
+
+        // When
+        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID);
+
+        // Then
+        verify(repository).findById(ID);
+        assertThat(itemRetrieved.isPresent(), is(true));
+        verify(etagGenerator, never()).generateEtag();
+    }
+
+    @Test
+    @DisplayName("getCertifiedCopyItemById handles failure to find item smoothly")
+    void getCertifiedCopyItemByIdHandlesFailureToFindItemSmoothly() {
+
+        // Given
+        when(repository.findById(ID)).thenReturn(Optional.empty());
+
+        // When
+        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID);
+        assertThat(item.isPresent(), is(false));
     }
 
 

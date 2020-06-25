@@ -44,7 +44,12 @@ public class CertifiedCopyItemService {
         return repository.save(certifiedCopyItem);
     }
 
-    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(final String certifiedCopyId) {
-        return repository.findById(certifiedCopyId);
+    /**
+     * Gets the certified copy item by its ID, and returns it as-is, without decorating it in any way.
+     * @param id the ID of the certified copy item to be retrieved
+     * @return the undecorated item retrieved from the DB
+     */
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
+        return repository.findById(id);
     }
 }
