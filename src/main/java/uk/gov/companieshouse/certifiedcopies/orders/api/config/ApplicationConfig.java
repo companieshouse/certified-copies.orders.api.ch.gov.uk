@@ -19,8 +19,8 @@ import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
-    @Value("${uk.gov.companieshouse.certifiedcopies.orders.api.path.pattern}")
-    private String CERTIFIED_COPIES_PATH_PATTERN;
+    @Value("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
+    private String CERTIFIED_COPIES_HOME;
 
     @Autowired
     private CertifiedCopyItemService certifiedCopyItemService;
@@ -28,9 +28,9 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(new LoggingInterceptor());
-        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_PATH_PATTERN);
+        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
         registry.addInterceptor(new UserAuthorisationInterceptor(certifiedCopyItemService))
-                .addPathPatterns(CERTIFIED_COPIES_PATH_PATTERN);
+                .addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
     }
 
     @Bean
