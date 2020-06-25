@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.interceptor;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.EricHeaderHelper;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,11 +11,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.*;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.getLogger;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
 
 public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
+    private static final Logger LOGGER = getLogger();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

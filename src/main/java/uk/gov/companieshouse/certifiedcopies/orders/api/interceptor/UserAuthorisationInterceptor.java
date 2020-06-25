@@ -6,7 +6,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.EricHeaderHelper;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,13 +17,19 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.*;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.IDENTITY_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.USER_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.CERTIFIED_COPY_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.getLogger;
 
 public class UserAuthorisationInterceptor extends HandlerInterceptorAdapter {
 
     private final CertifiedCopyItemService service;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
+    private static final Logger LOGGER = getLogger();
 
     public UserAuthorisationInterceptor(CertifiedCopyItemService service) {
         this.service = service;
