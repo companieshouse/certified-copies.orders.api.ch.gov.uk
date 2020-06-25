@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.TOKEN_REQUEST_ID_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
 
 /**
  * Unit tests the {@link CertifiedCopiesItemController} class.
@@ -54,7 +54,7 @@ public class CertifiedCopiesItemControllerTest {
         when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.of(item));
         when(item.getData()).thenReturn(data);
         when(mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(data)).thenReturn(dto);
-        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, TOKEN_REQUEST_ID_VALUE);
+        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(), is(dto));
@@ -64,7 +64,7 @@ public class CertifiedCopiesItemControllerTest {
     @DisplayName("Get certified copy item resource returns HTTP NOT FOUND")
     void getCertifiedCopyItemNotFound() {
         when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.empty());
-        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, TOKEN_REQUEST_ID_VALUE);
+        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE);
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }

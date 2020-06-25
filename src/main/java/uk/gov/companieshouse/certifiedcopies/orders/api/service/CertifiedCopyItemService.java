@@ -52,5 +52,4 @@ public class CertifiedCopyItemService {
     public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
         return repository.findById(id);
     }
-
 }
