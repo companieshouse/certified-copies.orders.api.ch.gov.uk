@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,7 +19,8 @@ import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
-    private static final String CERTIFIED_COPIES_PATH_PATTERN = "/orderable/certified-copies/**";
+    @Value("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
+    private String CERTIFIED_COPIES_HOME;
 
     @Autowired
     private CertifiedCopyItemService certifiedCopyItemService;
@@ -26,9 +28,9 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(new LoggingInterceptor());
-        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_PATH_PATTERN);
+        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
         registry.addInterceptor(new UserAuthorisationInterceptor(certifiedCopyItemService))
-                .addPathPatterns(CERTIFIED_COPIES_PATH_PATTERN);
+                .addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
     }
 
     @Bean
