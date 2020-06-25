@@ -2,6 +2,18 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
 public class FilingHistoryDocument {
 
+    public FilingHistoryDocument() {}
+
+    public FilingHistoryDocument(final String filingHistoryDate,
+                                 final String filingHistoryDescription,
+                                 final String filingHistoryId,
+                                 final String filingHistoryType) {
+        this.filingHistoryDate = filingHistoryDate;
+        this.filingHistoryDescription = filingHistoryDescription;
+        this.filingHistoryId = filingHistoryId;
+        this.filingHistoryType = filingHistoryType;
+    }
+
     private String filingHistoryDate;
 
     private String filingHistoryDescription;

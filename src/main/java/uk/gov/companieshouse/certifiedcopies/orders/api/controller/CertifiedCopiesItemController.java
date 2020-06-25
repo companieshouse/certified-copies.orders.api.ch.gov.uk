@@ -7,8 +7,10 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemReq
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.mapper.CertifiedCopyItemMapper;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -28,11 +30,14 @@ public class CertifiedCopiesItemController {
 
     private final CertifiedCopyItemMapper mapper;
     private final CertifiedCopyItemService certifiedCopyItemService;
+    private final FilingHistoryDocumentService filingHistoryDocumentService;
 
     public CertifiedCopiesItemController(final CertifiedCopyItemMapper mapper,
-                                         final CertifiedCopyItemService certifiedCopyItemService) {
+                                         final CertifiedCopyItemService certifiedCopyItemService,
+                                         final FilingHistoryDocumentService filingHistoryDocumentService) {
         this.mapper = mapper;
         this.certifiedCopyItemService = certifiedCopyItemService;
+        this.filingHistoryDocumentService = filingHistoryDocumentService;
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
@@ -47,6 +52,11 @@ public class CertifiedCopiesItemController {
         CertifiedCopyItem certifiedCopyItem = mapper
                 .certifiedCopyItemRequestDTOToCertifiedCopyItem(certifiedCopyItemRequestDTO);
         certifiedCopyItem.setUserId(AuthorisationUtil.getAuthorisedIdentity(request));
+        final List<FilingHistoryDocument> filings =
+                filingHistoryDocumentService.getFilingHistoryDocuments(
+                        certifiedCopyItem.getData().getCompanyNumber(),
+                        certifiedCopyItem.getData().getItemOptions().getFilingHistoryDocuments());
+        certifiedCopyItem.getData().getItemOptions().setFilingHistoryDocuments(filings);
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService
                 .createCertifiedCopyItem(certifiedCopyItem);
