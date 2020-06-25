@@ -12,7 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.lenient;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_HEADER_NAME;
 
 @ExtendWith(MockitoExtension.class)
 public class UserAuthenticationInterceptorTest {
