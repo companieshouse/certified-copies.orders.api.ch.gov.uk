@@ -18,6 +18,7 @@ import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
+    private static final String CERTIFIED_COPIES_PATH_PATTERN = "/orderable/certified-copies/**";
 
     @Autowired
     private CertifiedCopyItemService certifiedCopyItemService;
@@ -25,9 +26,9 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(new LoggingInterceptor());
-        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns("/orderable/certified-copies/**");
+        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_PATH_PATTERN);
         registry.addInterceptor(new UserAuthorisationInterceptor(certifiedCopyItemService))
-                .addPathPatterns("/orderable/certified-copies/**");
+                .addPathPatterns(CERTIFIED_COPIES_PATH_PATTERN);
     }
 
     @Bean
