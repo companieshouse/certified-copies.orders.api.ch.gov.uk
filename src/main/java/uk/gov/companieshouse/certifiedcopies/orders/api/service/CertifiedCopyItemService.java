@@ -6,6 +6,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class CertifiedCopyItemService {
@@ -41,5 +42,9 @@ public class CertifiedCopyItemService {
         certifiedCopyItem.getData().setKind("item#certified-copy");
 
         return repository.save(certifiedCopyItem);
+    }
+
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(final String certifiedCopyId) {
+        return repository.findById(certifiedCopyId);
     }
 }
