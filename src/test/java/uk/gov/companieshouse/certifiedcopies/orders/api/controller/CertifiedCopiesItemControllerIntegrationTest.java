@@ -260,7 +260,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     void getCertifiedCopyItemSuccessfully() throws Exception {
         // Given
         // Create certified copy item in database
-        final CertifiedCopyItem newItem = new CertifiedCopyItem();
+        final CertifiedCopyItem  newItem = new CertifiedCopyItem();
         newItem.setCompanyNumber(COMPANY_NUMBER);
         newItem.setId(CERTIFIED_COPY_ID);
         newItem.setQuantity(QUANTITY);
@@ -269,6 +269,10 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         newItem.setEtag(TOKEN_ETAG);
         newItem.setLinks(LINKS);
         newItem.setPostageCost(POSTAGE_COST);
+        final CertifiedCopyItemOptions options = new CertifiedCopyItemOptions();
+        options.setFilingHistoryDocuments(singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
+                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_ID, FILING_HISTORY_TYPE)));
+        newItem.setItemOptions(options);
         repository.save(newItem);
 
         final CertifiedCopyItemResponseDTO expectedItem = new CertifiedCopyItemResponseDTO();
@@ -279,6 +283,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         expectedItem.setEtag(TOKEN_ETAG);
         expectedItem.setLinks(LINKS);
         expectedItem.setPostageCost(POSTAGE_COST);
+        // TODO GCI-1209 expectedItem.setItemOptions(options);
 
         // When and then
         mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID)
