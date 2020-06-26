@@ -1,16 +1,14 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.util.List;
@@ -22,17 +20,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Integrations tests the {@link FilingHistoryDocumentService}. Uses JUnit4 to take advantage of the
- * system-rules {@link EnvironmentVariables} class rule. The JUnit5 system-extensions equivalent does not
- * seem to have been released.
+ * Integrations tests the {@link FilingHistoryDocumentService}.
  */
 @SpringBootTest
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
 public class FilingHistoryDocumentServiceIntegrationTest {
-
-    @ClassRule
-    public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
 
     private static final List<FilingHistoryDocument> FILINGS_SOUGHT = asList(
             new FilingHistoryDocument(null, null, "MDAxMTEyNzExOGFkaXF6a2N4", null),
@@ -51,15 +43,17 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     private CertifiedCopyItemService certifiedCopyItemService;
 
     @Test
-    public void getFilingHistoryDocuments() {
+    @DisplayName("Gets the expected filing history documents successfully")
+    @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
+    @SetEnvironmentVariable(key = "API_URL",
+            value = "http://api.chs-dev.internal:4001") // TODO GCI-1209 Move to WireMock
+    void getFilingHistoryDocuments() {
 
-        // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://api.chs-dev.internal:4001"); // TODO GCI-1209 Move to WireMock
-
+        // When
         final List<FilingHistoryDocument> filings =
                 serviceUnderTest.getFilingHistoryDocuments("00006400", FILINGS_SOUGHT);
 
+        // Then
         assertThat(filings, is(notNullValue()));
         assertThat(filings.size(), is(FILINGS_SOUGHT.size()));
         assertFilingsSame(filings, FILINGS_SOUGHT);
