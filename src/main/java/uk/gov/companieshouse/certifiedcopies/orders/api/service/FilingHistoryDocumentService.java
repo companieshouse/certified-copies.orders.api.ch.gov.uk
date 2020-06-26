@@ -16,6 +16,7 @@ import uk.gov.companieshouse.logging.Logger;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 public class FilingHistoryDocumentService {
@@ -36,13 +37,16 @@ public class FilingHistoryDocumentService {
     /**
      * Gets fully populated filing history documents for the partially populated filing history documents provided.
      * @param companyNumber the company number
-     * @param filingHistoryDocumentsSought the filing history documents, assumed to have their IDs populated at least
+     * @param filingHistoryDocumentsRequested the filing history documents requested, assumed to have their IDs
+     *                                        populated at least, and of which there must be at least one
      * @return fully populated documents
      */
     public List<FilingHistoryDocument> getFilingHistoryDocuments(
             final String companyNumber,
-            final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
-        LOGGER.info(filingHistoryDocumentsSought.size() + " filing history document(s) sought for company number "
+            final List<FilingHistoryDocument> filingHistoryDocumentsRequested) {
+
+        validateFilingHistoryDocumentsSought(companyNumber, filingHistoryDocumentsRequested);
+        LOGGER.info(filingHistoryDocumentsRequested.size() + " filing history document(s) requested for company number "
                 + companyNumber + ".");
         final ApiClient apiClient = apiClientService.getInternalApiClient();
         final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
@@ -52,7 +56,7 @@ public class FilingHistoryDocumentService {
                 LOGGER.info("Filing history returned for company number " + companyNumber +
                         " contains " + history.getItems().size() + " document(s).");
                 final List<FilingHistoryDocument> filings = history.getItems().stream().
-                        filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsSought)).
+                        filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsRequested)).
                         map(filing ->
                                 new FilingHistoryDocument(filing.getDate().toString(),
                                         filing.getDescription(),
@@ -73,14 +77,29 @@ public class FilingHistoryDocumentService {
     }
 
     /**
-     * Indicates whether the filing provided is amongst those sought.
+     * Validates that at least one filing history document (filing) has been requested.
+     * @param companyNumber the company for which the filings have been requested
+     * @param filingHistoryDocumentsRequested the filings requested
+     */
+    void validateFilingHistoryDocumentsSought(final String companyNumber,
+                                              final List<FilingHistoryDocument> filingHistoryDocumentsRequested) {
+        if (isEmpty(filingHistoryDocumentsRequested)) {
+            final String error = "No filing history documents requested for company number " + companyNumber
+                    + ". At least one must be requested.";
+            LOGGER.error(error);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
+        }
+    }
+
+    /**
+     * Indicates whether the filing provided is amongst those requested.
      * @param filing the filing to check
-     * @param filingHistoryDocumentsSought the filings sought
+     * @param filingHistoryDocumentsRequested the filings requested
      * @return <code>true</code> where the filing is one of those sought, <code>false</code> otherwise
      */
     boolean isInFilingsSought(final FilingApi filing,
-                              final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
-        final List<String> filingHistoryIds = filingHistoryDocumentsSought.stream()
+                              final List<FilingHistoryDocument> filingHistoryDocumentsRequested) {
+        final List<String> filingHistoryIds = filingHistoryDocumentsRequested.stream()
                         .map(FilingHistoryDocument::getFilingHistoryId)
                         .collect(toList());
         return filingHistoryIds.contains(filing.getTransactionId());

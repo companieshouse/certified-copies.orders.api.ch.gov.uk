@@ -5,12 +5,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -49,6 +52,26 @@ public class FilingHistoryDocumentServiceTest {
     @Test
     void isNotInFilingsSought() {
         assertThat(serviceUnderTest.isInFilingsSought(FILING_2, FILINGS_SOUGHT), is(false));
+    }
+
+    @Test
+    void nullFilingHistoryIsRejected() {
+        // When and then
+        assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(() ->
+                serviceUnderTest.validateFilingHistoryDocumentsSought("00006400", null))
+                .withNoCause()
+                .withMessage("400 BAD_REQUEST \"No filing history documents requested for company number 00006400. " +
+                        "At least one must be requested.\"");
+    }
+
+    @Test
+    void emptyFilingHistoryIsRejected() {
+        // When and then
+        assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(() ->
+                serviceUnderTest.validateFilingHistoryDocumentsSought("00006400", new ArrayList<>()))
+                .withNoCause()
+                .withMessage("400 BAD_REQUEST \"No filing history documents requested for company number 00006400. " +
+                        "At least one must be requested.\"");
     }
 
 }
