@@ -15,19 +15,21 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOpt
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.*;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,10 +47,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 public class CertifiedCopiesItemControllerIntegrationTest {
 
     private static final String CERTIFIED_COPIES_URL = "/orderable/certified-copies";
-
-    private static final String CERTIFIED_COPY_ID = "ORD-123456-123456";
-    private static final String UNKNOWN_CERTIFIED_COPY_ID = "ORD-000000-000000";
-
+    private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
     private static final String COMPANY_NUMBER = "00000000";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
@@ -77,6 +76,9 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
     @MockBean
     private IdGeneratorService idGeneratorService;
+
+    @MockBean
+    private FilingHistoryDocumentService filingHistoryDocumentService;
 
     @AfterEach
     void tearDown() {
@@ -108,7 +110,10 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
+        final List<FilingHistoryDocument> filings =
+                singletonList(new FilingHistoryDocument(null, null, FILING_HISTORY_ID, null));
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
@@ -221,7 +226,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
         final ApiError expectedValidationError =
                 new ApiError(BAD_REQUEST, asList("company_number: must not be null",
-                "item_options.filing_history_documents[0].filing_history_id: must not be null",
+                "item_options.filing_history_documents[0].filing_history_id: must not be empty",
                 "quantity: must not be null"));
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
