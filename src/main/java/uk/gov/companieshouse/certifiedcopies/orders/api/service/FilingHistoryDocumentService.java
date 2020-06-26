@@ -42,7 +42,6 @@ public class FilingHistoryDocumentService {
     public List<FilingHistoryDocument> getFilingHistoryDocuments(
             final String companyNumber,
             final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
-        // TODO GCI-1209 Validate inputs?
         LOGGER.info(filingHistoryDocumentsSought.size() + " filing history document(s) sought for company number "
                 + companyNumber + ".");
         final ApiClient apiClient = apiClientService.getInternalApiClient();
