@@ -32,7 +32,6 @@ public class FilingHistoryDocumentService {
         this.apiClientService = apiClientService;
     }
 
-    // TODO GCI-1209 Is the company number entirely redundant in this context?
     // TODO GCI-1209 Is the spec for FilingHistoryDocument going to change effectively?
     /**
      * Gets fully populated filing history documents for the partially populated filing history documents provided.

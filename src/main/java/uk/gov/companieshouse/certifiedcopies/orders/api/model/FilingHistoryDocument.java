@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
+import com.google.gson.Gson;
+
 public class FilingHistoryDocument {
 
     public FilingHistoryDocument() {}
@@ -53,4 +55,7 @@ public class FilingHistoryDocument {
     public void setFilingHistoryType(String filingHistoryType) {
         this.filingHistoryType = filingHistoryType;
     }
+
+    @Override
+    public String toString() { return new Gson().toJson(this); }
 }
