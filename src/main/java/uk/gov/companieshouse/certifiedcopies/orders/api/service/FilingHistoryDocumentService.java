@@ -51,7 +51,6 @@ public class FilingHistoryDocumentService {
                 final FilingHistoryApi history = apiClient.filingHistory().list(uri).execute().getData();
                 LOGGER.info("Filing history returned for company number " + companyNumber +
                         " contains " + history.getItems().size() + " document(s).");
-                // TODO GCI-1209 date format etc?
                 final List<FilingHistoryDocument> filings = history.getItems().stream().
                         filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsSought)).
                         map(filing ->
