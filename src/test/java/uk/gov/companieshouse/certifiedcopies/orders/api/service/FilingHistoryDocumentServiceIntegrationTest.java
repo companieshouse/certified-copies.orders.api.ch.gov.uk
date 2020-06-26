@@ -14,11 +14,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Integrations tests the {@link FilingHistoryDocumentService}. Uses JUnit4 to take advantage of the
- *  * system-rules {@link EnvironmentVariables} class rule. The JUnit5 system-extensions equivalent does not
- *  * seem to have been released.
+ * system-rules {@link EnvironmentVariables} class rule. The JUnit5 system-extensions equivalent does not
+ * seem to have been released.
  */
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -52,7 +53,10 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
         ENVIRONMENT_VARIABLES.set("API_URL", "http://api.chs-dev.internal:4001"); // TODO GCI-1209 Move to WireMock
 
-        serviceUnderTest.getFilingHistoryDocuments("00006400", Collections.singletonList(FILING));
+        final List<FilingHistoryDocument> docs =
+                serviceUnderTest.getFilingHistoryDocuments("00006400", Collections.singletonList(FILING));
+        // TODO GCI-1209 Remove this
+        docs.forEach(doc -> System.out.println(">" + doc.getFilingHistoryId() + ":" + doc.getFilingHistoryDescription()));
     }
 
 }

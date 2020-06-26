@@ -20,7 +20,6 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class FilingHistoryDocumentService {
 
-    // TODO GCI-1209 Do we need this?
     private static final Logger LOGGER = LoggingUtils.getLogger();
 
     private static final UriTemplate
@@ -44,7 +43,7 @@ public class FilingHistoryDocumentService {
     public List<FilingHistoryDocument> getFilingHistoryDocuments(
             final String companyNumber,
             final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
-        // TODO GCI-1209 Implement this - it should not manipulate the docs provided but create a copy
+        // TODO GCI-1209 Validate inputs?
         final ApiClient apiClient = apiClientService.getInternalApiClient();
         final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
         try {
@@ -54,7 +53,6 @@ public class FilingHistoryDocumentService {
                 history.getItems().forEach(filing -> System.out.println(filing.getTransactionId() + ":" + filing.getDescription()));
 
                 // TODO GCI-1209 date format etc?
-                // TODO GCI-1209 Filter on ID
                 return history.getItems().stream().
                         filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsSought)).
                         map(filing ->
@@ -73,10 +71,18 @@ public class FilingHistoryDocumentService {
 
     }
 
-    private boolean isInFilingsSought(final FilingApi filing,
-                                      final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
-        // TODO GCI-1209 Implement this
-        return true;
+    /**
+     * Indicates whether the filing provided is amongst those sought.
+     * @param filing the filing to check
+     * @param filingHistoryDocumentsSought the filings sought
+     * @return <code>true</code> where the filing is one of those sought, <code>false</code> otherwise
+     */
+    boolean isInFilingsSought(final FilingApi filing,
+                              final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
+        final List<String> filingHistoryIds = filingHistoryDocumentsSought.stream()
+                        .map(FilingHistoryDocument::getFilingHistoryId)
+                        .collect(toList());
+        return filingHistoryIds.contains(filing.getTransactionId());
     }
 
     // TODO GCI-1209 Sort out error messages, Javadoc, etc.
