@@ -43,22 +43,26 @@ public class FilingHistoryDocumentService {
             final String companyNumber,
             final List<FilingHistoryDocument> filingHistoryDocumentsSought) {
         // TODO GCI-1209 Validate inputs?
+        LOGGER.info(filingHistoryDocumentsSought.size() + " filing history document(s) sought for company number "
+                + companyNumber + ".");
         final ApiClient apiClient = apiClientService.getInternalApiClient();
         final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
         try {
                 // TODO GCI-1209 Can we use query params to make this less inefficient?
                 final FilingHistoryApi history = apiClient.filingHistory().list(uri).execute().getData();
-                // TODO GCI-1209 Remove this
-                history.getItems().forEach(filing -> System.out.println(filing.getTransactionId() + ":" + filing.getDescription()));
-
+                LOGGER.info("Filing history returned for company number " + companyNumber +
+                        " contains " + history.getItems().size() + " document(s).");
                 // TODO GCI-1209 date format etc?
-                return history.getItems().stream().
+                final List<FilingHistoryDocument> filings = history.getItems().stream().
                         filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsSought)).
                         map(filing ->
-                        new FilingHistoryDocument(filing.getDate().toString(),
-                                                  filing.getDescription(),
-                                                  filing.getTransactionId(),
-                                                  filing.getType())).collect(toList());
+                                new FilingHistoryDocument(filing.getDate().toString(),
+                                        filing.getDescription(),
+                                        filing.getTransactionId(),
+                                        filing.getType())).collect(toList());
+                LOGGER.info("Returning " + filings.size() +
+                        " matching filing history document(s) for company number " + companyNumber + ".");
+                return filings;
             } catch (ApiErrorResponseException ex) {
                 throw getResponseStatusException(ex, apiClient, companyNumber, uri);
             } catch (URIValidationException ex) {
@@ -84,13 +88,12 @@ public class FilingHistoryDocumentService {
         return filingHistoryIds.contains(filing.getTransactionId());
     }
 
-    // TODO GCI-1209 Sort out error messages, Javadoc, etc.
     /**
      * Creates an appropriate exception to report the underlying problem.
      * @param apiException the API exception caught
      * @param client the API client
-     * @param companyNumber the number of the company looked up
-     * @param uri the URI used to communicate with the company profiles API
+     * @param companyNumber the number of the company for which the filing history is looked up
+     * @param uri the URI used to communicate with the company filing history API
      * @return the {@link ResponseStatusException} exception to report the problem
      */
     private ResponseStatusException getResponseStatusException(final ApiErrorResponseException apiException,
@@ -105,7 +108,7 @@ public class FilingHistoryDocumentService {
             LOGGER.error(error, apiException);
             propagatedException = new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error);
         } else {
-            final String error = "Error getting company name for company number " + companyNumber;
+            final String error = "Error getting filing history for company number " + companyNumber + ".";
             LOGGER.error(error, apiException);
             propagatedException =  new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
         }
