@@ -283,7 +283,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         expectedItem.setEtag(TOKEN_ETAG);
         expectedItem.setLinks(LINKS);
         expectedItem.setPostageCost(POSTAGE_COST);
-        // TODO GCI-1209 expectedItem.setItemOptions(options);
+        expectedItem.setItemOptions(options);
 
         // When and then
         mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID)
@@ -293,7 +293,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, TOKEN_REQUEST_ID_VALUE)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedItem)))
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedItem), true))
                 .andDo(MockMvcResultHandlers.print());
     }
 
