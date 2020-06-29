@@ -380,7 +380,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/company/00006400/filing-history",
+							"raw": "{{base_url}}/company/00006400/filing-history?items_per_page=100",
 							"host": [
 								"{{base_url}}"
 							],
@@ -388,6 +388,37 @@
 								"company",
 								"00006400",
 								"filing-history"
+							],
+							"query": [
+								{
+									"key": "items_per_page",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET filing history small page size",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/company/00006400/filing-history?items_per_page=2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"company",
+								"00006400",
+								"filing-history"
+							],
+							"query": [
+								{
+									"key": "items_per_page",
+									"value": "2"
+								}
 							]
 						}
 					},
