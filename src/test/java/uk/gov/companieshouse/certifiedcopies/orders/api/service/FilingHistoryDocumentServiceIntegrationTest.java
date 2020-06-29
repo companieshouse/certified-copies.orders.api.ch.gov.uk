@@ -39,7 +39,6 @@ import static org.hamcrest.Matchers.is;
 @AutoConfigureWireMock(port = 12345) // TODO GCI-1209 randomly allocated port?
 public class FilingHistoryDocumentServiceIntegrationTest {
 
-
     private static final String COMPANY_NUMBER = "00006400";
     private static final String ID_1 = "MDAxMTEyNzExOGFkaXF6a2N4";
     private static final String ID_2 = "MzAwOTM2MDg5OWFkaXF6a2N4";
@@ -56,29 +55,7 @@ public class FilingHistoryDocumentServiceIntegrationTest {
 
     static {
         FILING_HISTORY = new FilingHistoryApi();
-
-        final FilingApi filing1 = new FilingApi();
-        filing1.setTransactionId(ID_1);
-        filing1.setDate(LocalDate.now());
-        filing1.setDescription("");
-        filing1.setType("");
-        final FilingApi filing2 = new FilingApi();
-        filing2.setTransactionId(ID_2);
-        filing2.setDate(LocalDate.now());
-        filing2.setDescription("");
-        filing2.setType("");
-        final FilingApi filing3 = new FilingApi();
-        filing3.setTransactionId(ID_3);
-        filing3.setDate(LocalDate.now());
-        filing3.setDescription("");
-        filing3.setType("");
-        final FilingApi filing4 = new FilingApi();
-        filing4.setTransactionId(ID_4);
-        filing4.setDate(LocalDate.now());
-        filing4.setDescription("");
-        filing4.setType("");
-        final List<FilingApi> filings = asList(filing1, filing2, filing3, filing4);
-        FILING_HISTORY.setItems(filings);
+        FILING_HISTORY.setItems(asList(filing(ID_1), filing(ID_2), filing(ID_3), filing(ID_4)));
     }
 
     @Configuration
@@ -153,6 +130,20 @@ public class FilingHistoryDocumentServiceIntegrationTest {
                                              filing.getFilingHistoryDescription() != null &&
                                              filing.getFilingHistoryDate() != null &&
                                              filing.getFilingHistoryType() != null, is(true)));
+    }
+
+    /**
+     * Factory method that creates an instance of {@link FilingApi} for testing purposes.
+     * @param transactionId the transaction ID to allocate to the filing
+     * @return the filing created
+     */
+    private static FilingApi filing(final String transactionId) {
+        final FilingApi filing = new FilingApi();
+        filing.setTransactionId(transactionId);
+        filing.setDate(LocalDate.now());
+        filing.setDescription("");
+        filing.setType("");
+        return filing;
     }
 
 }
