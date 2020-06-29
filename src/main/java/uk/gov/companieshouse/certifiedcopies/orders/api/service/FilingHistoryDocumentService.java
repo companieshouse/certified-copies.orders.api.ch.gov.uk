@@ -7,6 +7,7 @@ import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.handler.filinghistory.request.FilingHistoryList;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingHistoryApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
@@ -26,6 +27,9 @@ public class FilingHistoryDocumentService {
     private static final UriTemplate
             GET_FILING_HISTORY =
             new UriTemplate("/company/{companyNumber}/filing-history");
+
+    /** The maximum number of filings the Filing History API will return in response to a single request. */
+    private static final int MAX_FILINGS_THAT_CAN_BE_RETRIEVED = 100;
 
     private final ApiClientService apiClientService;
 
@@ -51,7 +55,9 @@ public class FilingHistoryDocumentService {
         final ApiClient apiClient = apiClientService.getInternalApiClient();
         final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
         try {
-                final FilingHistoryApi history = apiClient.filingHistory().list(uri).execute().getData();
+                final FilingHistoryList historyList =  apiClient.filingHistory().list(uri);
+                setMaxNumberOfFilingsFetched(historyList, MAX_FILINGS_THAT_CAN_BE_RETRIEVED);
+                final FilingHistoryApi history = historyList.execute().getData();
                 LOGGER.info("Filing history returned for company number " + companyNumber +
                         " contains " + history.getItems().size() + " document(s).");
                 final List<FilingHistoryDocument> filings = history.getItems().stream().
@@ -129,6 +135,17 @@ public class FilingHistoryDocumentService {
             propagatedException =  new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
         }
         return propagatedException;
+    }
+
+    /**
+     * Controls the maximum number of filings that will be retrieved from the Filing History API.
+     * @param historyList the history list specifying the request to be made to the Filing History API
+     * @param maxFilings the maximum number of filings that may be retrieved. Values over
+     * {@link #MAX_FILINGS_THAT_CAN_BE_RETRIEVED} are treated as equal to {@link #MAX_FILINGS_THAT_CAN_BE_RETRIEVED}
+     *                   by the API itself.
+     */
+    private void setMaxNumberOfFilingsFetched(final FilingHistoryList historyList, final int maxFilings) {
+        historyList.addQueryParams("items_per_page", Integer.toString(maxFilings));
     }
 
 }
