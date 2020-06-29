@@ -51,7 +51,6 @@ public class FilingHistoryDocumentService {
         final ApiClient apiClient = apiClientService.getInternalApiClient();
         final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
         try {
-                // TODO GCI-1209 Can we use query params to make this less inefficient?
                 final FilingHistoryApi history = apiClient.filingHistory().list(uri).execute().getData();
                 LOGGER.info("Filing history returned for company number " + companyNumber +
                         " contains " + history.getItems().size() + " document(s).");
