@@ -36,8 +36,12 @@ import static org.hamcrest.Matchers.is;
  */
 @SpringBootTest
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
-@AutoConfigureWireMock(port = 12345) // TODO GCI-1209 randomly allocated port?
+@AutoConfigureWireMock(port = FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
 public class FilingHistoryDocumentServiceIntegrationTest {
+
+    // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
+    // such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
+    static final int WIRE_MOCK_PORT = 12345;
 
     private static final String COMPANY_NUMBER = "00006400";
     private static final String ID_1 = "MDAxMTEyNzExOGFkaXF6a2N4";
@@ -86,11 +90,12 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     @Test
     @DisplayName("Gets the expected filing history documents successfully")
     @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:12345") // TODO GCI-1209 randomly allocated port?
+    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
     void getFilingHistoryDocuments() throws JsonProcessingException {
 
         // Given
-        givenThat(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history"))
+        givenThat(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo(
+                "/company/" + COMPANY_NUMBER + "/filing-history"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsString(FILING_HISTORY))));
@@ -112,7 +117,8 @@ public class FilingHistoryDocumentServiceIntegrationTest {
      * @param filings1 list of filing history documents
      * @param filings2 list of filing history documents
      */
-    private void assertFilingsSame(final List<FilingHistoryDocument> filings1, final List<FilingHistoryDocument> filings2) {
+    private void assertFilingsSame(final List<FilingHistoryDocument> filings1,
+                                   final List<FilingHistoryDocument> filings2) {
         // Sort lists before comparing - workaround for issue using Hamcrest containsInAnyOrder.
         final List<String> ids1 = filings1.stream().map(FilingHistoryDocument::getFilingHistoryId).collect(toList());
         final List<String> ids2 = filings2.stream().map(FilingHistoryDocument::getFilingHistoryId).collect(toList());
