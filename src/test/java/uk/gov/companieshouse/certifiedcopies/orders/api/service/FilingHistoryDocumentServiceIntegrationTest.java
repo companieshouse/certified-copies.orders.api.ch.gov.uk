@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.tomakehurst.wiremock.http.Fault;
+import org.hamcrest.core.Is;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
@@ -16,11 +19,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingHistoryApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
@@ -30,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  * Integrations tests the {@link FilingHistoryDocumentService}.
@@ -37,6 +43,9 @@ import static org.hamcrest.Matchers.is;
 @SpringBootTest
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
 @AutoConfigureWireMock(port = FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
+@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
+@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" +
+        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
 public class FilingHistoryDocumentServiceIntegrationTest {
 
     // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
@@ -44,6 +53,7 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     static final int WIRE_MOCK_PORT = 12345;
 
     private static final String COMPANY_NUMBER = "00006400";
+    private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
     private static final String ID_1 = "MDAxMTEyNzExOGFkaXF6a2N4";
     private static final String ID_2 = "MzAwOTM2MDg5OWFkaXF6a2N4";
     private static final String ID_3 = "MDE2OTkyOTEwMmFkaXF6a2N4";
@@ -55,11 +65,19 @@ public class FilingHistoryDocumentServiceIntegrationTest {
             new FilingHistoryDocument(null, null, null, ID_3, null),
             new FilingHistoryDocument(null, null, null, ID_4, null));
 
+
     private static final FilingHistoryApi FILING_HISTORY;
+    private static final FilingHistoryApi NO_FILING_HISTORY = new FilingHistoryApi();
 
     static {
         FILING_HISTORY = new FilingHistoryApi();
         FILING_HISTORY.setItems(asList(filing(ID_1), filing(ID_2), filing(ID_3), filing(ID_4)));
+
+        NO_FILING_HISTORY.setFilingHistoryStatus("filing-history-available");
+        NO_FILING_HISTORY.setItemsPerPage(100L);
+        NO_FILING_HISTORY.setStartIndex(0L);
+        NO_FILING_HISTORY.setItems(new ArrayList<>());
+        NO_FILING_HISTORY.setTotalCount(0L);
     }
 
     @Configuration
@@ -89,8 +107,6 @@ public class FilingHistoryDocumentServiceIntegrationTest {
 
     @Test
     @DisplayName("Gets the expected filing history documents successfully")
-    @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
     void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
 
         // Given
@@ -108,6 +124,41 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         assertThat(filings.size(), is(FILINGS_SOUGHT.size()));
         assertFilingsSame(filings, FILINGS_SOUGHT);
         assertFilingsArePopulated(filings);
+    }
+
+    @Test
+    @DisplayName("Gets no filing history documents for an unknown company")
+    void getFilingHistoryReturnsNoDocumentsForUnknownCompany() throws JsonProcessingException {
+
+        // Given
+        givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history?items_per_page=100"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(objectMapper.writeValueAsString(NO_FILING_HISTORY))));
+
+        // When
+        final List<FilingHistoryDocument> filings =
+                serviceUnderTest.getFilingHistoryDocuments(UNKNOWN_COMPANY_NUMBER, FILINGS_SOUGHT);
+
+        // Then
+        assertThat(filings, is(notNullValue()));
+        assertThat(filings.isEmpty(), is(true));
+    }
+
+    @Test
+    @DisplayName("Throws internal server error for connection failure")
+    void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history?items_per_page=100"))
+                .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
+
+        // When and then
+        final ResponseStatusException exception =
+                Assertions.assertThrows(ResponseStatusException.class,
+                        () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
+        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
+        final String expectedReason = "Error sending request to http://localhost:"
+                + WIRE_MOCK_PORT + "/company/" + COMPANY_NUMBER + "/filing-history: Connection reset";
+        assertThat(exception.getReason(), Is.is(expectedReason));
     }
 
     /**

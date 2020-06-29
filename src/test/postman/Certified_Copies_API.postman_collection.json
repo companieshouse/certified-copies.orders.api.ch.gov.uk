@@ -293,6 +293,40 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "Create certified copy item unknown company number",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"company_number\": \"00000000\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"MDAxMTEyNzExOGFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MzAwOTM2MDg5OWFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MDE2OTkyOTEwMmFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MDAyNzI3NTQ4OWFkaXF6a2N4\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
 								}
 							],
 							"protocolProfileBehavior": {},
