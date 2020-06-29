@@ -26,6 +26,7 @@
 		<api-security-java.version>0.2.10</api-security-java.version>
 		<api-helper-java.version>1.4.2</api-helper-java.version>
 		<junit-pioneer-version>0.6.0</junit-pioneer-version>
+		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<start-class>uk.gov.companieshouse.certifiedcopies.orders.api.CertifiedCopiesApiApplication</start-class>
 	</properties>
 
@@ -114,6 +115,12 @@
 			<groupId>org.junit-pioneer</groupId>
 			<artifactId>junit-pioneer</artifactId>
 			<version>${junit-pioneer-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<version>${spring-cloud-contract-wiremock-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
