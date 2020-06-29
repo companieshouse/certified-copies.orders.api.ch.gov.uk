@@ -65,6 +65,7 @@ public class FilingHistoryDocumentService {
                         map(filing ->
                                 new FilingHistoryDocument(filing.getDate().toString(),
                                         filing.getDescription(),
+                                        filing.getDescriptionValues(),
                                         filing.getTransactionId(),
                                         filing.getType())).collect(toList());
                 LOGGER.info("Returning " + filings.size() +

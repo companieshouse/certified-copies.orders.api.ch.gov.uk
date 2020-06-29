@@ -20,9 +20,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopy
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -57,14 +55,18 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private static final String SURNAME = "Jones";
     private static final String FILING_HISTORY_ID = "1";
     private static final String FILING_HISTORY_DATE = "2010-02-12";
-    private static final String FILING_HISTORY_DESCRIPTION = "memorandum-articles";
-    private static final String FILING_HISTORY_TYPE = "MEM/ARTS";
+    private static final String FILING_HISTORY_DESCRIPTION = "change-person-director-company-with-change-date";
+    private static final Map<String, Object > FILING_HISTORY_DESCRIPTION_VALUES;
+    private static final String FILING_HISTORY_TYPE = "CH01";
     private static final String KIND = "item#certified-copy";
     private static final String TOKEN_ETAG = "9d39ea69b64c80ca42ed72328b48c303c4445e28";
     private static final String POSTAGE_COST = "0";
     private static final Links LINKS;
 
     static {
+        FILING_HISTORY_DESCRIPTION_VALUES = new HashMap<>();
+        FILING_HISTORY_DESCRIPTION_VALUES.put("change_date", "2010-02-12");
+        FILING_HISTORY_DESCRIPTION_VALUES.put("officer_name", "Thomas David Wheare");
         LINKS = new Links();
         LINKS.setSelf(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID);
     }
@@ -116,7 +118,10 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
         final List<FilingHistoryDocument> filings =
                 singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
-                        FILING_HISTORY_DESCRIPTION, FILING_HISTORY_ID, FILING_HISTORY_TYPE));
+                                                        FILING_HISTORY_DESCRIPTION,
+                                                        FILING_HISTORY_DESCRIPTION_VALUES,
+                                                        FILING_HISTORY_ID,
+                                                        FILING_HISTORY_TYPE));
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
         when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
 
@@ -138,6 +143,8 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_DATE)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_description",
                         is(FILING_HISTORY_DESCRIPTION)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_description_values",
+                        is(FILING_HISTORY_DESCRIPTION_VALUES)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_id",
                         is(FILING_HISTORY_ID)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
@@ -271,7 +278,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         newItem.setPostageCost(POSTAGE_COST);
         final CertifiedCopyItemOptions options = new CertifiedCopyItemOptions();
         options.setFilingHistoryDocuments(singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
-                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_ID, FILING_HISTORY_TYPE)));
+                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_DESCRIPTION_VALUES, FILING_HISTORY_ID, FILING_HISTORY_TYPE)));
         newItem.setItemOptions(options);
         repository.save(newItem);
 

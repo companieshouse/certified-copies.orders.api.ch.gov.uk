@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.hamcrest.core.Is;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
@@ -18,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingHistoryApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
@@ -29,12 +26,10 @@ import java.util.List;
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Integrations tests the {@link FilingHistoryDocumentService}.
@@ -55,15 +50,12 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     private static final String ID_4 = "MDAyNzI3NTQ4OWFkaXF6a2N4";
 
     private static final List<FilingHistoryDocument> FILINGS_SOUGHT = asList(
-            new FilingHistoryDocument(null, null, ID_1, null),
-            new FilingHistoryDocument(null, null, ID_2, null),
-            new FilingHistoryDocument(null, null, ID_3, null),
-            new FilingHistoryDocument(null, null, ID_4, null));
+            new FilingHistoryDocument(null, null, null, ID_1, null),
+            new FilingHistoryDocument(null, null, null, ID_2, null),
+            new FilingHistoryDocument(null, null, null, ID_3, null),
+            new FilingHistoryDocument(null, null, null, ID_4, null));
 
     private static final FilingHistoryApi FILING_HISTORY;
-
-//    private static final CompanyProfileApiErrorResponsePayload COMPANY_NOT_FOUND =
-//            new CompanyProfileApiErrorResponsePayload(singletonList(new Error("ch:service", "company-profile-not-found")));
 
     static {
         FILING_HISTORY = new FilingHistoryApi();
@@ -98,11 +90,11 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     @Test
     @DisplayName("Gets the expected filing history documents successfully")
     @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-    @SetEnvironmentVariable(key = "API_URL", /*value = "http://localhost:" + WIRE_MOCK_PORT*/ value = "http://api.chs-dev.internal:4001")
+    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
     void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
 
         // Given
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history"))
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history?items_per_page=100"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsString(FILING_HISTORY))));
@@ -117,27 +109,6 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         assertFilingsSame(filings, FILINGS_SOUGHT);
         assertFilingsArePopulated(filings);
     }
-//
-//    @Test
-//    @DisplayName("No filing history documents are returned for unknown company")
-//    @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-//    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-//    public void getFilingHistoryReturnsNoDocumentsForUnknownCompany () throws JsonProcessingException {
-//
-//        // Given
-//        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER))
-//                .willReturn(badRequest()
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody(objectMapper.writeValueAsString(COMPANY_NOT_FOUND))));
-//
-//        // When and then
-//        final ResponseStatusException exception =
-//                Assertions.assertThrows(ResponseStatusException.class,
-//                        () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-//        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
-//        assertThat(exception.getReason(), Is.is("Error getting company name for company number 00006400"));
-//    }
-
 
     /**
      * Checks that the filings in the two lists are the same by comparing their filing history IDs. Does so in a way

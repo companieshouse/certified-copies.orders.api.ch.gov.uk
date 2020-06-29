@@ -24,10 +24,10 @@ import static org.hamcrest.Matchers.is;
 public class FilingHistoryDocumentServiceTest {
 
     private static final List<FilingHistoryDocument> FILINGS_SOUGHT = asList(
-            new FilingHistoryDocument(null, null, "1", null),
-            new FilingHistoryDocument(null, null, "3", null),
-            new FilingHistoryDocument(null, null, "4", null),
-            new FilingHistoryDocument(null, null, "5", null));
+            new FilingHistoryDocument(null, null, null, "1", null),
+            new FilingHistoryDocument(null, null, null, "3", null),
+            new FilingHistoryDocument(null, null, null, "4", null),
+            new FilingHistoryDocument(null, null, null, "5", null));
     private static final FilingApi FILING_1;
     private static final FilingApi FILING_2;
 
