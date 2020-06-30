@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriTemplate;
@@ -15,9 +14,14 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.logging.Logger;
 
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.createLogMapWithCompanyNumber;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.logErrorWithStatus;
 
 @Service
 public class FilingHistoryDocumentService {
@@ -49,8 +53,9 @@ public class FilingHistoryDocumentService {
             final List<FilingHistoryDocument> filingHistoryDocumentsRequested) {
 
         validateFilingHistoryDocumentsSought(companyNumber, filingHistoryDocumentsRequested);
+        final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
         LOGGER.info(filingHistoryDocumentsRequested.size() + " filing history document(s) requested for company number "
-                + companyNumber + ".");
+                + companyNumber + ".", logMap);
         final ApiClient apiClient = apiClientService.getInternalApiClient();
         final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
         try {
@@ -58,7 +63,7 @@ public class FilingHistoryDocumentService {
                 setMaxNumberOfFilingsFetched(historyList, MAX_FILINGS_THAT_CAN_BE_RETRIEVED);
                 final FilingHistoryApi history = historyList.execute().getData();
                 LOGGER.info("Filing history returned for company number " + companyNumber +
-                        " contains " + history.getItems().size() + " document(s).");
+                        " contains " + history.getItems().size() + " document(s).", logMap);
                 final List<FilingHistoryDocument> filings = history.getItems().stream().
                         filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsRequested)).
                         map(filing ->
@@ -68,15 +73,16 @@ public class FilingHistoryDocumentService {
                                         filing.getTransactionId(),
                                         filing.getType())).collect(toList());
                 LOGGER.info("Returning " + filings.size() +
-                        " matching filing history document(s) for company number " + companyNumber + ".");
+                        " matching filing history document(s) for company number " + companyNumber + ".", logMap);
                 return filings;
             } catch (ApiErrorResponseException ex) {
                 throw getResponseStatusException(ex, apiClient, companyNumber, uri);
             } catch (URIValidationException ex) {
                 // Should this happen (unlikely), it is a broken contract, hence 500.
                 final String error = "Invalid URI " + uri + " for filing history";
-                LOGGER.error(error, ex);
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error);
+                logErrorWithStatus(logMap, error, INTERNAL_SERVER_ERROR);
+                LOGGER.error(error, ex, logMap);
+                throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
             }
 
     }
@@ -91,8 +97,10 @@ public class FilingHistoryDocumentService {
         if (isEmpty(filingHistoryDocumentsRequested)) {
             final String error = "No filing history documents requested for company number " + companyNumber
                     + ". At least one must be requested.";
-            LOGGER.error(error);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
+            final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
+            logErrorWithStatus(logMap, error, BAD_REQUEST);
+            LOGGER.error(error, logMap);
+            throw new ResponseStatusException(BAD_REQUEST, error);
         }
     }
 
@@ -123,16 +131,19 @@ public class FilingHistoryDocumentService {
                                                                final String companyNumber,
                                                                final String uri) {
 
+        final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
         final ResponseStatusException propagatedException;
-        if (apiException.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+        if (apiException.getStatusCode() == INTERNAL_SERVER_ERROR.value()) {
             final String error = "Error sending request to "
                     + client.getBasePath() + uri + ": " + apiException.getStatusMessage();
-            LOGGER.error(error, apiException);
-            propagatedException = new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, error);
+            logErrorWithStatus(logMap, error, INTERNAL_SERVER_ERROR);
+            LOGGER.error(error, apiException, logMap);
+            propagatedException = new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         } else {
             final String error = "Error getting filing history for company number " + companyNumber + ".";
-            LOGGER.error(error, apiException);
-            propagatedException =  new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
+            logErrorWithStatus(logMap, error, BAD_REQUEST);
+            LOGGER.error(error, apiException, logMap);
+            propagatedException =  new ResponseStatusException(BAD_REQUEST, error);
         }
         return propagatedException;
     }

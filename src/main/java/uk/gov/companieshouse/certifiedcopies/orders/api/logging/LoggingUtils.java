@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
+
 public class LoggingUtils {
 
     private LoggingUtils() { }
@@ -41,7 +43,20 @@ public class LoggingUtils {
     }
 
     /**
-     * method to add errors and a bad request status to a map for logging
+     * Method to set up a map for logging purposes and add a value for the
+     * company number.
+     *
+     * @param companyNumber the company number to log under the key {@link LoggingUtils#COMPANY_NUMBER_LOG_KEY}
+     * @return the log map for use in log messages
+     */
+    public static Map<String, Object> createLogMapWithCompanyNumber(final String companyNumber) {
+        Map<String, Object> logMap = new HashMap<>();
+        logMap.put(COMPANY_NUMBER_LOG_KEY, companyNumber);
+        return logMap;
+    }
+
+    /**
+     * method to add errors and a status to a map for logging
      * purposes
      * @param logMap the map of logging data
      * @param errors a list of errors
@@ -50,6 +65,19 @@ public class LoggingUtils {
                                            final List<String> errors,
                                            final HttpStatus status) {
         logMap.put(ERRORS_LOG_KEY, errors);
+        logMap.put(STATUS_LOG_KEY, status);
+    }
+
+    /**
+     * Method to add an error and a status to a map for logging
+     * purposes.
+     * @param logMap the map of logging data
+     * @param error error message
+     */
+    public static void logErrorWithStatus(final Map<String, Object> logMap,
+                                          final String error,
+                                          final HttpStatus status) {
+        logMap.put(ERRORS_LOG_KEY, singletonList(error));
         logMap.put(STATUS_LOG_KEY, status);
     }
 }
