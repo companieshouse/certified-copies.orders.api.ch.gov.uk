@@ -4,6 +4,7 @@ import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -102,16 +103,19 @@ public class FilingHistoryDocumentServiceTest {
     private FilingHistoryApi history;
 
     @Test
+    @DisplayName("isInFilingsSought() finds filing correctly")
     void isInFilingsSought() {
         assertThat(serviceUnderTest.isInFilingsSought(FILING_1, FILINGS_SOUGHT), is(true));
     }
 
     @Test
+    @DisplayName("isInFilingsSought() does not find filing incorrectly")
     void isNotInFilingsSought() {
         assertThat(serviceUnderTest.isInFilingsSought(FILING_2, FILINGS_SOUGHT), is(false));
     }
 
     @Test
+    @DisplayName("validateFilingHistoryDocumentsSought() rejects a null filings request")
     void nullFilingHistoryIsRejected() {
         // When and then
         assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(() ->
@@ -122,6 +126,7 @@ public class FilingHistoryDocumentServiceTest {
     }
 
     @Test
+    @DisplayName("validateFilingHistoryDocumentsSought() rejects an empty filings request")
     void emptyFilingHistoryIsRejected() {
         // When and then
         assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(() ->
@@ -132,6 +137,7 @@ public class FilingHistoryDocumentServiceTest {
     }
 
     @Test
+    @DisplayName("getFilingHistoryDocuments() sets the max number of filings to be retrieved to 100")
     void max100FilingsWillBeRetrieved() throws Exception {
 
         // Given
@@ -145,6 +151,7 @@ public class FilingHistoryDocumentServiceTest {
     }
 
     @Test
+    @DisplayName("getFilingHistoryDocuments() returns matching filing")
     void matchingFilingReturned() throws Exception {
 
         // Given
@@ -162,6 +169,7 @@ public class FilingHistoryDocumentServiceTest {
     }
 
     @Test
+    @DisplayName("getFilingHistoryDocuments() does not return non-matching filing")
     void nonMatchingFilingNotReturned() throws Exception {
 
         // Given
@@ -178,6 +186,7 @@ public class FilingHistoryDocumentServiceTest {
     }
 
     @Test
+    @DisplayName("getFilingHistoryDocuments() reports a URIValidationException as an Internal Server Error (500)")
     void uriValidationExceptionReportedAsServerInternalError() throws Exception  {
 
         // Given
@@ -192,6 +201,7 @@ public class FilingHistoryDocumentServiceTest {
     }
 
     @Test
+    @DisplayName("getFilingHistoryDocuments() reports an IOException as an Internal Server Error (500)")
     void serverInternalErrorReportedAsSuch() throws Exception {
 
         // Given
