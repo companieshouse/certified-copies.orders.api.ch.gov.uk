@@ -6,9 +6,7 @@ import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.handler.filinghistory.request.FilingHistoryList;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
-import uk.gov.companieshouse.api.model.filinghistory.FilingHistoryApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.logging.Logger;
@@ -29,11 +27,8 @@ public class FilingHistoryDocumentService {
     private static final Logger LOGGER = LoggingUtils.getLogger();
 
     private static final UriTemplate
-            GET_FILING_HISTORY =
-            new UriTemplate("/company/{companyNumber}/filing-history");
-
-    /** The maximum number of filings the Filing History API will return in response to a single request. */
-    private static final int MAX_FILINGS_THAT_CAN_BE_RETRIEVED = 100;
+            GET_FILING_HISTORY_DOCUMENT =
+            new UriTemplate("/company/{companyNumber}/filing-history/{filingHistoryId}");
 
     private final ApiClientService apiClientService;
 
@@ -56,34 +51,46 @@ public class FilingHistoryDocumentService {
         final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
         LOGGER.info(filingHistoryDocumentsRequested.size() + " filing history document(s) requested for company number "
                 + companyNumber + ".", logMap);
+        final List<FilingHistoryDocument> filings =
+                filingHistoryDocumentsRequested.stream()
+                .map(filing -> getFilingHistoryDocument(companyNumber, filing.getFilingHistoryId()))
+                .collect(toList());
+        LOGGER.info("Returning " + filings.size() + " filing history document(s) for company number "
+                + companyNumber + ".", logMap);
+        return filings;
+    }
+
+    /**
+     * Gets the fully populated filing history document for the filing history document ID provided.
+     * @param companyNumber the company number
+     * @param filingHistoryDocumentId the filing history document ID
+     * @return fully populated document
+     */
+    public FilingHistoryDocument getFilingHistoryDocument(
+            final String companyNumber,
+            final String filingHistoryDocumentId) {
+
+        final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
+        LOGGER.info("Getting filing history document " + filingHistoryDocumentId + " for company number "
+                + companyNumber + ".", logMap);
         final ApiClient apiClient = apiClientService.getInternalApiClient();
-        final String uri = GET_FILING_HISTORY.expand(companyNumber).toString();
+        final String uri = GET_FILING_HISTORY_DOCUMENT.expand(companyNumber, filingHistoryDocumentId).toString();
         try {
-                final FilingHistoryList historyList =  apiClient.filingHistory().list(uri);
-                setMaxNumberOfFilingsFetched(historyList, MAX_FILINGS_THAT_CAN_BE_RETRIEVED);
-                final FilingHistoryApi history = historyList.execute().getData();
-                LOGGER.info("Filing history returned for company number " + companyNumber +
-                        " contains " + history.getItems().size() + " document(s).", logMap);
-                final List<FilingHistoryDocument> filings = history.getItems().stream().
-                        filter(filing -> isInFilingsSought(filing, filingHistoryDocumentsRequested)).
-                        map(filing ->
-                                new FilingHistoryDocument(filing.getDate().toString(),
-                                        filing.getDescription(),
-                                        filing.getDescriptionValues(),
-                                        filing.getTransactionId(),
-                                        filing.getType())).collect(toList());
-                LOGGER.info("Returning " + filings.size() +
-                        " matching filing history document(s) for company number " + companyNumber + ".", logMap);
-                return filings;
-            } catch (ApiErrorResponseException ex) {
-                throw getResponseStatusException(ex, apiClient, companyNumber, uri);
-            } catch (URIValidationException ex) {
-                // Should this happen (unlikely), it is a broken contract, hence 500.
-                final String error = "Invalid URI " + uri + " for filing history";
-                logErrorWithStatus(logMap, error, INTERNAL_SERVER_ERROR);
-                LOGGER.error(error, ex, logMap);
-                throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
-            }
+            final FilingApi filing = apiClient.filing().get(uri).execute().getData();
+            return new FilingHistoryDocument(filing.getDate().toString(),
+                    filing.getDescription(),
+                    filing.getDescriptionValues(),
+                    filing.getTransactionId(),
+                    filing.getType());
+        } catch (ApiErrorResponseException ex) {
+            throw getResponseStatusException(ex, apiClient, companyNumber, uri);
+        } catch (URIValidationException ex) {
+            // Should this happen (unlikely), it is a broken contract, hence 500.
+            final String error = "Invalid URI " + uri + " for filing history";
+            logErrorWithStatus(logMap, error, INTERNAL_SERVER_ERROR);
+            LOGGER.error(error, ex, logMap);
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
+        }
 
     }
 
@@ -146,17 +153,6 @@ public class FilingHistoryDocumentService {
             propagatedException =  new ResponseStatusException(BAD_REQUEST, error);
         }
         return propagatedException;
-    }
-
-    /**
-     * Controls the maximum number of filings that will be retrieved from the Filing History API.
-     * @param historyList the history list specifying the request to be made to the Filing History API
-     * @param maxFilings the maximum number of filings that may be retrieved. Values over
-     * {@link #MAX_FILINGS_THAT_CAN_BE_RETRIEVED} are treated as equal to {@link #MAX_FILINGS_THAT_CAN_BE_RETRIEVED}
-     *                   by the API itself.
-     */
-    private void setMaxNumberOfFilingsFetched(final FilingHistoryList historyList, final int maxFilings) {
-        historyList.addQueryParams("items_per_page", Integer.toString(maxFilings));
     }
 
 }
