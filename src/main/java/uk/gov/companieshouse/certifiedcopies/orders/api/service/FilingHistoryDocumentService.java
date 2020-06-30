@@ -77,16 +77,19 @@ public class FilingHistoryDocumentService {
         final String uri = GET_FILING_HISTORY_DOCUMENT.expand(companyNumber, filingHistoryDocumentId).toString();
         try {
             final FilingApi filing = apiClient.filing().get(uri).execute().getData();
-            return new FilingHistoryDocument(filing.getDate().toString(),
-                    filing.getDescription(),
-                    filing.getDescriptionValues(),
-                    filing.getTransactionId(),
-                    filing.getType());
+            // TODO GCI-1209 Check this behaviour against the real API.
+            return filing.getTransactionId() == null ?
+                    new FilingHistoryDocument():
+                    new FilingHistoryDocument(filing.getDate().toString(),
+                        filing.getDescription(),
+                        filing.getDescriptionValues(),
+                        filing.getTransactionId(),
+                        filing.getType());
         } catch (ApiErrorResponseException ex) {
             throw getResponseStatusException(ex, apiClient, companyNumber, uri);
         } catch (URIValidationException ex) {
             // Should this happen (unlikely), it is a broken contract, hence 500.
-            final String error = "Invalid URI " + uri + " for filing history";
+            final String error = "Invalid URI " + uri + " for filing";
             logErrorWithStatus(logMap, error, INTERNAL_SERVER_ERROR);
             LOGGER.error(error, ex, logMap);
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);

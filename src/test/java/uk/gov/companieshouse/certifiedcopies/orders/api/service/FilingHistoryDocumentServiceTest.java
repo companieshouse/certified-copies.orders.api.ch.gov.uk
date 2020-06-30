@@ -18,11 +18,10 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.handler.filinghistory.FilingHistoryResourceHandler;
-import uk.gov.companieshouse.api.handler.filinghistory.request.FilingHistoryList;
+import uk.gov.companieshouse.api.handler.filinghistory.FilingResourceHandler;
+import uk.gov.companieshouse.api.handler.filinghistory.request.FilingGet;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
-import uk.gov.companieshouse.api.model.filinghistory.FilingHistoryApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.io.IOException;
@@ -31,16 +30,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.util.CollectionUtils.isEmpty;
 import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromHttpResponseException;
 import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromIOException;
 
@@ -56,11 +51,11 @@ public class FilingHistoryDocumentServiceTest {
 
     private static final String INVALID_URI = "URI pattern does not match expected URI pattern for this resource.";
     private static final String INVALID_URI_EXPECTED_REASON =
-            "Invalid URI /company/00006400/filing-history for filing history";
+            "Invalid URI /company/00006400/filing-history/1 for filing";
 
     private static final String IOEXCEPTION_MESSAGE = "IOException thrown by test";
     private static final String IOEXCEPTION_EXPECTED_REASON =
-            "Error sending request to http://host/company/00006400/filing-history: " + IOEXCEPTION_MESSAGE;
+            "Error sending request to http://host/company/00006400/filing-history/1: " + IOEXCEPTION_MESSAGE;
 
     private static final String NOT_FOUND_EXPECTED_REASON = "Error getting filing history for company number "
             + COMPANY_NUMBER + ".";
@@ -91,16 +86,16 @@ public class FilingHistoryDocumentServiceTest {
     private InternalApiClient internalApiClient;
 
     @Mock
-    private FilingHistoryResourceHandler resourceHandler;
+    private FilingResourceHandler resourceHandler;
 
     @Mock
-    private FilingHistoryList historyList;
+    private FilingGet filingGet;
 
     @Mock
-    private ApiResponse<FilingHistoryApi> response;
+    private ApiResponse<FilingApi> response;
 
     @Mock
-    private FilingHistoryApi history;
+    private FilingApi filing;
 
     @Test
     @DisplayName("isInFilingsSought() finds filing correctly")
@@ -134,55 +129,6 @@ public class FilingHistoryDocumentServiceTest {
                 .withNoCause()
                 .withMessage("400 BAD_REQUEST \"No filing history documents requested for company number 00006400. " +
                         "At least one must be requested.\"");
-    }
-
-    @Test
-    @DisplayName("getFilingHistoryDocuments() sets the max number of filings to be retrieved to 100")
-    void max100FilingsWillBeRetrieved() throws Exception {
-
-        // Given
-        fairWeatherSetUp();
-
-        // When
-        serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT);
-
-        // Then
-        verify(historyList).addQueryParams("items_per_page", "100");
-    }
-
-    @Test
-    @DisplayName("getFilingHistoryDocuments() returns matching filing")
-    void matchingFilingReturned() throws Exception {
-
-        // Given
-        fairWeatherSetUp();
-        when(history.getItems()).thenReturn(singletonList(FILING_1));
-
-        // When
-        final List<FilingHistoryDocument> filings =
-                serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT);
-
-        // Then
-        assertThat(isEmpty(filings), is(false));
-        assertThat(filings.size(), is(1));
-        assertThat(filings.get(0).getFilingHistoryId(), is(FILING_1.getTransactionId()));
-    }
-
-    @Test
-    @DisplayName("getFilingHistoryDocuments() does not return non-matching filing")
-    void nonMatchingFilingNotReturned() throws Exception {
-
-        // Given
-        fairWeatherSetUp();
-        when(history.getItems()).thenReturn(singletonList(FILING_2));
-
-        // When
-        final List<FilingHistoryDocument> filings =
-                serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT);
-
-        // Then
-        assertThat(filings, is(notNullValue()));
-        assertThat(isEmpty(filings), is(true));
     }
 
     @Test
@@ -249,9 +195,9 @@ public class FilingHistoryDocumentServiceTest {
     private void setUpForFilingApiException(final Exception exceptionToThrow)
             throws ApiErrorResponseException, URIValidationException {
         when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
-        when(internalApiClient.filingHistory()).thenReturn(resourceHandler);
-        when(resourceHandler.list("/company/00006400/filing-history")).thenReturn(historyList);
-        when(historyList.execute()).thenThrow(exceptionToThrow);
+        when(internalApiClient.filing()).thenReturn(resourceHandler);
+        when(resourceHandler.get("/company/00006400/filing-history/1")).thenReturn(filingGet);
+        when(filingGet.execute()).thenThrow(exceptionToThrow);
     }
 
     /**
@@ -262,10 +208,10 @@ public class FilingHistoryDocumentServiceTest {
      */
     private void fairWeatherSetUp() throws ApiErrorResponseException, URIValidationException {
         when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
-        when(internalApiClient.filingHistory()).thenReturn(resourceHandler);
-        when(resourceHandler.list("/company/00006400/filing-history")).thenReturn(historyList);
-        when(historyList.execute()).thenReturn(response);
-        when(response.getData()).thenReturn(history);
+        when(internalApiClient.filing()).thenReturn(resourceHandler);
+        when(resourceHandler.get("/company/00006400/filing-history/1")).thenReturn(filingGet);
+        when(filingGet.execute()).thenReturn(response);
+        when(response.getData()).thenReturn(filing);
     }
 
 }
