@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
- * Integrations tests the {@link FilingHistoryDocumentService}.
+ * Integration tests the {@link FilingHistoryDocumentService}.
  */
 @SpringBootTest
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
@@ -148,6 +148,8 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     @Test
     @DisplayName("Throws internal server error for connection failure")
     void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
+
+        // Given
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history?items_per_page=100"))
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
