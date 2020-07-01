@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.github.tomakehurst.wiremock.http.Fault;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,21 +20,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
-import uk.gov.companieshouse.api.model.filinghistory.FilingHistoryApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Integration tests the {@link FilingHistoryDocumentService}.
@@ -44,8 +44,8 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
 @AutoConfigureWireMock(port = FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
 @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" +
-        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
+@SetEnvironmentVariable(key = "API_URL", /* TODO GCI-1209 Restore this value = "http://localhost:" +
+        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT*/ value = "http://api.chs-dev.internal:4001")
 public class FilingHistoryDocumentServiceIntegrationTest {
 
     // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
@@ -58,6 +58,39 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     private static final String ID_2 = "MzAwOTM2MDg5OWFkaXF6a2N4";
     private static final String ID_3 = "MDE2OTkyOTEwMmFkaXF6a2N4";
     private static final String ID_4 = "MDAyNzI3NTQ4OWFkaXF6a2N4";
+    private static final String UNKNOWN_ID = "000000000000000000000000";
+
+    private static final FilingHistoryDocument FILING_1 = new FilingHistoryDocument(
+            "1993-04-01",
+            "memorandum-articles",
+            null,
+            ID_1,
+            "MEM/ARTS"
+    );
+    private static final FilingHistoryDocument FILING_2 = new FilingHistoryDocument(
+            "2010-02-12",
+            "change-person-director-company-with-change-date",
+            Stream.of(new Object[][] {
+                    { "change_date", "2010-02-12" },
+                    { "officer_name", "Thomas David Wheare" }
+            }).collect(Collectors.toMap(data -> (String) data[0], data -> data[1])),
+            ID_2,
+            "CH01"
+    );
+    private static final FilingHistoryDocument FILING_3 = new FilingHistoryDocument(
+            "2006-10-19",
+            "legacy",
+            Collections.singletonMap("description", "New director appointed"),
+            ID_3,
+            "288a"
+    );
+    private static final FilingHistoryDocument FILING_4 = new FilingHistoryDocument(
+            "2005-03-21",
+            "accounts-with-accounts-type-group",
+            Collections.singletonMap("made_up_date", "2004-08-31"),
+            ID_4,
+            "AA"
+    );
 
     private static final List<FilingHistoryDocument> FILINGS_SOUGHT = asList(
             new FilingHistoryDocument(null, null, null, ID_1, null),
@@ -65,20 +98,10 @@ public class FilingHistoryDocumentServiceIntegrationTest {
             new FilingHistoryDocument(null, null, null, ID_3, null),
             new FilingHistoryDocument(null, null, null, ID_4, null));
 
+    private static final FilingHistoryDocument UNKNOWN_FILING =
+            new FilingHistoryDocument(null, null, null, UNKNOWN_ID, null);
 
-    private static final FilingHistoryApi FILING_HISTORY;
-    private static final FilingHistoryApi NO_FILING_HISTORY = new FilingHistoryApi();
-
-    static {
-        FILING_HISTORY = new FilingHistoryApi();
-        FILING_HISTORY.setItems(asList(filing(ID_1), filing(ID_2), filing(ID_3), filing(ID_4)));
-
-        NO_FILING_HISTORY.setFilingHistoryStatus("filing-history-available");
-        NO_FILING_HISTORY.setItemsPerPage(100L);
-        NO_FILING_HISTORY.setStartIndex(0L);
-        NO_FILING_HISTORY.setItems(new ArrayList<>());
-        NO_FILING_HISTORY.setTotalCount(0L);
-    }
+    private static final List<FilingHistoryDocument> FILINGS_EXPECTED = asList(FILING_1, FILING_2, FILING_3, FILING_4);
 
     @Configuration
     @ComponentScan(basePackageClasses = FilingHistoryDocumentServiceIntegrationTest.class)
@@ -106,14 +129,28 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     private CertifiedCopyItemService certifiedCopyItemService;
 
     @Test
-    @DisplayName("Gets the expected filing history documents successfully")
+    @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
     void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
 
+        /* TODO GCI-1209 Restore this
         // Given
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history?items_per_page=100"))
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(FILING_HISTORY))));
+                        .withBody(objectMapper.writeValueAsString(FILING_1))));
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_2))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(objectMapper.writeValueAsString(FILING_2))));
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_3))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(objectMapper.writeValueAsString(FILING_3))));
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_4))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(objectMapper.writeValueAsString(FILING_4))));
+         */
 
         // When
         final List<FilingHistoryDocument> filings =
@@ -123,34 +160,59 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         assertThat(filings, is(notNullValue()));
         assertThat(filings.size(), is(FILINGS_SOUGHT.size()));
         assertFilingsSame(filings, FILINGS_SOUGHT);
-        assertFilingsArePopulated(filings);
+        assertThat(isSemanticallyEquivalent(filings, FILINGS_EXPECTED), is(true));
     }
 
     @Test
-    @DisplayName("Gets no filing history documents for an unknown company")
-    void getFilingHistoryReturnsNoDocumentsForUnknownCompany() throws JsonProcessingException {
+    @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown company")
+    void getFilingHistoryThrowsBadRequestForUnknownCompany() throws JsonProcessingException {
 
+        /* TODO GCI-1209 Restore this
         // Given
-        givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history?items_per_page=100"))
+        givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsString(NO_FILING_HISTORY))));
+         */
 
-        // When
-        final List<FilingHistoryDocument> filings =
-                serviceUnderTest.getFilingHistoryDocuments(UNKNOWN_COMPANY_NUMBER, FILINGS_SOUGHT);
-
-        // Then
-        assertThat(filings, is(notNullValue()));
-        assertThat(filings.isEmpty(), is(true));
+        // When and then
+        final ResponseStatusException exception =
+                Assertions.assertThrows(ResponseStatusException.class,
+                        () -> serviceUnderTest.getFilingHistoryDocuments(UNKNOWN_COMPANY_NUMBER, FILINGS_SOUGHT));
+        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
+        final String expectedReason = "Error getting filing history document " + ID_1 +
+                " for company number " + UNKNOWN_COMPANY_NUMBER + ".";
+        assertThat(exception.getReason(), Is.is(expectedReason));
     }
 
     @Test
-    @DisplayName("Throws internal server error for connection failure")
+    @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown filing history document")
+    void getFilingHistoryThrowsBadRequestForUnknownFilingHistoryDocument() throws JsonProcessingException {
+
+        /* TODO GCI-1209 Restore this
+        // Given
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + UNKNOWN_ID))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(objectMapper.writeValueAsString(NO_FILING_HISTORY))));
+         */
+
+        final ResponseStatusException exception =
+                Assertions.assertThrows(ResponseStatusException.class,
+                        () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, singletonList(UNKNOWN_FILING)));
+        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
+        final String expectedReason = "Error getting filing history document " + UNKNOWN_ID +
+                " for company number " + COMPANY_NUMBER + ".";
+        assertThat(exception.getReason(), Is.is(expectedReason));
+    }
+
+    /* TODO GCI-1209 Restore this
+    @Test
+    @DisplayName("getFilingHistoryDocuments throws internal server error for connection failure")
     void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
 
         // Given
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history?items_per_page=100"))
+        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
         // When and then
@@ -159,9 +221,10 @@ public class FilingHistoryDocumentServiceIntegrationTest {
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
         assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason = "Error sending request to http://localhost:"
-                + WIRE_MOCK_PORT + "/company/" + COMPANY_NUMBER + "/filing-history: Connection reset";
+                + WIRE_MOCK_PORT + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
         assertThat(exception.getReason(), Is.is(expectedReason));
     }
+    */
 
     /**
      * Checks that the filings in the two lists are the same by comparing their filing history IDs. Does so in a way
@@ -180,17 +243,6 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     }
 
     /**
-     * Checks that each of the filings provided has all of its fields populated.
-     * @param filings the filing history documents to check
-     */
-    private void assertFilingsArePopulated(final List<FilingHistoryDocument> filings) {
-        filings.forEach(filing -> assertThat(filing.getFilingHistoryId() != null &&
-                                             filing.getFilingHistoryDescription() != null &&
-                                             filing.getFilingHistoryDate() != null &&
-                                             filing.getFilingHistoryType() != null, is(true)));
-    }
-
-    /**
      * Factory method that creates an instance of {@link FilingApi} for testing purposes.
      * @param transactionId the transaction ID to allocate to the filing
      * @return the filing created
@@ -202,6 +254,19 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         filing.setDescription("");
         filing.setType("");
         return filing;
+    }
+
+    /**
+     * Serialises the objects to be compared to JSON so that we can compare them without worrying about differences
+     * in the type of maps, arrays, etc., underlying their implementations.
+     * @param object1 the first object to be compared
+     * @param object2 the second object to be compared
+     * @return whether the two objects are semantically equivalent (<code>true</code>), or differ (<code>false</code>)
+     * @throws JsonProcessingException should something unexpected happen
+     */
+    private boolean isSemanticallyEquivalent(final Object object1, final Object object2)
+            throws JsonProcessingException {
+        return objectMapper.writeValueAsString(object1).equals(objectMapper.writeValueAsString(object2));
     }
 
 }
