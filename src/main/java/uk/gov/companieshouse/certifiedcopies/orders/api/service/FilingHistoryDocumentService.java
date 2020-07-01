@@ -77,10 +77,7 @@ public class FilingHistoryDocumentService {
         final String uri = GET_FILING_HISTORY_DOCUMENT.expand(companyNumber, filingHistoryDocumentId).toString();
         try {
             final FilingApi filing = apiClient.filing().get(uri).execute().getData();
-            // TODO GCI-1209 Check this behaviour against the real API.
-            return filing.getTransactionId() == null ?
-                    new FilingHistoryDocument():
-                    new FilingHistoryDocument(filing.getDate().toString(),
+            return new FilingHistoryDocument(filing.getDate().toString(),
                         filing.getDescription(),
                         filing.getDescriptionValues(),
                         filing.getTransactionId(),
