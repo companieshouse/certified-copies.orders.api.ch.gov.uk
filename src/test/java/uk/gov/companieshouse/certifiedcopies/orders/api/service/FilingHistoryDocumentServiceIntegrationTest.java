@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.tomakehurst.wiremock.http.Fault;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -36,6 +38,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  * Integration tests the {@link FilingHistoryDocumentService}.
@@ -206,7 +209,8 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         assertThat(exception.getReason(), Is.is(expectedReason));
     }
 
-    /* TODO GCI-1209 Restore this
+    // TODO GCI-1209 Remove this extra env var setting.
+    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
     @Test
     @DisplayName("getFilingHistoryDocuments throws internal server error for connection failure")
     void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
@@ -224,7 +228,6 @@ public class FilingHistoryDocumentServiceIntegrationTest {
                 + WIRE_MOCK_PORT + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
         assertThat(exception.getReason(), Is.is(expectedReason));
     }
-    */
 
     /**
      * Checks that the filings in the two lists are the same by comparing their filing history IDs. Does so in a way
