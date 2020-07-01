@@ -32,6 +32,10 @@ public class DescriptionProviderService {
         companyCertifiedCopyDescription = getCompanyCertifiedCopyDescription(ordersDescriptionsFile);
     }
 
+    public DescriptionProviderService(final File ordersDescriptionsFile) {
+        companyCertifiedCopyDescription = getCompanyCertifiedCopyDescription(ordersDescriptionsFile);
+    }
+
     /**
      * Gets the configured description.
      * @param companyNumber the company number making up part of the description
