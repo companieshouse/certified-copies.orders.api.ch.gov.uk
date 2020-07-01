@@ -142,7 +142,7 @@ public class FilingHistoryDocumentService {
 
         final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
         final ResponseStatusException propagatedException;
-        if (apiException.getStatusCode() == INTERNAL_SERVER_ERROR.value()) {
+        if (apiException.getStatusCode() >= INTERNAL_SERVER_ERROR.value()) {
             final String error = "Error sending request to "
                     + client.getBasePath() + uri + ": " + apiException.getStatusMessage();
             logErrorWithStatus(logMap, error, INTERNAL_SERVER_ERROR);
