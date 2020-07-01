@@ -327,6 +327,74 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "Create certified copy item unknown filing history ID",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"company_number\": \"00006400\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"MDAxMTEyNzExOGFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MzAwOTM2MDg5OWFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MDE2OTkyOTEwMmFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"000000000000000000000000\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create certified copy item unknown company",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"company_number\": \"00000000\",\n    \"customer_reference\": \"Certificate ordered by OJ\",\n    \"item_options\": {\n        \"collection_location\": \"cardiff\",\n        \"contact_number\": \"02920123456\",\n        \"delivery_method\": \"postal\",\n        \"delivery_timescale\": \"same-day\",\n        \"filing_history_documents\": [\n            {\n             \"filing_history_id\": \"MDAxMTEyNzExOGFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MzAwOTM2MDg5OWFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MDE2OTkyOTEwMmFkaXF6a2N4\"\n            },\n            {\n             \"filing_history_id\": \"MDAyNzI3NTQ4OWFkaXF6a2N4\"\n            }\n        ],\n        \"forename\": \"bob\",\n        \"surname\": \"jones\"\n    },\n    \"quantity\": 1\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/orderable/certified-copies",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"orderable",
+												"certified-copies"
+											]
+										}
+									},
+									"response": []
 								}
 							],
 							"protocolProfileBehavior": {},
@@ -409,74 +477,151 @@
 			"name": "Filing History API",
 			"item": [
 				{
-					"name": "GET filing history",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/company/00006400/filing-history?items_per_page=100",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"company",
-								"00006400",
-								"filing-history"
-							],
-							"query": [
-								{
-									"key": "items_per_page",
-									"value": "100"
+					"name": "Get filing history document",
+					"item": [
+						{
+							"name": "GET filing history document",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/company/00006400/filing-history/MDAxMTEyNzExOGFkaXF6a2N4",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"company",
+										"00006400",
+										"filing-history",
+										"MDAxMTEyNzExOGFkaXF6a2N4"
+									]
 								}
-							]
+							},
+							"response": []
+						},
+						{
+							"name": "GET filing history document unknown company",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/company/00000000/filing-history/MDAxMTEyNzExOGFkaXF6a2N4",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"company",
+										"00000000",
+										"filing-history",
+										"MDAxMTEyNzExOGFkaXF6a2N4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET filing history document unknown document",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/company/00006400/filing-history/000000000000000000000000",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"company",
+										"00006400",
+										"filing-history",
+										"000000000000000000000000"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "GET filing history small page size",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/company/00006400/filing-history?items_per_page=2",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"company",
-								"00006400",
-								"filing-history"
-							],
-							"query": [
-								{
-									"key": "items_per_page",
-									"value": "2"
+					"name": "Get filing history NOT USED",
+					"item": [
+						{
+							"name": "GET filing history",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/company/00006400/filing-history?items_per_page=100",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"company",
+										"00006400",
+										"filing-history"
+									],
+									"query": [
+										{
+											"key": "items_per_page",
+											"value": "100"
+										}
+									]
 								}
-							]
+							},
+							"response": []
+						},
+						{
+							"name": "GET filing history small page size",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/company/00006400/filing-history?items_per_page=2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"company",
+										"00006400",
+										"filing-history"
+									],
+									"query": [
+										{
+											"key": "items_per_page",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET filing history document",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/company/00006400/filing-history/MDAxMTEyNzExOGFkaXF6a2N4",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"company",
-								"00006400",
-								"filing-history",
-								"MDAxMTEyNzExOGFkaXF6a2N4"
-							]
+					],
+					"description": "NOT USED\n--------\n* It turns out that the API method tested by the requests in this folder is NOT used within the Certified Copies API after all. \n* Kept as useful for probing what's available through the Filing History API only.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f057815c-f4ff-4778-9584-33361ac479de",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7214b3df-190a-4bc2-b9c2-fa8adf072de8",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
 						}
-					},
-					"response": []
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
