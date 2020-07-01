@@ -39,6 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_NOT_FOUND;
 
 /**
  * Integration tests the {@link FilingHistoryDocumentService}.
@@ -105,40 +106,6 @@ public class FilingHistoryDocumentServiceIntegrationTest {
             new FilingHistoryDocument(null, null, null, UNKNOWN_ID, null);
 
     private static final List<FilingHistoryDocument> FILINGS_EXPECTED = asList(FILING_1, FILING_2, FILING_3, FILING_4);
-
-    private static class Error {
-        private String type;
-        private String error;
-
-        private Error(String type, String error) {
-            this.type = type;
-            this.error = error;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getError() {
-            return error;
-        }
-    }
-
-    private static class ApiErrorResponsePayload {
-
-        private List<Error> errors;
-
-        private ApiErrorResponsePayload(List<Error> errors) {
-            this.errors = errors;
-        }
-
-        public List<Error> getErrors() {
-            return errors;
-        }
-    }
-
-    private static final ApiErrorResponsePayload FILING_NOT_FOUND =
-            new ApiErrorResponsePayload(singletonList(new Error("ch:service", "filing-history-item-not-found")));
 
     @Configuration
     @ComponentScan(basePackageClasses = FilingHistoryDocumentServiceIntegrationTest.class)

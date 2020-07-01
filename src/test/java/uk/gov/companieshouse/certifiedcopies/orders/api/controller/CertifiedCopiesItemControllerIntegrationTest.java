@@ -45,7 +45,6 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 @SpringBootTest
 public class CertifiedCopiesItemControllerIntegrationTest {
 
-    private static final String CERTIFIED_COPIES_URL = "/orderable/certified-copies";
     private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
     private static final String COMPANY_NUMBER = "00000000";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
