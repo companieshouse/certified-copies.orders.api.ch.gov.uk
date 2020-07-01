@@ -47,8 +47,8 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
 @AutoConfigureWireMock(port = FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
 @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-@SetEnvironmentVariable(key = "API_URL", /* TODO GCI-1209 Restore this value = "http://localhost:" +
-        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT*/ value = "http://api.chs-dev.internal:4001")
+@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" +
+        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
 public class FilingHistoryDocumentServiceIntegrationTest {
 
     // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
@@ -106,6 +106,40 @@ public class FilingHistoryDocumentServiceIntegrationTest {
 
     private static final List<FilingHistoryDocument> FILINGS_EXPECTED = asList(FILING_1, FILING_2, FILING_3, FILING_4);
 
+    private static class Error {
+        private String type;
+        private String error;
+
+        private Error(String type, String error) {
+            this.type = type;
+            this.error = error;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getError() {
+            return error;
+        }
+    }
+
+    private static class ApiErrorResponsePayload {
+
+        private List<Error> errors;
+
+        private ApiErrorResponsePayload(List<Error> errors) {
+            this.errors = errors;
+        }
+
+        public List<Error> getErrors() {
+            return errors;
+        }
+    }
+
+    private static final ApiErrorResponsePayload FILING_NOT_FOUND =
+            new ApiErrorResponsePayload(singletonList(new Error("ch:service", "filing-history-item-not-found")));
+
     @Configuration
     @ComponentScan(basePackageClasses = FilingHistoryDocumentServiceIntegrationTest.class)
     static class Config {
@@ -135,25 +169,23 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
     void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
 
-        /* TODO GCI-1209 Restore this
         // Given
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(FILING_1))));
+                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_1)))));
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_2))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(FILING_2))));
+                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_2)))));
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_3))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(FILING_3))));
+                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_3)))));
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_4))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(FILING_4))));
-         */
+                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_4)))));
 
         // When
         final List<FilingHistoryDocument> filings =
@@ -170,13 +202,11 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown company")
     void getFilingHistoryThrowsBadRequestForUnknownCompany() throws JsonProcessingException {
 
-        /* TODO GCI-1209 Restore this
         // Given
         givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + ID_1))
-                .willReturn(aResponse()
+                .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(NO_FILING_HISTORY))));
-         */
+                        .withBody(objectMapper.writeValueAsString(FILING_NOT_FOUND))));
 
         // When and then
         final ResponseStatusException exception =
@@ -192,13 +222,11 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown filing history document")
     void getFilingHistoryThrowsBadRequestForUnknownFilingHistoryDocument() throws JsonProcessingException {
 
-        /* TODO GCI-1209 Restore this
         // Given
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + UNKNOWN_ID))
-                .willReturn(aResponse()
+                .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(NO_FILING_HISTORY))));
-         */
+                        .withBody(objectMapper.writeValueAsString(FILING_NOT_FOUND))));
 
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
@@ -209,10 +237,8 @@ public class FilingHistoryDocumentServiceIntegrationTest {
         assertThat(exception.getReason(), Is.is(expectedReason));
     }
 
-    // TODO GCI-1209 Remove this extra env var setting.
-    @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
     @Test
-    @DisplayName("getFilingHistoryDocuments throws internal server error for connection failure")
+    @DisplayName("getFilingHistoryDocuments throws 500 Internal Server Error for connection failure")
     void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
 
         // Given
@@ -231,7 +257,7 @@ public class FilingHistoryDocumentServiceIntegrationTest {
 
     /**
      * Checks that the filings in the two lists are the same by comparing their filing history IDs. Does so in a way
-     * that does not require use to add equals() and hashCode() to FilingHistoryDocument.
+     * that does not require us to add equals() and hashCode() to FilingHistoryDocument.
      * @param filings1 list of filing history documents
      * @param filings2 list of filing history documents
      */
@@ -246,16 +272,18 @@ public class FilingHistoryDocumentServiceIntegrationTest {
     }
 
     /**
-     * Factory method that creates an instance of {@link FilingApi} for testing purposes.
-     * @param transactionId the transaction ID to allocate to the filing
+     * Factory method that creates an instance of {@link FilingApi} for testing purposes, "reverse-engineered"
+     * from the {@link FilingHistoryDocument} provided.
+     * @param document the filing history document that should result from the filing this creates
      * @return the filing created
      */
-    private static FilingApi filing(final String transactionId) {
+    private static FilingApi filingApi(final FilingHistoryDocument document) {
         final FilingApi filing = new FilingApi();
-        filing.setTransactionId(transactionId);
-        filing.setDate(LocalDate.now());
-        filing.setDescription("");
-        filing.setType("");
+        filing.setTransactionId(document.getFilingHistoryId());
+        filing.setDate(LocalDate.parse(document.getFilingHistoryDate()));
+        filing.setDescriptionValues(document.getFilingHistoryDescriptionValues());
+        filing.setDescription(document.getFilingHistoryDescription());
+        filing.setType(document.getFilingHistoryType());
         return filing;
     }
 
