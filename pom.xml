@@ -26,9 +26,12 @@
 		<api-security-java.version>0.2.10</api-security-java.version>
 		<api-helper-java.version>1.4.2</api-helper-java.version>
 		<api-sdk-java.version>4.2.36</api-sdk-java.version>
+		<api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
 		<junit-pioneer-version>0.6.0</junit-pioneer-version>
 		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<powermock.version>2.0.6</powermock.version>
+		<system-rules-version>1.19.0</system-rules-version>
+		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<start-class>uk.gov.companieshouse.certifiedcopies.orders.api.CertifiedCopiesApiApplication</start-class>
 	</properties>
 
@@ -84,6 +87,11 @@
 			<artifactId>api-sdk-java</artifactId>
 			<version>${api-sdk-java.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.gov.companieshouse</groupId>
+			<artifactId>api-sdk-manager-java-library</artifactId>
+			<version>${api-sdk-manager-java-library.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -146,6 +154,18 @@
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito2</artifactId>
 			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.stefanbirkner</groupId>
+			<artifactId>system-rules</artifactId>
+			<version>${system-rules-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<version>${spring-cloud-contract-wiremock-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

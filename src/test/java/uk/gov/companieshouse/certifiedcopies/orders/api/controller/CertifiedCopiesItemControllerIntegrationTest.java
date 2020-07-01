@@ -15,8 +15,14 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOpt
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemData;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.*;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
@@ -46,7 +52,10 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 public class CertifiedCopiesItemControllerIntegrationTest {
 
     private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
+    private static final String UNKNOWN_CERTIFIED_COPY_ID = "CCD-000000-000000";
+
     private static final String COMPANY_NUMBER = "00000000";
+    private static final String COMPANY_NAME = "Company Name";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
     private static final String CONTACT_NUMBER = "0123456789";
@@ -81,6 +90,9 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
     @MockBean
     private IdGeneratorService idGeneratorService;
+
+    @MockBean
+    private CompanyService companyService;
 
     @MockBean
     private FilingHistoryDocumentService filingHistoryDocumentService;
@@ -122,6 +134,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                                                         FILING_HISTORY_ID,
                                                         FILING_HISTORY_TYPE));
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
         when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
@@ -132,6 +145,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
+                .andExpect(jsonPath("$.company_name", is(COMPANY_NAME)))
                 .andExpect(jsonPath("$.customer_reference", is(CUSTOMER_REFERENCE)))
                 .andExpect(jsonPath("$.item_options.contact_number", is(CONTACT_NUMBER)))
                 .andExpect(jsonPath("$.item_options.delivery_method",
@@ -266,11 +280,21 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     void getCertifiedCopyItemSuccessfully() throws Exception {
         // Given
         // Create certified copy item in database
-        final CertifiedCopyItem  newItem = new CertifiedCopyItem();
+        final CertifiedCopyItemData certifiedCopyItemData = new CertifiedCopyItemData();
+        certifiedCopyItemData.setCompanyName(COMPANY_NAME);
+        certifiedCopyItemData.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemData.setId(CERTIFIED_COPY_ID);
+        certifiedCopyItemData.setQuantity(QUANTITY);
+        certifiedCopyItemData.setCustomerReference(CUSTOMER_REFERENCE);
+        certifiedCopyItemData.setEtag(TOKEN_ETAG);
+        certifiedCopyItemData.setLinks(LINKS);
+        certifiedCopyItemData.setPostageCost(POSTAGE_COST);
+        final CertifiedCopyItem newItem = new CertifiedCopyItem();
         newItem.setCompanyNumber(COMPANY_NUMBER);
         newItem.setId(CERTIFIED_COPY_ID);
         newItem.setQuantity(QUANTITY);
         newItem.setUserId(ERIC_IDENTITY_VALUE);
+        newItem.setData(certifiedCopyItemData);
         newItem.setCustomerReference(CUSTOMER_REFERENCE);
         newItem.setEtag(TOKEN_ETAG);
         newItem.setLinks(LINKS);
@@ -283,6 +307,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
         final CertifiedCopyItemResponseDTO expectedItem = new CertifiedCopyItemResponseDTO();
         expectedItem.setCompanyNumber(COMPANY_NUMBER);
+        expectedItem.setCompanyName(COMPANY_NAME);
         expectedItem.setQuantity(QUANTITY);
         expectedItem.setId(CERTIFIED_COPY_ID);
         expectedItem.setCustomerReference(CUSTOMER_REFERENCE);
@@ -296,7 +321,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
-                .header(REQUEST_ID_HEADER_NAME, TOKEN_REQUEST_ID_VALUE)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedItem), true))
@@ -311,7 +336,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
-                .header(REQUEST_ID_HEADER_NAME, TOKEN_REQUEST_ID_VALUE)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());

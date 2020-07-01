@@ -22,6 +22,7 @@ public class LoggingUtils {
     public static final String STATUS_LOG_KEY = "status";
     public static final String ERRORS_LOG_KEY = "errors";
     public static final String REQUEST_ID_LOG_KEY = "request_id";
+    public static final String IDENTITY_LOG_KEY = "identity";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
