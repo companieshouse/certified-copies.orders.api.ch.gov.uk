@@ -57,7 +57,7 @@ public class FilingHistoryDocumentServiceTest {
     private static final String IOEXCEPTION_EXPECTED_REASON =
             "Error sending request to http://host/company/00006400/filing-history/1: " + IOEXCEPTION_MESSAGE;
 
-    private static final String NOT_FOUND_EXPECTED_REASON = "Error getting filing history for company number "
+    private static final String NOT_FOUND_EXPECTED_REASON = "Error getting filing history document 1 for company number "
             + COMPANY_NUMBER + ".";
 
     private static final List<FilingHistoryDocument> FILINGS_SOUGHT = asList(

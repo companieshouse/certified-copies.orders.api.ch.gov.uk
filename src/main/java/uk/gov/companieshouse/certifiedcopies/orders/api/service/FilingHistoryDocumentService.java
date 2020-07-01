@@ -86,7 +86,7 @@ public class FilingHistoryDocumentService {
                         filing.getTransactionId(),
                         filing.getType());
         } catch (ApiErrorResponseException ex) {
-            throw getResponseStatusException(ex, apiClient, companyNumber, uri);
+            throw getResponseStatusException(ex, apiClient, companyNumber, filingHistoryDocumentId, uri);
         } catch (URIValidationException ex) {
             // Should this happen (unlikely), it is a broken contract, hence 500.
             final String error = "Invalid URI " + uri + " for filing";
@@ -133,12 +133,14 @@ public class FilingHistoryDocumentService {
      * @param apiException the API exception caught
      * @param client the API client
      * @param companyNumber the number of the company for which the filing history is looked up
+     * @param filingHistoryDocumentId the filing history document ID
      * @param uri the URI used to communicate with the company filing history API
      * @return the {@link ResponseStatusException} exception to report the problem
      */
     private ResponseStatusException getResponseStatusException(final ApiErrorResponseException apiException,
                                                                final ApiClient client,
                                                                final String companyNumber,
+                                                               final String filingHistoryDocumentId,
                                                                final String uri) {
 
         final Map<String, Object> logMap = createLogMapWithCompanyNumber(companyNumber);
@@ -150,7 +152,8 @@ public class FilingHistoryDocumentService {
             LOGGER.error(error, apiException, logMap);
             propagatedException = new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         } else {
-            final String error = "Error getting filing history for company number " + companyNumber + ".";
+            final String error = "Error getting filing history document " + filingHistoryDocumentId +
+                    " for company number " + companyNumber + ".";
             logErrorWithStatus(logMap, error, BAD_REQUEST);
             LOGGER.error(error, apiException, logMap);
             propagatedException =  new ResponseStatusException(BAD_REQUEST, error);
