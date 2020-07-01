@@ -25,6 +25,10 @@ import static org.mockito.Mockito.*;
 public class CertifiedCopyItemServiceTest {
 
     private static final String ID = "CCD-123456-123456";
+    private static final String COMPANY_NUMBER = "00000000";
+    private static final String DESCRIPTION = "certified copy for company 00000000";
+    private static final String DESCRIPTION_IDENTIFIER = "certified-copy";
+    private static final String COMPANY_NUMBER_KEY = "company_number";
 
     @InjectMocks
     private CertifiedCopyItemService serviceUnderTest;
@@ -37,6 +41,9 @@ public class CertifiedCopyItemServiceTest {
 
     @Mock
     private IdGeneratorService idGeneratorService;
+
+    @Mock
+    private DescriptionProviderService descriptionProviderService;
 
     @Mock
     private CertifiedCopyItemRepository repository;
@@ -63,6 +70,34 @@ public class CertifiedCopyItemServiceTest {
         assertThat(certifiedCopyItem.getId(), is(ID));
         verify(etagGenerator).generateEtag();
         verify(linksGenerator).generateLinks(ID);
+    }
+
+    @Test
+    @DisplayName("createCertifiedCopyItem creates and saves the certified copy item with the descriptions")
+    void createCertifiedCopyItemPopulatesDescriptionAndSavesItem() {
+        when(idGeneratorService.autoGenerateId()).thenReturn(ID);
+        when(descriptionProviderService.getDescription(COMPANY_NUMBER)).thenReturn(DESCRIPTION);
+
+        final CertifiedCopyItemOptions certifiedCopyItemOptions = new CertifiedCopyItemOptions();
+        certifiedCopyItemOptions.setDeliveryMethod(DeliveryMethod.POSTAL);
+        final CertifiedCopyItem certifiedCopyItem = new CertifiedCopyItem();
+        certifiedCopyItem.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItem.setItemOptions(certifiedCopyItemOptions);
+
+        when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
+
+        final LocalDateTime intervalStart = LocalDateTime.now();
+
+        serviceUnderTest.createCertifiedCopyItem(certifiedCopyItem);
+
+        final LocalDateTime intervalEnd = LocalDateTime.now();
+
+        verifyCreationTimestampsWithinExecutionInterval(certifiedCopyItem, intervalStart, intervalEnd);
+        assertThat(certifiedCopyItem.getData().getDescription(), is(DESCRIPTION));
+        assertThat(certifiedCopyItem.getData().getDescriptionIdentifier(), is(DESCRIPTION_IDENTIFIER));
+        assertThat(certifiedCopyItem.getData().getDescriptionValues().get(DESCRIPTION_IDENTIFIER), is(DESCRIPTION));
+        assertThat(certifiedCopyItem.getData().getDescriptionValues().get(COMPANY_NUMBER_KEY), is(COMPANY_NUMBER));
+        verify(descriptionProviderService).getDescription(COMPANY_NUMBER);
     }
 
     @Test
