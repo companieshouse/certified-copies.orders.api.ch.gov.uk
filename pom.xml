@@ -10,7 +10,7 @@
 	<artifactId>certified-copies.orders.api.ch.gov.uk</artifactId>
 	<version>unversioned</version>
 	<name>certified-copies.orders.api.ch.gov.uk</name>
-	<description>CH API handling CRUD operations on Certified Copies Service</description>
+	<description>CH API handling CRUD operations on Certified Copies Service </description>
 
 	<properties>
 		<java.version>1.8</java.version>
