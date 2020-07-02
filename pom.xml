@@ -29,7 +29,6 @@
 		<api-sdk-java.version>4.2.36</api-sdk-java.version>
 		<api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
 		<junit-pioneer-version>0.6.0</junit-pioneer-version>
-		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<powermock.version>2.0.6</powermock.version>
 		<system-rules-version>1.19.0</system-rules-version>
 		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
