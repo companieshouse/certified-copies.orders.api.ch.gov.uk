@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -16,6 +17,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemReq
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Collections.singletonList;
@@ -50,6 +52,9 @@ class CertifiedCopiesApiApplicationTests {
 	@Autowired
 	private WebTestClient webTestClient;
 
+	@MockBean
+	private CompanyService companyService;
+
 	@SuppressWarnings("squid:S2699")    // at least one assertion
 	@Test
 	void contextLoads() {
@@ -58,6 +63,7 @@ class CertifiedCopiesApiApplicationTests {
 	@Test
 	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
 	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 400 Bad Request for an unknown company get filing request")
 	void createCertifiedCopyPropagatesBadRequestForUnknownCompanyFilingRequest() throws JsonProcessingException {
 
@@ -87,6 +93,7 @@ class CertifiedCopiesApiApplicationTests {
 	@Test
 	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
 	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for connection failure during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestConnectionFailure() {
 
@@ -116,6 +123,7 @@ class CertifiedCopiesApiApplicationTests {
 	@Test
 	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
 	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for service unavailable during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestServiceUnavailable() {
 

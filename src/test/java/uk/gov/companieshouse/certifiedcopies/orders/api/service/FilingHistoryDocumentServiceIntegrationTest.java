@@ -50,7 +50,9 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 @SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
 @SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" +
         FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
-public class FilingHistoryDocumentServiceIntegrationTest {
+@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" +
+        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
+class FilingHistoryDocumentServiceIntegrationTest {
 
     // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
     // such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
