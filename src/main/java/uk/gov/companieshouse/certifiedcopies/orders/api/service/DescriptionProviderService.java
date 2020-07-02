@@ -74,10 +74,6 @@ public class DescriptionProviderService {
             final Map<String, Object> orderDescriptions = yaml.load(inputStream);
             final Map<String, String> certifiedCopyDescriptions =
                     (Map<String, String>) orderDescriptions.get(CERTIFIED_COPY_DESCRIPTION_KEY);
-            LoggingUtils.getLogger().error("CONTENTS OF FILE");
-            for (Map.Entry<String, Object> entry : orderDescriptions.entrySet()) {
-                LoggingUtils.getLogger().error(entry.getKey() + ", value : " + entry.getValue());
-            }
             if (certifiedCopyDescriptions == null) {
                 Map<String, Object> logMap = new HashMap<>();
                 logMap.put(CERTIFIED_COPY_DESCRIPTION_KEY, CERTIFIED_COPY_DESCRIPTION_KEY);
