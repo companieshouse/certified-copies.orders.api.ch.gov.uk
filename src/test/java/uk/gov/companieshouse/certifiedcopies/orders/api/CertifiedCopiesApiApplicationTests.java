@@ -7,7 +7,6 @@ import org.junit.ClassRule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-// TODO GCI-1209 Remove junit-pioneer import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,17 +29,12 @@ import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTIT
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
 
-//@AutoConfigureWireMock(port = CertifiedCopiesApiApplicationTests.WIRE_MOCK_PORT)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
 class CertifiedCopiesApiApplicationTests {
 
 	@ClassRule
 	public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
-
-//	// Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
-//	// such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
-//	static final int WIRE_MOCK_PORT = 12345;
 
 	private static final String COMPANY_NUMBER = "00006400";
 	private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
@@ -71,9 +65,6 @@ class CertifiedCopiesApiApplicationTests {
 	}
 
 	@Test
-//	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-//	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-//	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 400 Bad Request for an unknown company get filing request")
 	void createCertifiedCopyPropagatesBadRequestForUnknownCompanyFilingRequest() throws JsonProcessingException {
 
@@ -106,9 +97,6 @@ class CertifiedCopiesApiApplicationTests {
 	}
 
 	@Test
-//	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-//	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-//	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for connection failure during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestConnectionFailure() {
 
@@ -141,9 +129,6 @@ class CertifiedCopiesApiApplicationTests {
 	}
 
 	@Test
-//	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-//	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-//	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for service unavailable during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestServiceUnavailable() {
 
