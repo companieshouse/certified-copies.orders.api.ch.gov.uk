@@ -93,7 +93,7 @@ public class CompanyServiceIntegrationTest {
     }
 
     @Test
-    void getCompanyNameThrowsInternalServerErrorForForConnectionFailure() {
+    void getCompanyNameThrowsInternalServerErrorForConnectionFailure() {
 
         // Given
         final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);

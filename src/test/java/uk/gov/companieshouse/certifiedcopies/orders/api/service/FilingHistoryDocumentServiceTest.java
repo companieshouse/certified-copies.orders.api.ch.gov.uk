@@ -2,8 +2,6 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
-import org.hamcrest.core.Is;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +31,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -139,11 +138,10 @@ public class FilingHistoryDocumentServiceTest {
         setUpForFilingApiException(new URIValidationException(INVALID_URI));
 
         // When and then
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
-        assertThat(exception.getReason(), Is.is(INVALID_URI_EXPECTED_REASON));
+        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getReason(), is(INVALID_URI_EXPECTED_REASON));
     }
 
     @Test
@@ -155,11 +153,10 @@ public class FilingHistoryDocumentServiceTest {
         when(internalApiClient.getBasePath()).thenReturn("http://host");
 
         // When and then
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
-        assertThat(exception.getReason(), Is.is(IOEXCEPTION_EXPECTED_REASON));
+        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getReason(), is(IOEXCEPTION_EXPECTED_REASON));
     }
 
     /**
@@ -178,11 +175,10 @@ public class FilingHistoryDocumentServiceTest {
         setUpForFilingApiException(ex);
 
         // When and then
-        final ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class,
+        final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
-        assertThat(exception.getReason(), Is.is(NOT_FOUND_EXPECTED_REASON));
+        assertThat(exception.getStatus(), is(BAD_REQUEST));
+        assertThat(exception.getReason(), is(NOT_FOUND_EXPECTED_REASON));
     }
 
     /**

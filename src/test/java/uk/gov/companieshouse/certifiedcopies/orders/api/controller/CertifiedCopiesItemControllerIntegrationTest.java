@@ -64,7 +64,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private static final String FILING_HISTORY_ID = "1";
     private static final String FILING_HISTORY_DATE = "2010-02-12";
     private static final String FILING_HISTORY_DESCRIPTION = "change-person-director-company-with-change-date";
-    private static final Map<String, Object > FILING_HISTORY_DESCRIPTION_VALUES;
+    private static final Map<String, Object> FILING_HISTORY_DESCRIPTION_VALUES;
     private static final String FILING_HISTORY_TYPE = "CH01";
     private static final String KIND = "item#certified-copy";
     private static final String TOKEN_ETAG = "9d39ea69b64c80ca42ed72328b48c303c4445e28";

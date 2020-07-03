@@ -45,9 +45,6 @@ public class CompanyServiceTest {
     private static final String IOEXCEPTION_EXPECTED_REASON =
             "Error sending request to http://host/company/00006400: " + IOEXCEPTION_MESSAGE;
 
-    private static final String NOT_FOUND_EXPECTED_REASON = "Error getting company name for company number "
-            + COMPANY_NUMBER;
-
     @InjectMocks
     private CompanyService serviceUnderTest;
 
