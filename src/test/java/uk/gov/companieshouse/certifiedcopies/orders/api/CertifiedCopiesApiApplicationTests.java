@@ -3,13 +3,16 @@ package uk.gov.companieshouse.certifiedcopies.orders.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
+import org.junit.ClassRule;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
+// TODO GCI-1209 Remove junit-pioneer import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
@@ -27,13 +30,17 @@ import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTIT
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
 
-@AutoConfigureWireMock(port = CertifiedCopiesApiApplicationTests.WIRE_MOCK_PORT)
+//@AutoConfigureWireMock(port = CertifiedCopiesApiApplicationTests.WIRE_MOCK_PORT)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWireMock(port = 0)
 class CertifiedCopiesApiApplicationTests {
 
-	// Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
-	// such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
-	static final int WIRE_MOCK_PORT = 12345;
+	@ClassRule
+	public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
+
+//	// Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
+//	// such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
+//	static final int WIRE_MOCK_PORT = 12345;
 
 	private static final String COMPANY_NUMBER = "00006400";
 	private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
@@ -55,19 +62,27 @@ class CertifiedCopiesApiApplicationTests {
 	@MockBean
 	private CompanyService companyService;
 
+	@Autowired
+	private Environment environment;
+
 	@SuppressWarnings("squid:S2699")    // at least one assertion
 	@Test
 	void contextLoads() {
 	}
 
 	@Test
-	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+//	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
+//	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+//	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 400 Bad Request for an unknown company get filing request")
 	void createCertifiedCopyPropagatesBadRequestForUnknownCompanyFilingRequest() throws JsonProcessingException {
 
+		final String wireMockPort = environment.getProperty("wiremock.server.port");
+
 		// Given
+		ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
+		ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
+		ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
 		givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
 			.willReturn(badRequest()
 					.withHeader("Content-Type", "application/json")
@@ -91,13 +106,18 @@ class CertifiedCopiesApiApplicationTests {
 	}
 
 	@Test
-	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+//	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
+//	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+//	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for connection failure during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestConnectionFailure() {
 
+		final String wireMockPort = environment.getProperty("wiremock.server.port");
+
 		// Given
+		ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
+		ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
+		ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
 		givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
 			.willReturn(aResponse()
 					.withFault(Fault.CONNECTION_RESET_BY_PEER)));
@@ -115,19 +135,24 @@ class CertifiedCopiesApiApplicationTests {
 			.jsonPath("$.status").isEqualTo("500")
 			.jsonPath("$.error").isEqualTo("Internal Server Error")
 			.jsonPath("$.message")
-			.isEqualTo("Error sending request to http://localhost:12345/company/00006400/filing-history/1: " +
-					"Connection reset")
+			.isEqualTo("Error sending request to http://localhost:" + wireMockPort +
+					"/company/00006400/filing-history/1: " + "Connection reset")
 			.jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
 	}
 
 	@Test
-	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
-	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+//	@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
+//	@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
+//	@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" + WIRE_MOCK_PORT)
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for service unavailable during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestServiceUnavailable() {
 
+		final String wireMockPort = environment.getProperty("wiremock.server.port");
+
 		// Given
+		ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
+		ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
+		ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
 		givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
 			.willReturn(serviceUnavailable()));
 
@@ -144,8 +169,8 @@ class CertifiedCopiesApiApplicationTests {
 			.jsonPath("$.status").isEqualTo("500")
 			.jsonPath("$.error").isEqualTo("Internal Server Error")
 			.jsonPath("$.message")
-			.isEqualTo("Error sending request to http://localhost:12345/company/00006400/filing-history/1: " +
-					"Service Unavailable")
+			.isEqualTo("Error sending request to http://localhost:" + wireMockPort
+					+ "/company/00006400/filing-history/1: " + "Service Unavailable")
 			.jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
 	}
 

@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.tomakehurst.wiremock.http.Fault;
 import org.hamcrest.core.Is;
+import org.junit.ClassRule;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
+// TODO GCI-1209 Remove junit-pioneer import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,6 +20,7 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
@@ -46,17 +49,21 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
  */
 @SpringBootTest
 @SpringJUnitConfig(FilingHistoryDocumentServiceIntegrationTest.Config.class)
-@AutoConfigureWireMock(port = FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
-@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
-@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" +
-        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
-@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" +
-        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
+//@AutoConfigureWireMock(port = FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
+@AutoConfigureWireMock(port = 0)
+//@SetEnvironmentVariable(key = "CHS_API_KEY", value = "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz")
+//@SetEnvironmentVariable(key = "API_URL", value = "http://localhost:" +
+//        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
+//@SetEnvironmentVariable(key = "PAYMENTS_API_URL", value = "http://localhost:" +
+//        FilingHistoryDocumentServiceIntegrationTest.WIRE_MOCK_PORT)
 class FilingHistoryDocumentServiceIntegrationTest {
 
-    // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
-    // such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
-    static final int WIRE_MOCK_PORT = 12345;
+    @ClassRule
+    public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
+
+//    // Junit 5 Pioneer @SetEnvironmentVariable cannot evaluate properties/environment variables
+//    // such as {wire.mock.port}, hence we seem to be forced to hard wire the port value. Not ideal.
+//    static final int WIRE_MOCK_PORT = 12345;
 
     private static final String COMPANY_NUMBER = "00006400";
     private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
@@ -131,6 +138,9 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private Environment environment;
+
     @MockBean
     private CertifiedCopyItemService certifiedCopyItemService;
 
@@ -138,7 +148,12 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
     void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
 
+        final String wireMockPort = environment.getProperty("wiremock.server.port");
+
         // Given
+        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
+        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
+        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
@@ -171,7 +186,12 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown company")
     void getFilingHistoryThrowsBadRequestForUnknownCompany() throws JsonProcessingException {
 
+        final String wireMockPort = environment.getProperty("wiremock.server.port");
+
         // Given
+        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
+        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
+        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
         givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
@@ -210,7 +230,12 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 500 Internal Server Error for connection failure")
     void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
 
+        final String wireMockPort = environment.getProperty("wiremock.server.port");
+
         // Given
+        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
+        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
+        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
@@ -220,7 +245,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
         assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason = "Error sending request to http://localhost:"
-                + WIRE_MOCK_PORT + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
+                + wireMockPort + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
         assertThat(exception.getReason(), Is.is(expectedReason));
     }
 

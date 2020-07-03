@@ -28,9 +28,11 @@
 		<api-helper-java.version>1.4.2</api-helper-java.version>
 		<api-sdk-java.version>4.2.36</api-sdk-java.version>
 		<api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
-		<junit-pioneer-version>0.6.0</junit-pioneer-version>
+		<!-- TODO GCI-1209 Remove junit-pioneer junit-pioneer-version>0.6.0</junit-pioneer-version -->
 		<powermock.version>2.0.6</powermock.version>
-		<system-rules-version>1.19.0</system-rules-version>
+		<!-- system-rules: 1.17.2 is the latest version that works with JUnit 5.
+		See https://github.com/stefanbirkner/system-rules/issues/70 -->
+		<system-rules-version>1.17.2</system-rules-version>
 		<spring-cloud-contract-wiremock-version>2.2.2.RELEASE</spring-cloud-contract-wiremock-version>
 		<start-class>uk.gov.companieshouse.certifiedcopies.orders.api.CertifiedCopiesApiApplication</start-class>
 	</properties>
@@ -138,12 +140,13 @@
 			<artifactId>de.flapdoodle.embed.mongo</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.junit-pioneer</groupId>
-			<artifactId>junit-pioneer</artifactId>
-			<version>${junit-pioneer-version}</version>
-			<scope>test</scope>
-		</dependency>
+<!-- TODO GCI-1209 Remove junit-pioneer -->
+<!--		<dependency>-->
+<!--			<groupId>org.junit-pioneer</groupId>-->
+<!--			<artifactId>junit-pioneer</artifactId>-->
+<!--			<version>${junit-pioneer-version}</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
