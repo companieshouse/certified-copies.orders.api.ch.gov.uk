@@ -42,6 +42,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_NOT_FOUND;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
 
 /**
  * Integration tests the {@link FilingHistoryDocumentService}.
@@ -137,12 +138,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
     void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
 
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
-
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
@@ -175,12 +172,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown company")
     void getFilingHistoryThrowsBadRequestForUnknownCompany() throws JsonProcessingException {
 
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
-
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
@@ -200,12 +193,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown filing history document")
     void getFilingHistoryThrowsBadRequestForUnknownFilingHistoryDocument() throws JsonProcessingException {
 
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
-
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + UNKNOWN_ID))
                 .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
@@ -224,12 +213,8 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @DisplayName("getFilingHistoryDocuments throws 500 Internal Server Error for connection failure")
     void getFilingHistoryThrowsInternalServerErrorForForConnectionFailure() {
 
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
-
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 

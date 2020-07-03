@@ -4,15 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
 import org.junit.ClassRule;
-import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.ApiErrorResponsePayload;
@@ -27,14 +25,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
 
 /**
- * Unit/integration tests the {@link CompanyService} class. Uses JUnit4 to take advantage of the
- * system-rules {@link EnvironmentVariables} class rule. The JUnit5 system-extensions equivalent does not
- * seem to have been released.
+ * Unit/integration tests the {@link CompanyService} class.
  */
 @SpringBootTest
-@RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureWireMock(port = 0)
 public class CompanyServiceIntegrationTest {
 
@@ -65,14 +61,10 @@ public class CompanyServiceIntegrationTest {
 
 
     @Test
-    public void getCompanyNameGetsNameSuccessfully () throws JsonProcessingException {
-
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
+    void getCompanyNameGetsNameSuccessfully () throws JsonProcessingException {
 
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo("/company/" + COMPANY_NUMBER))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
@@ -83,14 +75,10 @@ public class CompanyServiceIntegrationTest {
     }
 
     @Test
-    public void getCompanyNameThrowsBadRequestExceptionForCompanyNotFound () throws JsonProcessingException {
-
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
+    void getCompanyNameThrowsBadRequestExceptionForCompanyNotFound () throws JsonProcessingException {
 
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo("/company/" + COMPANY_NUMBER))
                 .willReturn(badRequest()
                         .withHeader("Content-Type", "application/json")
@@ -105,14 +93,10 @@ public class CompanyServiceIntegrationTest {
     }
 
     @Test
-    public void getCompanyNameThrowsInternalServerErrorForForConnectionFailure() {
-
-        final String wireMockPort = environment.getProperty("wiremock.server.port");
+    void getCompanyNameThrowsInternalServerErrorForForConnectionFailure() {
 
         // Given
-        ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-        ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-        ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
         givenThat(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo("/company/" + COMPANY_NUMBER))
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 

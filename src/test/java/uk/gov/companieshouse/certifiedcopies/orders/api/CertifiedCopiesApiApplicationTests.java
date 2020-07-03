@@ -28,6 +28,7 @@ import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTIT
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
@@ -38,8 +39,7 @@ class CertifiedCopiesApiApplicationTests {
 
 	private static final String COMPANY_NUMBER = "00006400";
 	private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
-
-
+	
 	private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
 	private static final int QUANTITY = 5;
 	private static final String CONTACT_NUMBER = "0123456789";
@@ -68,12 +68,8 @@ class CertifiedCopiesApiApplicationTests {
 	@DisplayName("createCertifiedCopy propagates 400 Bad Request for an unknown company get filing request")
 	void createCertifiedCopyPropagatesBadRequestForUnknownCompanyFilingRequest() throws JsonProcessingException {
 
-		final String wireMockPort = environment.getProperty("wiremock.server.port");
-
 		// Given
-		ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-		ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-		ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+		givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
 		givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
 			.willReturn(badRequest()
 					.withHeader("Content-Type", "application/json")
@@ -100,12 +96,8 @@ class CertifiedCopiesApiApplicationTests {
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for connection failure during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestConnectionFailure() {
 
-		final String wireMockPort = environment.getProperty("wiremock.server.port");
-
 		// Given
-		ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-		ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-		ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+		final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
 		givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
 			.willReturn(aResponse()
 					.withFault(Fault.CONNECTION_RESET_BY_PEER)));
@@ -132,12 +124,8 @@ class CertifiedCopiesApiApplicationTests {
 	@DisplayName("createCertifiedCopy propagates 500 Internal Server Error for service unavailable during get filing request")
 	void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestServiceUnavailable() {
 
-		final String wireMockPort = environment.getProperty("wiremock.server.port");
-
 		// Given
-		ENVIRONMENT_VARIABLES.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
-		ENVIRONMENT_VARIABLES.set("API_URL", "http://localhost:" + wireMockPort);
-		ENVIRONMENT_VARIABLES.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+		final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
 		givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
 			.willReturn(serviceUnavailable()));
 
