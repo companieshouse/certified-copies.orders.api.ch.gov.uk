@@ -35,6 +35,17 @@ public class CertifiedCopyItemService {
         this.descriptionProvider = descriptionProvider;
     }
 
+    private void populateDescriptions(final CertifiedCopyItem certifiedCopyItem) {
+        String description = descriptionProvider.getDescription(certifiedCopyItem.getData().getCompanyNumber());
+        certifiedCopyItem.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
+        certifiedCopyItem.setDescription(description);
+
+        Map<String, String> descriptionValues = new HashMap<>();
+        descriptionValues.put(DESCRIPTION_IDENTIFIER, description);
+        descriptionValues.put(COMPANY_NUMBER_KEY, certifiedCopyItem.getData().getCompanyNumber());
+        certifiedCopyItem.setDescriptionValues(descriptionValues);
+    }
+
     public CertifiedCopyItem createCertifiedCopyItem(final CertifiedCopyItem certifiedCopyItem) {
         final LocalDateTime now = LocalDateTime.now();
         certifiedCopyItem.setCreatedAt(now);
@@ -42,16 +53,9 @@ public class CertifiedCopyItemService {
         certifiedCopyItem.setId(idGenerator.autoGenerateId());
         certifiedCopyItem.setEtag(etagGenerator.generateEtag());
         certifiedCopyItem.setLinks(linksGenerator.generateLinks(certifiedCopyItem.getId()));
-
-        String description = descriptionProvider.getDescription(certifiedCopyItem.getData().getCompanyNumber());
-        certifiedCopyItem.setDescriptionIdentifier(DESCRIPTION_IDENTIFIER);
-        certifiedCopyItem.setDescription(description);
         certifiedCopyItem.setKind(KIND);
 
-        Map<String, String> descriptionValues = new HashMap<>();
-        descriptionValues.put(DESCRIPTION_IDENTIFIER, description);
-        descriptionValues.put(COMPANY_NUMBER_KEY, certifiedCopyItem.getData().getCompanyNumber());
-        certifiedCopyItem.setDescriptionValues(descriptionValues);
+        populateDescriptions(certifiedCopyItem);
 
         if(certifiedCopyItem.getData().getItemOptions().getDeliveryMethod().equals(DeliveryMethod.POSTAL)) {
             certifiedCopyItem.getData().setPostalDelivery(Boolean.TRUE);

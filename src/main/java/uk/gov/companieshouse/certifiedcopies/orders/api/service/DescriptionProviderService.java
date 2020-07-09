@@ -44,8 +44,7 @@ public class DescriptionProviderService {
     public String getDescription(final String companyNumber) {
         if (companyCertifiedCopyDescription == null) {
             // Error logged again here at time description is requested.
-            Map<String, Object> logMap = new HashMap<>();
-            logMap.put(COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY, COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY);
+            Map<String, Object> logMap = LoggingUtils.createLogMapWithDescriptionKey(COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY);
             LoggingUtils.getLogger().error("Company certified copy description not found in orders descriptions file", logMap);
             return null;
         }
@@ -75,8 +74,7 @@ public class DescriptionProviderService {
             final Map<String, String> certifiedCopyDescriptions =
                     (Map<String, String>) orderDescriptions.get(CERTIFIED_COPY_DESCRIPTION_KEY);
             if (certifiedCopyDescriptions == null) {
-                Map<String, Object> logMap = new HashMap<>();
-                logMap.put(CERTIFIED_COPY_DESCRIPTION_KEY, CERTIFIED_COPY_DESCRIPTION_KEY);
+                Map<String, Object> logMap = LoggingUtils.createLogMapWithDescriptionKey(CERTIFIED_COPY_DESCRIPTION_KEY);
                 LoggingUtils.getLogger().error("Certified copy descriptions not found in orders descriptions file", logMap);
 
                 return null;
@@ -84,8 +82,7 @@ public class DescriptionProviderService {
 
             companyCertifiedCopyDesc = certifiedCopyDescriptions.get(COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY);
             if (companyCertifiedCopyDesc == null) {
-                Map<String, Object> logMap = new HashMap<>();
-                logMap.put(COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY, COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY);
+                Map<String, Object> logMap = LoggingUtils.createLogMapWithDescriptionKey(COMPANY_CERTIFIED_COPY_DESCRIPTION_KEY);
                 LoggingUtils.getLogger().error("Company certified copy description not found in orders descriptions file", logMap);
             }
         } catch (IOException ioe) {
