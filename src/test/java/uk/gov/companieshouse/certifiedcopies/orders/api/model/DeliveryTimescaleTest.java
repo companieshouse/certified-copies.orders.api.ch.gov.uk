@@ -9,7 +9,10 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPY_COST;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPY_NEW_INCORPORATION_COST;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.SAME_DAY_CERTIFIED_COPY_COST;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST;
 
 /**
  * Unit/integration tests the {@link DeliveryTimescale} enum.
@@ -22,8 +25,8 @@ class DeliveryTimescaleTest {
         COSTS = new CostsConfig();
         COSTS.setStandardCost(CERTIFIED_COPY_COST);
         COSTS.setSameDayCost(SAME_DAY_CERTIFIED_COPY_COST);
-        COSTS.setStandardDiscount(CERTIFIED_COPY_NEW_INCORPORATION_COST);
-        COSTS.setSameDayDiscount(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST);
+        COSTS.setStandardNewIncorporationCost(CERTIFIED_COPY_NEW_INCORPORATION_COST);
+        COSTS.setSameDayNewIncorporationCost(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST);
     }
 
    @Test
@@ -38,18 +41,18 @@ class DeliveryTimescaleTest {
 
    @Test
     void standardTimescaleCostsAreCorrect() {
-       assertThat(DeliveryTimescale.STANDARD.getIndividualCertificateCost(COSTS),         is(CERTIFIED_COPY_COST));
-       assertThat(DeliveryTimescale.STANDARD.getExtraCertificateDiscount(COSTS),          is(CERTIFIED_COPY_NEW_INCORPORATION_COST));
-       MatcherAssert.assertThat(DeliveryTimescale.STANDARD.getFirstCertificateProductType(),            Is.is(ProductType.CERTIFICATE));
-       MatcherAssert.assertThat(DeliveryTimescale.STANDARD.getAdditionalCertificatesProductType(),      Is.is(ProductType.CERTIFICATE_ADDITIONAL_COPY));
+       assertThat(DeliveryTimescale.STANDARD.getCertifiedCopyCost(COSTS), is(CERTIFIED_COPY_COST));
+       assertThat(DeliveryTimescale.STANDARD.getCertifiedCopyNewIncorporationCost(COSTS),
+                                            is(CERTIFIED_COPY_NEW_INCORPORATION_COST));
+       MatcherAssert.assertThat(DeliveryTimescale.STANDARD.getProductType(), Is.is(ProductType.CERTIFIED_COPY));
    }
 
     @Test
     void sameDayTimescaleCostsAreCorrect() {
-        assertThat(DeliveryTimescale.SAME_DAY.getIndividualCertificateCost(COSTS),         is(SAME_DAY_CERTIFIED_COPY_COST));
-        assertThat(DeliveryTimescale.SAME_DAY.getExtraCertificateDiscount(COSTS),          is(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST));
-        MatcherAssert.assertThat(DeliveryTimescale.SAME_DAY.getFirstCertificateProductType(),            Is.is(ProductType.CERTIFICATE_SAME_DAY));
-        MatcherAssert.assertThat(DeliveryTimescale.SAME_DAY.getAdditionalCertificatesProductType(),      Is.is(ProductType.CERTIFICATE_ADDITIONAL_COPY));
+        assertThat(DeliveryTimescale.SAME_DAY.getCertifiedCopyCost(COSTS), is(SAME_DAY_CERTIFIED_COPY_COST));
+        assertThat(DeliveryTimescale.SAME_DAY.getCertifiedCopyNewIncorporationCost(COSTS),
+                                            is(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST));
+        MatcherAssert.assertThat(DeliveryTimescale.SAME_DAY.getProductType(),
+                                            Is.is(ProductType.CERTIFIED_COPY_SAME_DAY));
     }
-
 }

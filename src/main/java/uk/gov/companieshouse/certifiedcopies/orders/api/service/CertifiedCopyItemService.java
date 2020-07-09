@@ -2,7 +2,10 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemData;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.time.LocalDateTime;
@@ -15,15 +18,18 @@ public class CertifiedCopyItemService {
     private final EtagGeneratorService etagGenerator;
     private final LinksGeneratorService linksGenerator;
     private final IdGeneratorService idGenerator;
+    private final CertifiedCopyCostCalculatorService costCalculatorService;
 
     public CertifiedCopyItemService(final CertifiedCopyItemRepository repository,
                                     final EtagGeneratorService etagGenerator,
                                     final LinksGeneratorService linksGenerator,
-                                    final IdGeneratorService idGenerator) {
+                                    final IdGeneratorService idGenerator,
+                                    final CertifiedCopyCostCalculatorService calculatorService) {
         this.repository = repository;
         this.etagGenerator = etagGenerator;
         this.linksGenerator = linksGenerator;
         this.idGenerator = idGenerator;
+        this.costCalculatorService = calculatorService;
     }
 
     public CertifiedCopyItem createCertifiedCopyItem(final CertifiedCopyItem certifiedCopyItem) {
@@ -40,8 +46,27 @@ public class CertifiedCopyItemService {
             certifiedCopyItem.getData().setPostalDelivery(Boolean.FALSE);
         }
         certifiedCopyItem.getData().setKind("item#certified-copy");
+        populateItemCosts(certifiedCopyItem, costCalculatorService);
 
         return repository.save(certifiedCopyItem);
+    }
+
+    public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator) {
+        CertifiedCopyItemData itemData = item.getData();
+        String filingHistoryType = itemData.getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryType();
+
+        final ItemCostCalculation calculation =
+                calculator.calculateCosts(getOrDefaultDeliveryTimescale(item), filingHistoryType);
+        item.setPostageCost(calculation.getPostageCost());
+        item.setItemCosts(calculation.getItemCosts());
+        item.setTotalItemCost(calculation.getTotalItemCost());
+    }
+
+    DeliveryTimescale getOrDefaultDeliveryTimescale(final CertifiedCopyItem item) {
+        return item.getData().getItemOptions() != null &&
+                item.getData().getItemOptions().getDeliveryTimescale() != null ?
+                item.getData().getItemOptions().getDeliveryTimescale() :
+                DeliveryTimescale.STANDARD;
     }
 
     /**

@@ -15,43 +15,43 @@ import javax.validation.constraints.Min;
 @Validated
 public class CostsConfig {
     @Min(1)
-    private int certifiedCopy;
+    private int standardCost;
     @Min(1)
-    private int certifiedCopyNewIncorporation;
+    private int standardNewIncorporationCost;
     @Min(1)
-    private int sameDayCertifiedCopy;
+    private int sameDayCost;
     @Min(1)
-    private int sameDayCertifiedCopyNewIncorporation;
+    private int sameDayNewIncorporationCost;
 
-    public int getCertifiedCopy() {
-        return certifiedCopy;
+    public int getStandardCost() {
+        return standardCost;
     }
 
-    public void setCertifiedCopy(int certifiedCopy) {
-        this.certifiedCopy = certifiedCopy;
+    public void setStandardCost(int standardCost) {
+        this.standardCost = standardCost;
     }
 
-    public int getCertifiedCopyNewIncorporation() {
-        return certifiedCopyNewIncorporation;
+    public int getStandardNewIncorporationCost() {
+        return standardNewIncorporationCost;
     }
 
-    public void setCertifiedCopyNewIncorporation(int certifiedCopyNewIncorporation) {
-        this.certifiedCopyNewIncorporation = certifiedCopyNewIncorporation;
+    public void setStandardNewIncorporationCost(int standardNewIncorporationCost) {
+        this.standardNewIncorporationCost = standardNewIncorporationCost;
     }
 
-    public int getSameDayCertifiedCopy() {
-        return sameDayCertifiedCopy;
+    public int getSameDayCost() {
+        return sameDayCost;
     }
 
-    public void setSameDayCertifiedCopy(int sameDayCertifiedCopy) {
-        this.sameDayCertifiedCopy = sameDayCertifiedCopy;
+    public void setSameDayCost(int sameDayCost) {
+        this.sameDayCost = sameDayCost;
     }
 
-    public int getSameDayCertifiedCopyNewIncorporation() {
-        return sameDayCertifiedCopyNewIncorporation;
+    public int getSameDayNewIncorporationCost() {
+        return sameDayNewIncorporationCost;
     }
 
-    public void setSameDayCertifiedCopyNewIncorporation(int sameDayCertifiedCopyNewIncorporation) {
-        this.sameDayCertifiedCopyNewIncorporation = sameDayCertifiedCopyNewIncorporation;
+    public void setSameDayNewIncorporationCost(int sameDayNewIncorporationCost) {
+        this.sameDayNewIncorporationCost = sameDayNewIncorporationCost;
     }
 }
