@@ -4,6 +4,11 @@ version             := "unversioned"
 .PHONY: all
 all: build
 
+.PHONY: submodules
+submodules:
+	git submodule init
+	git submodule update
+
 .PHONY: clean
 clean:
 	mvn clean
@@ -12,7 +17,7 @@ clean:
 	rm -rf ./build-*
 
 .PHONY: build
-build:
+build: submodules
 	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
 	mvn package -DskipTests=true
 	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar

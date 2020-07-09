@@ -69,6 +69,9 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private static final String KIND = "item#certified-copy";
     private static final String TOKEN_ETAG = "9d39ea69b64c80ca42ed72328b48c303c4445e28";
     private static final String POSTAGE_COST = "0";
+    private static final String DESCRIPTION = "certified copy for company 00000000";
+    private static final String DESCRIPTION_IDENTIFIER = "certified-copy";
+
     private static final Links LINKS;
 
     static {
@@ -233,6 +236,36 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                         is(DeliveryTimescale.STANDARD.getJsonName())))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY)));
+
+        assertItemSavedCorrectly(CERTIFIED_COPY_ID);
+
+    }
+
+    @Test
+    @DisplayName("Successfully creates certified copy with correct descriptions")
+    void createCertifiedCopyPopulatesDescription() throws Exception {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
+        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
+                = new CertifiedCopyItemOptionsRequestDTO();
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.description", is(DESCRIPTION)))
+                .andExpect(jsonPath("$.description_identifier", is(DESCRIPTION_IDENTIFIER)))
+                .andExpect(jsonPath("$.description_values.company_number", is(COMPANY_NUMBER)))
+                .andExpect(jsonPath("$.description_values."+DESCRIPTION_IDENTIFIER,
+                        is(DESCRIPTION)));
 
         assertItemSavedCorrectly(CERTIFIED_COPY_ID);
 
