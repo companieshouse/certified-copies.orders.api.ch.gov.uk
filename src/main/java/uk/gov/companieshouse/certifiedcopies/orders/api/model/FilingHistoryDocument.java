@@ -1,10 +1,30 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
+import com.google.gson.Gson;
+
+import java.util.Map;
+
 public class FilingHistoryDocument {
+
+    public FilingHistoryDocument() {}
+
+    public FilingHistoryDocument(final String filingHistoryDate,
+                                 final String filingHistoryDescription,
+                                 final Map<String, Object> filingHistoryDescriptionValues,
+                                 final String filingHistoryId,
+                                 final String filingHistoryType) {
+        this.filingHistoryDate = filingHistoryDate;
+        this.filingHistoryDescription = filingHistoryDescription;
+        this.filingHistoryDescriptionValues = filingHistoryDescriptionValues;
+        this.filingHistoryId = filingHistoryId;
+        this.filingHistoryType = filingHistoryType;
+    }
 
     private String filingHistoryDate;
 
     private String filingHistoryDescription;
+
+    private Map<String, Object> filingHistoryDescriptionValues;
 
     private String filingHistoryId;
 
@@ -26,6 +46,14 @@ public class FilingHistoryDocument {
         this.filingHistoryDescription = filingHistoryDescription;
     }
 
+    public Map<String, Object> getFilingHistoryDescriptionValues() {
+        return filingHistoryDescriptionValues;
+    }
+
+    public void setFilingHistoryDescriptionValues(Map<String, Object> filingHistoryDescriptionValues) {
+        this.filingHistoryDescriptionValues = filingHistoryDescriptionValues;
+    }
+
     public String getFilingHistoryId() {
         return filingHistoryId;
     }
@@ -41,4 +69,7 @@ public class FilingHistoryDocument {
     public void setFilingHistoryType(String filingHistoryType) {
         this.filingHistoryType = filingHistoryType;
     }
+
+    @Override
+    public String toString() { return new Gson().toJson(this); }
 }
