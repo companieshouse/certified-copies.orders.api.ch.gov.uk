@@ -84,14 +84,14 @@ public class LoggingUtils {
     }
 
     /**
-     * Method to set up a map for logging purposes and add a value for the description key.
+     * Method to log an error and add a value for the description key.
      *
      * @param descriptionKey the company number to log under the key {@link LoggingUtils#DESCRIPTION_LOG_KEY}
-     * @return the log map for use in log messages
+     * @param errorMessage the error message to display
      */
-    public static Map<String, Object> createLogMapWithDescriptionKey(final String descriptionKey) {
+    public static void logOrdersDescriptionsConfigError(final String descriptionKey, final String errorMessage) {
         Map<String, Object> logMap = new HashMap<>();
         logMap.put(DESCRIPTION_LOG_KEY, descriptionKey);
-        return logMap;
+        LOGGER.error(errorMessage);
     }
 }
