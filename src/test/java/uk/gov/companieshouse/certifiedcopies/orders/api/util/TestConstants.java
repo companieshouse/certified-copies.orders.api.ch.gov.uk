@@ -12,8 +12,8 @@ public class TestConstants {
     public static final String ERIC_IDENTITY_TYPE_API_KEY_VALUE = "key";
     public static final int CERTIFIED_COPY_COST = 15;
     public static final int SAME_DAY_CERTIFIED_COPY_COST = 50;
-    public static final int CERTIFIED_COPY_NEW_INCORPORATION_COST = 5;
-    public static final int SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST = 40;
+    public static final int CERTIFIED_COPY_NEW_INCORPORATION_COST = 30;
+    public static final int SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST = 100;
     public static final String CERTIFIED_COPIES_URL = "/orderable/certified-copies";
     public static final ApiErrorResponsePayload FILING_NOT_FOUND =
             new ApiErrorResponsePayload(singletonList(new Error("ch:service", "filing-history-item-not-found")));

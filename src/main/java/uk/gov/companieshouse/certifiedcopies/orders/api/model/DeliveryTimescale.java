@@ -5,8 +5,8 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.converter.EnumValueNameConverter;
 
 public enum DeliveryTimescale {
-    STANDARD("standard"),
-    SAME_DAY("same-day") {
+    STANDARD,
+    SAME_DAY {
 
         @Override
         public int getCertifiedCopyCost(final CostsConfig costs) {
@@ -23,13 +23,6 @@ public enum DeliveryTimescale {
             return ProductType.CERTIFIED_COPY_SAME_DAY;
         }
     };
-    private String value;
-    private DeliveryTimescale(String value) {
-        this.value = value;
-    }
-    public String getValue(){
-        return this.value;
-    }
 
     @JsonValue
     public String getJsonName() {

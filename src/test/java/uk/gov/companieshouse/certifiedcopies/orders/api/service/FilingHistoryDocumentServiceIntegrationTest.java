@@ -23,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
+import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.time.LocalDate;
@@ -132,7 +133,13 @@ class FilingHistoryDocumentServiceIntegrationTest {
     private Environment environment;
 
     @MockBean
+    private CostsConfig costsConfig;
+
+    @MockBean
     private CertifiedCopyItemService certifiedCopyItemService;
+
+    @MockBean
+    private CertifiedCopyCostCalculatorService certifiedCopyCostCalculatorService;
 
     @Test
     @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
