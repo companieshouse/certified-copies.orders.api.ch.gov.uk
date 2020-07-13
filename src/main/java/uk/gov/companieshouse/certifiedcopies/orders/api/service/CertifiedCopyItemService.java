@@ -68,7 +68,7 @@ public class CertifiedCopyItemService {
         } else {
             certifiedCopyItem.getData().setPostalDelivery(Boolean.FALSE);
         }
-        certifiedCopyItem.getData().setKind("item#certified-copy");
+        certifiedCopyItem.getData().setKind(KIND);
         populateItemCosts(certifiedCopyItem, costCalculatorService);
 
         return repository.save(certifiedCopyItem);
