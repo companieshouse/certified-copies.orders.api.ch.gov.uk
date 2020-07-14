@@ -3,6 +3,7 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType;
@@ -22,8 +23,17 @@ public class CertifiedCopyCostCalculatorService {
         this.costs = costs;
     }
 
-    public ItemCostCalculation calculateCosts(final DeliveryTimescale deliveryTimescale,
-                                              final String filingHistoryType) {
+    public List<ItemCostCalculation> calculateAllCosts(final DeliveryTimescale deliveryTimescale,
+                                                       final List<FilingHistoryDocument> filingHistoryDocs) {
+        List<ItemCostCalculation> costCalculationList = new ArrayList<>();
+        for (FilingHistoryDocument filingHistoryDocument : filingHistoryDocs) {
+            costCalculationList.add(calculateCosts(deliveryTimescale, filingHistoryDocument.getFilingHistoryType()));
+        }
+
+        return costCalculationList;
+    }
+
+    private ItemCostCalculation calculateCosts(final DeliveryTimescale deliveryTimescale, final String filingHistoryType) {
         checkArguments(deliveryTimescale, filingHistoryType);
         final List<ItemCosts> itemCostsList = new ArrayList<>();
         ItemCosts itemCosts =  calculateSingleItemCosts(deliveryTimescale, filingHistoryType);
@@ -40,8 +50,9 @@ public class CertifiedCopyCostCalculatorService {
         final int cost = filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
                                             deliveryTimescale.getCertifiedCopyNewIncorporationCost(costs) :
                                             deliveryTimescale.getCertifiedCopyCost(costs);
+        final int calculatedCost = cost - Integer.parseInt(DISCOUNT);
         itemCosts.setItemCost(Integer.toString(cost));
-        itemCosts.setCalculatedCost(Integer.toString(cost));
+        itemCosts.setCalculatedCost(Integer.toString(calculatedCost));
         final ProductType productType = deliveryTimescale.getProductType();
         itemCosts.setProductType(productType);
 

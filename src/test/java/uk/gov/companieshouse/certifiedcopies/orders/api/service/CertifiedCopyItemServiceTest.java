@@ -24,6 +24,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
@@ -91,9 +92,9 @@ public class CertifiedCopyItemServiceTest {
         final CertifiedCopyItem certifiedCopyItem = new CertifiedCopyItem();
         certifiedCopyItem.setItemOptions(certifiedCopyItemOptions);
 
-        ItemCostCalculation costCalculation = getItemCostCalculation();
+        List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateCosts(any(), anyString())).thenReturn(costCalculation);
+        when(costCalculatorService.calculateAllCosts(any(), anyList())).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
@@ -127,9 +128,9 @@ public class CertifiedCopyItemServiceTest {
         certifiedCopyItem.setCompanyNumber(COMPANY_NUMBER);
         certifiedCopyItem.setItemOptions(certifiedCopyItemOptions);
 
-        ItemCostCalculation costCalculation = getItemCostCalculation();
+        List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateCosts(any(), anyString())).thenReturn(costCalculation);
+        when(costCalculatorService.calculateAllCosts(any(), anyList())).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
@@ -146,13 +147,16 @@ public class CertifiedCopyItemServiceTest {
         verify(descriptionProviderService).getDescription(COMPANY_NUMBER);
     }
 
-    private ItemCostCalculation getItemCostCalculation() {
+    private List<ItemCostCalculation> getItemCostCalculations() {
         List<ItemCosts> itemCosts = new ArrayList<>();
         ItemCosts cost = new ItemCosts();
         cost.setItemCost(ITEM_COST);
         cost.setCalculatedCost(CALCULATED_COST);
         itemCosts.add(cost);
-        return new ItemCostCalculation(itemCosts, POSTAGE_COST, TOTAL_ITEM_COST);
+        List<ItemCostCalculation> costCalculationList = new ArrayList<>();
+        costCalculationList.add(new ItemCostCalculation(itemCosts, POSTAGE_COST, TOTAL_ITEM_COST));
+
+        return costCalculationList;
     }
 
     @Test
