@@ -17,16 +17,25 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRes
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemData;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.*;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.ApiClientService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
+import uk.gov.companieshouse.certifiedcopies.orders.api.service.DescriptionProviderService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -34,6 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -45,14 +55,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.*;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPIES_URL;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
 
 @AutoConfigureMockMvc
 @SpringBootTest
 public class CertifiedCopiesItemControllerIntegrationTest {
 
     private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
-    private static final String UNKNOWN_CERTIFIED_COPY_ID = "CCD-000000-000000";
 
     private static final String COMPANY_NUMBER = "00000000";
     private static final String COMPANY_NAME = "Company Name";
@@ -65,12 +77,19 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private static final String FILING_HISTORY_DATE = "2010-02-12";
     private static final String FILING_HISTORY_DESCRIPTION = "change-person-director-company-with-change-date";
     private static final Map<String, Object> FILING_HISTORY_DESCRIPTION_VALUES;
-    private static final String FILING_HISTORY_TYPE = "CH01";
+    private static final String FILING_HISTORY_ID_01 = "01";
+    private static final String FILING_HISTORY_ID_02 = "02";
+    private static final String FILING_HISTORY_TYPE_CH01 = "CH01";
+    private static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
     private static final String KIND = "item#certified-copy";
     private static final String TOKEN_ETAG = "9d39ea69b64c80ca42ed72328b48c303c4445e28";
     private static final String POSTAGE_COST = "0";
     private static final String DESCRIPTION = "certified copy for company 00000000";
     private static final String DESCRIPTION_IDENTIFIER = "certified-copy";
+    private static final String TOTAL_ITEM_COST = "15";
+    private static final String TOTAL_ITEM_COST_SAME_DAY = "50";
+    private static final String TOTAL_ITEM_COST_NEWINC = "30";
+    private static final String TOTAL_ITEM_COST_MULTI = "45";
 
     private static final Links LINKS;
 
@@ -99,6 +118,12 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
     @MockBean
     private FilingHistoryDocumentService filingHistoryDocumentService;
+
+    @MockBean
+    private DescriptionProviderService descriptionProviderService;
+
+    @MockBean
+    private ApiClientService apiClientService;
 
     @AfterEach
     void tearDown() {
@@ -132,10 +157,11 @@ public class CertifiedCopiesItemControllerIntegrationTest {
 
         final List<FilingHistoryDocument> filings =
                 singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
-                                                        FILING_HISTORY_DESCRIPTION,
-                                                        FILING_HISTORY_DESCRIPTION_VALUES,
-                                                        FILING_HISTORY_ID,
-                                                        FILING_HISTORY_TYPE));
+                        FILING_HISTORY_DESCRIPTION,
+                        FILING_HISTORY_DESCRIPTION_VALUES,
+                        FILING_HISTORY_ID,
+                        FILING_HISTORY_TYPE_CH01));
+
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
         when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
         when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
@@ -164,15 +190,90 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_id",
                         is(FILING_HISTORY_ID)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
-                        is(FILING_HISTORY_TYPE)))
+                        is(FILING_HISTORY_TYPE_CH01)))
                 .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
                 .andExpect(jsonPath("$.kind", is(KIND)))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)));
+                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST)));
 
         final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
-        assertFilingSavedCorrectly(retrievedCopy);
+    }
+
+    @Test
+    @DisplayName("Successfully creates certified copy item")
+    void createCertifiedCopyItemMultipleFilingHistorySuccessfullyCreatesCertifiedCopyItem() throws Exception {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest
+                = new CertifiedCopyItemRequestDTO();
+        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemDTORequest.setCustomerReference(CUSTOMER_REFERENCE);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
+                = new FilingHistoryDocumentRequestDTO();
+        filingHistoryDocumentRequestDTO.setFilingHistoryId(FILING_HISTORY_ID);
+
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
+                = new CertifiedCopyItemOptionsRequestDTO();
+        certifiedCopyItemOptionsDTORequest.setContactNumber(CONTACT_NUMBER);
+        certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.POSTAL);
+        certifiedCopyItemOptionsDTORequest.setDeliveryTimescale(DeliveryTimescale.STANDARD);
+        certifiedCopyItemOptionsDTORequest.setForename(FORENAME);
+        certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
+
+        certifiedCopyItemOptionsDTORequest
+                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        final List<FilingHistoryDocument> filings = getFilingHistoryDocumentsMulti();
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
+
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
+                .andExpect(jsonPath("$.company_name", is(COMPANY_NAME)))
+                .andExpect(jsonPath("$.customer_reference", is(CUSTOMER_REFERENCE)))
+                .andExpect(jsonPath("$.item_options.contact_number", is(CONTACT_NUMBER)))
+                .andExpect(jsonPath("$.item_options.delivery_method",
+                        is(DeliveryMethod.POSTAL.getJsonName())))
+                .andExpect(jsonPath("$.item_options.delivery_timescale",
+                        is(DeliveryTimescale.STANDARD.getJsonName())))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_date",
+                        is(FILING_HISTORY_DATE)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_description",
+                        is(FILING_HISTORY_DESCRIPTION)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_description_values",
+                        is(FILING_HISTORY_DESCRIPTION_VALUES)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_id",
+                        is(FILING_HISTORY_ID_01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
+                        is(FILING_HISTORY_TYPE_CH01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_date",
+                        is(FILING_HISTORY_DATE)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_description",
+                        is(FILING_HISTORY_DESCRIPTION)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_description_values",
+                        is(FILING_HISTORY_DESCRIPTION_VALUES)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_id",
+                        is(FILING_HISTORY_ID_02)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_type",
+                        is(FILING_HISTORY_TYPE_NEWINC)))
+                .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
+                .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
+                .andExpect(jsonPath("$.kind", is(KIND)))
+                .andExpect(jsonPath("$.postal_delivery", is(true)))
+                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_MULTI)));
+
+        final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
     }
 
     @Test
@@ -182,13 +283,28 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
         certifiedCopyItemDTORequest.setQuantity(QUANTITY);
 
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
+                = new FilingHistoryDocumentRequestDTO();
+        filingHistoryDocumentRequestDTO.setFilingHistoryId(FILING_HISTORY_ID);
+
         final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
                 = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemOptionsDTORequest.setDeliveryTimescale(DeliveryTimescale.SAME_DAY);
         certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.COLLECTION);
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+        certifiedCopyItemOptionsDTORequest
+                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
+        final List<FilingHistoryDocument> filings =
+                singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
+                        FILING_HISTORY_DESCRIPTION,
+                        FILING_HISTORY_DESCRIPTION_VALUES,
+                        FILING_HISTORY_ID,
+                        FILING_HISTORY_TYPE_CH01));
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
@@ -203,7 +319,8 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.delivery_timescale",
                         is(DeliveryTimescale.SAME_DAY.getJsonName())))
                 .andExpect(jsonPath("$.postal_delivery", is(false)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)));
+                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_SAME_DAY)));
 
         assertItemSavedCorrectly(CERTIFIED_COPY_ID);
 
@@ -212,14 +329,11 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     @Test
     @DisplayName("Successfully creates certified copy with default delivery method and timescale")
     void createCertifiedCopyDefaultsDeliveryMethodAndDeliveryTimeScale() throws Exception {
-        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
-        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
-        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = getCertifiedCopyItemRequestDTO();
 
-        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
-                = new CertifiedCopyItemOptionsRequestDTO();
-        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+        List<FilingHistoryDocument> filingHistoryDocuments = getFilingHistoryDocuments();
 
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(anyString(), anyList())).thenReturn(filingHistoryDocuments);
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
@@ -235,7 +349,8 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.delivery_timescale",
                         is(DeliveryTimescale.STANDARD.getJsonName())))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)));
+                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_NEWINC)));
 
         assertItemSavedCorrectly(CERTIFIED_COPY_ID);
 
@@ -244,15 +359,14 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     @Test
     @DisplayName("Successfully creates certified copy with correct descriptions")
     void createCertifiedCopyPopulatesDescription() throws Exception {
-        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
-        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
-        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = getCertifiedCopyItemRequestDTO();
 
-        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
-                = new CertifiedCopyItemOptionsRequestDTO();
-        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+        List<FilingHistoryDocument> filingHistoryDocuments = getFilingHistoryDocuments();
 
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
+        when(descriptionProviderService.getDescription(COMPANY_NUMBER)).thenReturn(DESCRIPTION);
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(anyString(), anyList())).thenReturn(filingHistoryDocuments);
 
         mockMvc.perform(post(CERTIFIED_COPIES_URL)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
@@ -265,10 +379,38 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.description_identifier", is(DESCRIPTION_IDENTIFIER)))
                 .andExpect(jsonPath("$.description_values.company_number", is(COMPANY_NUMBER)))
                 .andExpect(jsonPath("$.description_values."+DESCRIPTION_IDENTIFIER,
-                        is(DESCRIPTION)));
+                        is(DESCRIPTION)))
+                .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_NEWINC)));
+
 
         assertItemSavedCorrectly(CERTIFIED_COPY_ID);
 
+    }
+
+    private List<FilingHistoryDocument> getFilingHistoryDocuments() {
+        List<FilingHistoryDocument> filingHistoryDocuments = new LinkedList<>();
+        FilingHistoryDocument filingHistoryDocument = new FilingHistoryDocument();
+        filingHistoryDocument.setFilingHistoryType(FILING_HISTORY_TYPE_NEWINC);
+        filingHistoryDocuments.add(filingHistoryDocument);
+        return filingHistoryDocuments;
+    }
+
+    private CertifiedCopyItemRequestDTO getCertifiedCopyItemRequestDTO() {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
+        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
+                = new FilingHistoryDocumentRequestDTO();
+        filingHistoryDocumentRequestDTO.setFilingHistoryId(FILING_HISTORY_ID);
+
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
+                = new CertifiedCopyItemOptionsRequestDTO();
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+        certifiedCopyItemOptionsDTORequest
+                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+        return certifiedCopyItemDTORequest;
     }
 
     @Test
@@ -334,7 +476,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         newItem.setPostageCost(POSTAGE_COST);
         final CertifiedCopyItemOptions options = new CertifiedCopyItemOptions();
         options.setFilingHistoryDocuments(singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
-                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_DESCRIPTION_VALUES, FILING_HISTORY_ID, FILING_HISTORY_TYPE)));
+                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_DESCRIPTION_VALUES, FILING_HISTORY_ID, FILING_HISTORY_TYPE_CH01)));
         newItem.setItemOptions(options);
         repository.save(newItem);
 
@@ -375,11 +517,32 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    private List<FilingHistoryDocument> getFilingHistoryDocumentsMulti() {
+        FilingHistoryDocument filingHistoryDocument1 = new FilingHistoryDocument();
+        filingHistoryDocument1.setFilingHistoryId(FILING_HISTORY_ID_01);
+        filingHistoryDocument1.setFilingHistoryType(FILING_HISTORY_TYPE_CH01);
+        filingHistoryDocument1.setFilingHistoryDate(FILING_HISTORY_DATE);
+        filingHistoryDocument1.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
+        filingHistoryDocument1.setFilingHistoryDate(FILING_HISTORY_DATE);
+        filingHistoryDocument1.setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES);
+        FilingHistoryDocument filingHistoryDocument2 = new FilingHistoryDocument();
+        filingHistoryDocument2.setFilingHistoryId(FILING_HISTORY_ID_02);
+        filingHistoryDocument2.setFilingHistoryType(FILING_HISTORY_TYPE_NEWINC);
+        filingHistoryDocument2.setFilingHistoryDate(FILING_HISTORY_DATE);
+        filingHistoryDocument2.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
+        filingHistoryDocument2.setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES);
+        List<FilingHistoryDocument> filingHistoryDocumentList = new ArrayList<>();
+        filingHistoryDocumentList.add(filingHistoryDocument1);
+        filingHistoryDocumentList.add(filingHistoryDocument2);
+
+        return filingHistoryDocumentList;
+    }
+
     /**
      * Verifies that the certified copy item can be retrieved
      * from the database using its expected ID value.
      * @param certifiedCopyId the expected ID of the newly created item
-     * @return the retrieved certificate item, for possible further verification
+     * @return the retrieved certified copy item, for possible further verification
      */
     private CertifiedCopyItem assertItemSavedCorrectly(final String certifiedCopyId) {
         final Optional<CertifiedCopyItem> retrievedCertifiedCopyItem
@@ -411,7 +574,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         assertThat(retrievedFiling.getFilingHistoryDate(), is(FILING_HISTORY_DATE));
         assertThat(retrievedFiling.getFilingHistoryDescription(), is(FILING_HISTORY_DESCRIPTION));
         assertThat(retrievedFiling.getFilingHistoryId(), is(FILING_HISTORY_ID));
-        assertThat(retrievedFiling.getFilingHistoryType(), is(FILING_HISTORY_TYPE));
+        assertThat(retrievedFiling.getFilingHistoryType(), is(FILING_HISTORY_TYPE_CH01));
     }
 
 }

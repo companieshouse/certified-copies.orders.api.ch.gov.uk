@@ -2,11 +2,18 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemData;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,6 +24,7 @@ public class CertifiedCopyItemService {
     private final EtagGeneratorService etagGenerator;
     private final LinksGeneratorService linksGenerator;
     private final IdGeneratorService idGenerator;
+    private final CertifiedCopyCostCalculatorService costCalculatorService;
     private final DescriptionProviderService descriptionProvider;
 
     public static final String DESCRIPTION_IDENTIFIER = "certified-copy";
@@ -27,11 +35,13 @@ public class CertifiedCopyItemService {
                                     final EtagGeneratorService etagGenerator,
                                     final LinksGeneratorService linksGenerator,
                                     final IdGeneratorService idGenerator,
+                                    final CertifiedCopyCostCalculatorService calculatorService,
                                     final DescriptionProviderService descriptionProvider) {
         this.repository = repository;
         this.etagGenerator = etagGenerator;
         this.linksGenerator = linksGenerator;
         this.idGenerator = idGenerator;
+        this.costCalculatorService = calculatorService;
         this.descriptionProvider = descriptionProvider;
     }
 
@@ -62,8 +72,33 @@ public class CertifiedCopyItemService {
         } else {
             certifiedCopyItem.getData().setPostalDelivery(Boolean.FALSE);
         }
+        certifiedCopyItem.getData().setKind(KIND);
+        populateItemCosts(certifiedCopyItem, costCalculatorService);
 
         return repository.save(certifiedCopyItem);
+    }
+
+    public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator) {
+        CertifiedCopyItemData itemData = item.getData();
+        List<FilingHistoryDocument> filingHistoryDocumentList = itemData.getItemOptions().getFilingHistoryDocuments();
+        List<ItemCostCalculation> costCalculationList = calculator.calculateAllCosts(getOrDefaultDeliveryTimescale(item),
+                                                                            filingHistoryDocumentList);
+        int totalItemCost = 0;
+        List<ItemCosts> itemCosts = new ArrayList<>();
+        for (ItemCostCalculation costCalculation : costCalculationList) {
+            totalItemCost += Integer.parseInt(costCalculation.getTotalItemCost());
+            itemCosts.addAll(costCalculation.getItemCosts());
+            item.setPostageCost(costCalculation.getPostageCost());
+        }
+        item.setItemCosts(itemCosts);
+        item.setTotalItemCost(totalItemCost + "");
+    }
+
+    DeliveryTimescale getOrDefaultDeliveryTimescale(final CertifiedCopyItem item) {
+        return item.getData().getItemOptions() != null &&
+                item.getData().getItemOptions().getDeliveryTimescale() != null ?
+                item.getData().getItemOptions().getDeliveryTimescale() :
+                DeliveryTimescale.STANDARD;
     }
 
     /**

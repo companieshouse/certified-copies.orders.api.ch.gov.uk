@@ -23,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
+import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 
 import java.time.LocalDate;
@@ -32,7 +33,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -132,7 +137,13 @@ class FilingHistoryDocumentServiceIntegrationTest {
     private Environment environment;
 
     @MockBean
+    private CostsConfig costsConfig;
+
+    @MockBean
     private CertifiedCopyItemService certifiedCopyItemService;
+
+    @MockBean
+    private CertifiedCopyCostCalculatorService certifiedCopyCostCalculatorService;
 
     @Test
     @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
