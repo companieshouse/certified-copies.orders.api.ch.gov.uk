@@ -69,7 +69,8 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private static final String COMPANY_NUMBER = "00000000";
     private static final String COMPANY_NAME = "Company Name";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
-    private static final int QUANTITY = 5;
+    private static final int QUANTITY_1 = 1;
+    private static final int QUANTITY_3 = 3;
     private static final String CONTACT_NUMBER = "0123456789";
     private static final String FORENAME = "Bob";
     private static final String SURNAME = "Jones";
@@ -90,6 +91,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private static final String TOTAL_ITEM_COST_SAME_DAY = "50";
     private static final String TOTAL_ITEM_COST_NEWINC = "30";
     private static final String TOTAL_ITEM_COST_MULTI = "45";
+    private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "135";
 
     private static final Links LINKS;
 
@@ -137,7 +139,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 = new CertifiedCopyItemRequestDTO();
         certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
         certifiedCopyItemDTORequest.setCustomerReference(CUSTOMER_REFERENCE);
-        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY_1);
 
         final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
                 = new FilingHistoryDocumentRequestDTO();
@@ -195,20 +197,20 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
                 .andExpect(jsonPath("$.kind", is(KIND)))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.quantity", is(QUANTITY_1)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST)));
 
         final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
     }
 
     @Test
-    @DisplayName("Successfully creates certified copy item")
+    @DisplayName("Successfully creates certified copy item with multiple filing history documents")
     void createCertifiedCopyItemMultipleFilingHistorySuccessfullyCreatesCertifiedCopyItem() throws Exception {
         final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest
                 = new CertifiedCopyItemRequestDTO();
         certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
         certifiedCopyItemDTORequest.setCustomerReference(CUSTOMER_REFERENCE);
-        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY_1);
 
         final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
                 = new FilingHistoryDocumentRequestDTO();
@@ -270,8 +272,83 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
                 .andExpect(jsonPath("$.kind", is(KIND)))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.quantity", is(QUANTITY_1)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_MULTI)));
+
+        final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
+    }
+
+    @Test
+    @DisplayName("Successfully creates certified copy item with multiple filing history documents and more than 1 quantity")
+    void createCertifiedCopyItemMultipleFilingHistoryAndQuantityOver1SuccessfullyCreatesCertifiedCopyItem() throws Exception {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest
+                = new CertifiedCopyItemRequestDTO();
+        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemDTORequest.setCustomerReference(CUSTOMER_REFERENCE);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY_3);
+
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
+                = new FilingHistoryDocumentRequestDTO();
+        filingHistoryDocumentRequestDTO.setFilingHistoryId(FILING_HISTORY_ID);
+
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
+                = new CertifiedCopyItemOptionsRequestDTO();
+        certifiedCopyItemOptionsDTORequest.setContactNumber(CONTACT_NUMBER);
+        certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.POSTAL);
+        certifiedCopyItemOptionsDTORequest.setDeliveryTimescale(DeliveryTimescale.STANDARD);
+        certifiedCopyItemOptionsDTORequest.setForename(FORENAME);
+        certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
+
+        certifiedCopyItemOptionsDTORequest
+                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        final List<FilingHistoryDocument> filings = getFilingHistoryDocumentsMulti();
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
+
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
+                .andExpect(jsonPath("$.company_name", is(COMPANY_NAME)))
+                .andExpect(jsonPath("$.customer_reference", is(CUSTOMER_REFERENCE)))
+                .andExpect(jsonPath("$.item_options.contact_number", is(CONTACT_NUMBER)))
+                .andExpect(jsonPath("$.item_options.delivery_method",
+                        is(DeliveryMethod.POSTAL.getJsonName())))
+                .andExpect(jsonPath("$.item_options.delivery_timescale",
+                        is(DeliveryTimescale.STANDARD.getJsonName())))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_date",
+                        is(FILING_HISTORY_DATE)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_description",
+                        is(FILING_HISTORY_DESCRIPTION)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_description_values",
+                        is(FILING_HISTORY_DESCRIPTION_VALUES)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_id",
+                        is(FILING_HISTORY_ID_01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
+                        is(FILING_HISTORY_TYPE_CH01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_date",
+                        is(FILING_HISTORY_DATE)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_description",
+                        is(FILING_HISTORY_DESCRIPTION)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_description_values",
+                        is(FILING_HISTORY_DESCRIPTION_VALUES)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_id",
+                        is(FILING_HISTORY_ID_02)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_type",
+                        is(FILING_HISTORY_TYPE_NEWINC)))
+                .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
+                .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
+                .andExpect(jsonPath("$.kind", is(KIND)))
+                .andExpect(jsonPath("$.postal_delivery", is(true)))
+                .andExpect(jsonPath("$.quantity", is(QUANTITY_3)))
+                .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_MULTI_QUANTITY_3)));
 
         final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
     }
@@ -281,7 +358,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     void createCertifiedCopySetsDeliveryMethodCollectionAndDeliveryTimeScaleSameDay() throws Exception {
         final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
         certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
-        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY_1);
 
         final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
                 = new FilingHistoryDocumentRequestDTO();
@@ -319,7 +396,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.delivery_timescale",
                         is(DeliveryTimescale.SAME_DAY.getJsonName())))
                 .andExpect(jsonPath("$.postal_delivery", is(false)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.quantity", is(QUANTITY_1)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_SAME_DAY)));
 
         assertItemSavedCorrectly(CERTIFIED_COPY_ID);
@@ -349,7 +426,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.item_options.delivery_timescale",
                         is(DeliveryTimescale.STANDARD.getJsonName())))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
-                .andExpect(jsonPath("$.quantity", is(QUANTITY)))
+                .andExpect(jsonPath("$.quantity", is(QUANTITY_1)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_NEWINC)));
 
         assertItemSavedCorrectly(CERTIFIED_COPY_ID);
@@ -398,7 +475,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
     private CertifiedCopyItemRequestDTO getCertifiedCopyItemRequestDTO() {
         final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
         certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
-        certifiedCopyItemDTORequest.setQuantity(QUANTITY);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY_1);
 
         final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
                 = new FilingHistoryDocumentRequestDTO();
@@ -459,7 +536,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemData.setCompanyName(COMPANY_NAME);
         certifiedCopyItemData.setCompanyNumber(COMPANY_NUMBER);
         certifiedCopyItemData.setId(CERTIFIED_COPY_ID);
-        certifiedCopyItemData.setQuantity(QUANTITY);
+        certifiedCopyItemData.setQuantity(QUANTITY_1);
         certifiedCopyItemData.setCustomerReference(CUSTOMER_REFERENCE);
         certifiedCopyItemData.setEtag(TOKEN_ETAG);
         certifiedCopyItemData.setLinks(LINKS);
@@ -467,7 +544,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         final CertifiedCopyItem newItem = new CertifiedCopyItem();
         newItem.setCompanyNumber(COMPANY_NUMBER);
         newItem.setId(CERTIFIED_COPY_ID);
-        newItem.setQuantity(QUANTITY);
+        newItem.setQuantity(QUANTITY_1);
         newItem.setUserId(ERIC_IDENTITY_VALUE);
         newItem.setData(certifiedCopyItemData);
         newItem.setCustomerReference(CUSTOMER_REFERENCE);
@@ -483,7 +560,7 @@ public class CertifiedCopiesItemControllerIntegrationTest {
         final CertifiedCopyItemResponseDTO expectedItem = new CertifiedCopyItemResponseDTO();
         expectedItem.setCompanyNumber(COMPANY_NUMBER);
         expectedItem.setCompanyName(COMPANY_NAME);
-        expectedItem.setQuantity(QUANTITY);
+        expectedItem.setQuantity(QUANTITY_1);
         expectedItem.setId(CERTIFIED_COPY_ID);
         expectedItem.setCustomerReference(CUSTOMER_REFERENCE);
         expectedItem.setEtag(TOKEN_ETAG);
