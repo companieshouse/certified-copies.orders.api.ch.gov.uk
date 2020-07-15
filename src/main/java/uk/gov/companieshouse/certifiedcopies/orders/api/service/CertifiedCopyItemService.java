@@ -81,7 +81,9 @@ public class CertifiedCopyItemService {
     public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator) {
         CertifiedCopyItemData itemData = item.getData();
         List<FilingHistoryDocument> filingHistoryDocumentList = itemData.getItemOptions().getFilingHistoryDocuments();
-        List<ItemCostCalculation> costCalculationList = calculator.calculateAllCosts(getOrDefaultDeliveryTimescale(item),
+        int quantity = itemData.getQuantity();
+        List<ItemCostCalculation> costCalculationList = calculator.calculateAllCosts(itemData.getQuantity(),
+                                                                            getOrDefaultDeliveryTimescale(item),
                                                                             filingHistoryDocumentList);
         int totalItemCost = 0;
         List<ItemCosts> itemCosts = new ArrayList<>();

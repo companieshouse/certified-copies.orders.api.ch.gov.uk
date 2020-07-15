@@ -23,21 +23,24 @@ public class CertifiedCopyCostCalculatorService {
         this.costs = costs;
     }
 
-    public List<ItemCostCalculation> calculateAllCosts(final DeliveryTimescale deliveryTimescale,
+    public List<ItemCostCalculation> calculateAllCosts(final int quantity, final DeliveryTimescale deliveryTimescale,
                                                        final List<FilingHistoryDocument> filingHistoryDocs) {
         List<ItemCostCalculation> costCalculationList = new ArrayList<>();
         for (FilingHistoryDocument filingHistoryDocument : filingHistoryDocs) {
-            costCalculationList.add(calculateCosts(deliveryTimescale, filingHistoryDocument.getFilingHistoryType()));
+            costCalculationList.add(calculateCosts(quantity, deliveryTimescale,
+                                                        filingHistoryDocument.getFilingHistoryType()));
         }
 
         return costCalculationList;
     }
 
-    private ItemCostCalculation calculateCosts(final DeliveryTimescale deliveryTimescale, final String filingHistoryType) {
-        checkArguments(deliveryTimescale, filingHistoryType);
+    private ItemCostCalculation calculateCosts(final int quantity,  final DeliveryTimescale deliveryTimescale,
+                                               final String filingHistoryType) {
+        checkArguments(quantity, deliveryTimescale, filingHistoryType);
         final List<ItemCosts> itemCostsList = new ArrayList<>();
-        ItemCosts itemCosts =  calculateSingleItemCosts(deliveryTimescale, filingHistoryType);
-        itemCostsList.add(itemCosts);
+        for (int i = 0; i < quantity; i++) {
+            itemCostsList.add(calculateSingleItemCosts(deliveryTimescale, filingHistoryType));
+        }
         final String totalItemCost = calculateTotalItemCost(itemCostsList, POSTAGE_COST);
 
         return new ItemCostCalculation(itemCostsList, POSTAGE_COST, totalItemCost);
@@ -67,8 +70,12 @@ public class CertifiedCopyCostCalculatorService {
         return Integer.toString(total);
     }
 
-    private void checkArguments(final DeliveryTimescale deliveryTimescale,
+    private void checkArguments(final int quantity,
+                                final DeliveryTimescale deliveryTimescale,
                                 String filingHistoryType) {
+        if (quantity < 1) {
+            throw new IllegalArgumentException("quantity must be greater than or equal to 1!");
+        }
         if (deliveryTimescale == null) {
             throw new IllegalArgumentException("deliveryTimescale must not be null!");
         }
