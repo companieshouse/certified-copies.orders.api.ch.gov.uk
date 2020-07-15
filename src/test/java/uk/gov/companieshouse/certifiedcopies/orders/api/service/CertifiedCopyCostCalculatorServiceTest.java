@@ -49,7 +49,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         // Given and when
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
         final List<ItemCostCalculation> calculations =
-                calculatorUnderTest.calculateAllCosts(DeliveryTimescale.STANDARD, filingHistoryDocumentList);
+                calculatorUnderTest.calculateAllCosts(1, DeliveryTimescale.STANDARD, filingHistoryDocumentList);
         final List<ItemCosts> costs = calculations.get(0).getItemCosts();
 
         // Then
@@ -69,7 +69,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         // Given and when
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocumentsMulti();
         final List<ItemCostCalculation> calculations =
-                calculatorUnderTest.calculateAllCosts(DeliveryTimescale.STANDARD, filingHistoryDocumentList);
+                calculatorUnderTest.calculateAllCosts(1, DeliveryTimescale.STANDARD, filingHistoryDocumentList);
         final List<ItemCosts> costs = calculations.get(0).getItemCosts();
 
         // Then
@@ -96,7 +96,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         // Given and when
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_NEWINC);
         final List<ItemCostCalculation> calculations =
-                calculatorUnderTest.calculateAllCosts(DeliveryTimescale.STANDARD, filingHistoryDocumentList);
+                calculatorUnderTest.calculateAllCosts(1, DeliveryTimescale.STANDARD, filingHistoryDocumentList);
         final List<ItemCosts> costs = calculations.get(0).getItemCosts();
 
         // Then
@@ -116,7 +116,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         // Given and when
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
         final List<ItemCostCalculation> calculations =
-                calculatorUnderTest.calculateAllCosts(DeliveryTimescale.SAME_DAY, filingHistoryDocumentList);
+                calculatorUnderTest.calculateAllCosts(1, DeliveryTimescale.SAME_DAY, filingHistoryDocumentList);
         final List<ItemCosts> costs = calculations.get(0).getItemCosts();
 
         // Then
@@ -136,7 +136,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         // Given and when
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_NEWINC);
         final List<ItemCostCalculation> calculations =
-                calculatorUnderTest.calculateAllCosts(DeliveryTimescale.SAME_DAY, filingHistoryDocumentList);
+                calculatorUnderTest.calculateAllCosts(1, DeliveryTimescale.SAME_DAY, filingHistoryDocumentList);
         final List<ItemCosts> costs = calculations.get(0).getItemCosts();
 
         // Then
@@ -150,6 +150,17 @@ public class CertifiedCopyCostCalculatorServiceTest {
     }
 
     @Test
+    @DisplayName("Incorrect quantity results in IllegalArgumentException")
+    void incorrectQuantityTriggersIllegalArgumentException() {
+        List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
+        final IllegalArgumentException exception =
+                Assertions.assertThrows(IllegalArgumentException.class,
+                        () -> calculatorUnderTest.calculateAllCosts(0, DeliveryTimescale.STANDARD,
+                                filingHistoryDocumentList));
+        assertThat(exception.getMessage(), is("quantity must be greater than or equal to 1!"));
+    }
+
+    @Test
     @DisplayName("Missing filing history type results in IllegalArgumentException")
     void missingFilingHistoryTypeTriggersIllegalArgumentException() {
         FilingHistoryDocument filingHistoryDocument = new FilingHistoryDocument();
@@ -158,7 +169,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         filingHistoryDocumentList.add(filingHistoryDocument);
         final IllegalArgumentException exception =
                 Assertions.assertThrows(IllegalArgumentException.class,
-                                        () -> calculatorUnderTest.calculateAllCosts(DeliveryTimescale.STANDARD,
+                                        () -> calculatorUnderTest.calculateAllCosts(1, DeliveryTimescale.STANDARD,
                                                                                     filingHistoryDocumentList));
         assertThat(exception.getMessage(), is("filingHistoryType must not be null"));
     }
@@ -169,7 +180,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
         final IllegalArgumentException exception =
                 Assertions.assertThrows(IllegalArgumentException.class,
-                                        () -> calculatorUnderTest.calculateAllCosts(null, filingHistoryDocumentList));
+                                        () -> calculatorUnderTest.calculateAllCosts(1, null, filingHistoryDocumentList));
         assertThat(exception.getMessage(), is("deliveryTimescale must not be null!"));
     }
 

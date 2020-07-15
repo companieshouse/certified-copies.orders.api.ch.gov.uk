@@ -24,6 +24,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
@@ -91,10 +92,11 @@ public class CertifiedCopyItemServiceTest {
         certifiedCopyItemOptions.setFilingHistoryDocuments(filings);
         final CertifiedCopyItem certifiedCopyItem = new CertifiedCopyItem();
         certifiedCopyItem.setItemOptions(certifiedCopyItemOptions);
+        certifiedCopyItem.setQuantity(1);
 
         List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateAllCosts(any(), anyList())).thenReturn(costCalculations);
+        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList())).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
@@ -127,10 +129,11 @@ public class CertifiedCopyItemServiceTest {
         final CertifiedCopyItem certifiedCopyItem = new CertifiedCopyItem();
         certifiedCopyItem.setCompanyNumber(COMPANY_NUMBER);
         certifiedCopyItem.setItemOptions(certifiedCopyItemOptions);
+        certifiedCopyItem.setQuantity(1);
 
         List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateAllCosts(any(), anyList())).thenReturn(costCalculations);
+        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList())).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
