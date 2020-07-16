@@ -12,6 +12,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyIte
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
+import uk.gov.companieshouse.certifiedcopies.orders.api.validator.CreateItemRequestValidator;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -29,15 +30,18 @@ public class CertifiedCopiesItemController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingUtils.APPLICATION_NAMESPACE);
 
+    private final CreateItemRequestValidator createItemRequestValidator;
     private final CertifiedCopyItemMapper mapper;
     private final CertifiedCopyItemService certifiedCopyItemService;
     private final CompanyService companyService;
     private final FilingHistoryDocumentService filingHistoryDocumentService;
 
-    public CertifiedCopiesItemController(final CertifiedCopyItemMapper mapper,
+    public CertifiedCopiesItemController(final CreateItemRequestValidator createItemRequestValidator,
+                                         final CertifiedCopyItemMapper mapper,
                                          final CertifiedCopyItemService certifiedCopyItemService,
                                          final CompanyService companyService,
                                          final FilingHistoryDocumentService filingHistoryDocumentService) {
+        this.createItemRequestValidator = createItemRequestValidator;
         this.mapper = mapper;
         this.certifiedCopyItemService = certifiedCopyItemService;
         this.companyService = companyService;
@@ -45,13 +49,20 @@ public class CertifiedCopiesItemController {
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
-    public ResponseEntity<CertifiedCopyItemResponseDTO> createCertifiedCopy(
+    public ResponseEntity<Object> createCertifiedCopy(
             final @Valid @RequestBody CertifiedCopyItemRequestDTO certifiedCopyItemRequestDTO,
             HttpServletRequest request,
             final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId) {
 
         Map<String, Object> logMap = LoggingUtils.createLoggingDataMap(requestId);
         LoggingUtils.getLogger().infoRequest(request, "create certified copy item request", logMap);
+
+        final List<String> errors = createItemRequestValidator.getValidationErrors(certifiedCopyItemRequestDTO);
+        if (!errors.isEmpty()) {
+            logErrorsWithStatus(logMap, errors, BAD_REQUEST);
+            LOGGER.errorRequest(request, "create certificate item validation errors", logMap);
+            return ResponseEntity.status(BAD_REQUEST).body(new ApiError(BAD_REQUEST, errors));
+        }
 
         CertifiedCopyItem certifiedCopyItem = mapper
                 .certifiedCopyItemRequestDTOToCertifiedCopyItem(certifiedCopyItemRequestDTO);

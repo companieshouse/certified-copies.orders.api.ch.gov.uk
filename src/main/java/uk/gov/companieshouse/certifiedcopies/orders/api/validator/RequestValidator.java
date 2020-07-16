@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.validator;
 
+import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
@@ -30,7 +31,7 @@ public class RequestValidator {
      * @param converter the converter this uses to present field names as they appear in the request JSON payload
      * @return the errors found, which will be empty if the item is found to be valid
      */
-    List<String> getValidationErrors(final CertifiedCopyItemOptions options, final FieldNameConverter converter) {
+    List<String> getValidationErrors(final CertifiedCopyItemOptionsRequestDTO options, final FieldNameConverter converter) {
         final List<String> errors = new ArrayList<>();
         if (options == null) {
             return errors;
@@ -45,7 +46,7 @@ public class RequestValidator {
      * @param options the options to be validated
      * @return the resulting errors, which will be empty if the fields are found to be valid
      */
-    List<String> getCollectionDeliveryValidationErrors(final CertifiedCopyItemOptions options) {
+    List<String> getCollectionDeliveryValidationErrors(final CertifiedCopyItemOptionsRequestDTO options) {
         final List<String> errors = new ArrayList<>();
         if (options.getDeliveryMethod() == DeliveryMethod.COLLECTION) {
             if (isBlank(options.getForename())) {

@@ -1,9 +1,10 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.validator;
 
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.certificates.orders.api.dto.CertificateItemDTO;
-import uk.gov.companieshouse.certificates.orders.api.model.CertificateItemOptions;
-import uk.gov.companieshouse.certificates.orders.api.util.FieldNameConverter;
+import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 
 import java.util.ArrayList;
@@ -30,12 +31,9 @@ public class CreateItemRequestValidator extends RequestValidator {
      * @param item the item to be validated
      * @return the errors found, which will be empty if the item is found to be valid
      */
-    public List<String> getValidationErrors(final CertifiedCopyIt item) {
+    public List<String> getValidationErrors(final CertifiedCopyItemRequestDTO item) {
         final List<String> errors = new ArrayList<>();
-        if (item.getId() != null) {
-            errors.add("id: must be null in a create item request");
-        }
-        final CertificateItemOptions options = item.getItemOptions();
+        final CertifiedCopyItemOptionsRequestDTO options = item.getItemOptions();
         errors.addAll(getValidationErrors(options, converter));
         return errors;
     }
