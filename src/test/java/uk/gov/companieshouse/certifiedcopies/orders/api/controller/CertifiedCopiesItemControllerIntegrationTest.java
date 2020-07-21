@@ -22,6 +22,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.ApiClientService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
@@ -62,7 +63,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class CertifiedCopiesItemControllerIntegrationTest {
+class CertifiedCopiesItemControllerIntegrationTest {
 
     private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
 
@@ -391,6 +392,8 @@ public class CertifiedCopiesItemControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
+                .andExpect(jsonPath("$.item_costs[0].product_type",
+                        is(ProductType.CERTIFIED_COPY_SAME_DAY.getJsonName())))
                 .andExpect(jsonPath("$.item_options.delivery_method",
                         is(DeliveryMethod.COLLECTION.getJsonName())))
                 .andExpect(jsonPath("$.item_options.delivery_timescale",
