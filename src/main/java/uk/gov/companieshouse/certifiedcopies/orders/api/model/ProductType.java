@@ -1,15 +1,22 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import static uk.gov.companieshouse.certifiedcopies.orders.api.converter.EnumValueNameConverter.convertEnumValueNameToJson;
+
 /**
  * Values of this represent the possible product types.
  */
 public enum ProductType {
-    CERTIFIED_COPY("certified-copy"),
-    CERTIFIED_COPY_SAME_DAY("certified-copy-same-day");
+    CERTIFICATE,
+    CERTIFICATE_SAME_DAY,
+    CERTIFICATE_ADDITIONAL_COPY,
+    SCAN_UPON_DEMAND,
+    CERTIFIED_COPY,
+    CERTIFIED_COPY_SAME_DAY;
 
-    private String value;
-
-    private ProductType(String value) { this.value = value; }
-
-    public String getValue() { return this.value; }
+    @JsonValue
+    public String getJsonName() {
+        return convertEnumValueNameToJson(this);
+    }
 }
