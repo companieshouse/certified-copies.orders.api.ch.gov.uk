@@ -1,15 +1,20 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
+import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.mapper.CertifiedCopyItemMapper;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
-import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.validator.CreateCertifiedCopyItemRequestValidator;
@@ -18,12 +23,22 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import java.util.*;
-
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.*;
+import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.CERTIFIED_COPY_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.COMPANY_NUMBER_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.USER_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.createLoggingDataMap;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.logErrorsWithStatus;
 
 @RestController
 public class CertifiedCopiesItemController {

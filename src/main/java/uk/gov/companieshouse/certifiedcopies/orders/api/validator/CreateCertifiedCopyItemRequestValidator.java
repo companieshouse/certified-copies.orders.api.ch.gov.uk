@@ -3,8 +3,6 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.validator;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 
 import java.util.ArrayList;
