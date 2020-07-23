@@ -369,6 +369,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemOptionsDTORequest.setDeliveryTimescale(DeliveryTimescale.SAME_DAY);
         certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.COLLECTION);
+        certifiedCopyItemOptionsDTORequest.setForename(FORENAME);
+        certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         certifiedCopyItemOptionsDTORequest
                 .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
@@ -491,6 +493,44 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         return certifiedCopyItemDTORequest;
+    }
+
+    @Test
+    @DisplayName("Fails to create certified copy when forename/surname missing with delivery set as collection")
+    void createCertifiedCopyWithDeliveryMethodCollectionAndMissingForenameSurnameFails() throws Exception {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest = new CertifiedCopyItemRequestDTO();
+        certifiedCopyItemDTORequest.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemDTORequest.setQuantity(QUANTITY_1);
+
+        final FilingHistoryDocumentRequestDTO filingHistoryDocumentRequestDTO
+                = new FilingHistoryDocumentRequestDTO();
+        filingHistoryDocumentRequestDTO.setFilingHistoryId(FILING_HISTORY_ID);
+
+        final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsDTORequest
+                = new CertifiedCopyItemOptionsRequestDTO();
+        certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.COLLECTION);
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+        certifiedCopyItemOptionsDTORequest
+                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+        certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
+
+        final List<FilingHistoryDocument> filings =
+                singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
+                        FILING_HISTORY_DESCRIPTION,
+                        FILING_HISTORY_DESCRIPTION_VALUES,
+                        FILING_HISTORY_ID,
+                        FILING_HISTORY_TYPE_CH01));
+        when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
+        when(companyService.getCompanyName(COMPANY_NUMBER)).thenReturn(COMPANY_NAME);
+        when(filingHistoryDocumentService.getFilingHistoryDocuments(eq(COMPANY_NUMBER), anyList())).thenReturn(filings);
+
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
