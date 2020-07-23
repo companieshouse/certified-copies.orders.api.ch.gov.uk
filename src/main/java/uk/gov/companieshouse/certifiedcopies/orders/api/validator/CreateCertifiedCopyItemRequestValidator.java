@@ -14,7 +14,7 @@ import java.util.List;
  * Implements validation of the request payload specific to the the create item request only.
  */
 @Component
-public class CreateItemRequestValidator extends RequestValidator {
+public class CreateCertifiedCopyItemRequestValidator extends RequestValidator {
 
     private final FieldNameConverter converter;
 
@@ -22,7 +22,7 @@ public class CreateItemRequestValidator extends RequestValidator {
      * Constructor.
      * @param converter the converter this uses to present field names as they appear in the request JSON payload
      */
-    public CreateItemRequestValidator(FieldNameConverter converter) {
+    public CreateCertifiedCopyItemRequestValidator(FieldNameConverter converter) {
         this.converter = converter;
     }
 

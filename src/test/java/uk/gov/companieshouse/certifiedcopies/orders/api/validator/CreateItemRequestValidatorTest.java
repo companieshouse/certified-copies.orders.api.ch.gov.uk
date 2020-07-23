@@ -14,15 +14,15 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod.COLLECTION;
 
 /**
- * Unit tests the {@link CreateItemRequestValidator} class.
+ * Unit tests the {@link CreateCertifiedCopyItemRequestValidator} class.
  */
 class CreateItemRequestValidatorTest {
 
-    private CreateItemRequestValidator validatorUnderTest;
+    private CreateCertifiedCopyItemRequestValidator validatorUnderTest;
 
     @BeforeEach
     void setUp() {
-        validatorUnderTest = new CreateItemRequestValidator(new FieldNameConverter());
+        validatorUnderTest = new CreateCertifiedCopyItemRequestValidator(new FieldNameConverter());
     }
 
     @Test
