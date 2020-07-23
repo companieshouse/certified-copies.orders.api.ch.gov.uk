@@ -1,30 +1,18 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.validator;
 
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
-import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.lang.Boolean.TRUE;
-import static java.util.Arrays.stream;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Implements common request payload validation.
  */
 public class RequestValidator {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingUtils.APPLICATION_NAMESPACE);
-
     /**
      * Validates the options provided, returning any errors found.
      * @param options the options to be validated
