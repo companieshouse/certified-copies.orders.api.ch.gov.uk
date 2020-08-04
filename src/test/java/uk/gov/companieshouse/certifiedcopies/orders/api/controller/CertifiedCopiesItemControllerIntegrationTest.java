@@ -21,6 +21,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemO
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
@@ -56,7 +57,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPIES_URL;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPY_COST;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPY_NEW_INCORPORATION_COST;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_CH01;
@@ -93,6 +98,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
     private static final String TOTAL_ITEM_COST_NEWINC = "30";
     private static final String TOTAL_ITEM_COST_MULTI = "45";
     private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "135";
+    private static final String DISCOUNT = "0";
 
     private static final Links LINKS;
 
@@ -269,6 +275,22 @@ class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_ID_02)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_type",
                         is(FILING_HISTORY_TYPE_NEWINC)))
+                .andExpect(jsonPath("$.item_costs[0].discount_applied",
+                        is(DISCOUNT)))
+                .andExpect(jsonPath("$.item_costs[0].item_cost",
+                        is(Integer.toString(CERTIFIED_COPY_COST))))
+                .andExpect(jsonPath("$.item_costs[0].calculated_cost",
+                        is(Integer.toString(CERTIFIED_COPY_COST))))
+                .andExpect(jsonPath("$.item_costs[0].product_type",
+                        is(CERTIFIED_COPY.getJsonName())))
+                .andExpect(jsonPath("$.item_costs[1].discount_applied",
+                        is(DISCOUNT)))
+                .andExpect(jsonPath("$.item_costs[1].item_cost",
+                        is(Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST))))
+                .andExpect(jsonPath("$.item_costs[1].calculated_cost",
+                        is(Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST))))
+                .andExpect(jsonPath("$.item_costs[1].product_type",
+                        is(CERTIFIED_COPY_INCORPORATION.getJsonName())))
                 .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
                 .andExpect(jsonPath("$.kind", is(KIND)))
@@ -277,6 +299,17 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_MULTI)));
 
         final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
+        assertThat(retrievedCopy.getData().getItemCosts().size(), is(2));
+        final ItemCosts cost1 = retrievedCopy.getData().getItemCosts().get(0);
+        final ItemCosts cost2 = retrievedCopy.getData().getItemCosts().get(0);
+        assertThat(cost1.getDiscountApplied(), is(DISCOUNT));
+        assertThat(cost1.getItemCost(), is(Integer.toString(CERTIFIED_COPY_COST)));
+        assertThat(cost1.getCalculatedCost(), is(Integer.toString(CERTIFIED_COPY_COST)));
+        assertThat(cost1.getProductType(), is(CERTIFIED_COPY));
+        assertThat(cost2.getDiscountApplied(), is(DISCOUNT));
+        assertThat(cost2.getItemCost(), is(Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST)));
+        assertThat(cost2.getCalculatedCost(), is(Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST)));
+        assertThat(cost1.getProductType(), is(CERTIFIED_COPY_INCORPORATION));
     }
 
     @Test
