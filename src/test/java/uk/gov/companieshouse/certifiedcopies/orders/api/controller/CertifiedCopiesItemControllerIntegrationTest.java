@@ -59,6 +59,8 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUt
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPIES_URL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_CH01;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_NEWINC;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
 
 @AutoConfigureMockMvc
@@ -81,8 +83,6 @@ class CertifiedCopiesItemControllerIntegrationTest {
     private static final Map<String, Object> FILING_HISTORY_DESCRIPTION_VALUES;
     private static final String FILING_HISTORY_ID_01 = "01";
     private static final String FILING_HISTORY_ID_02 = "02";
-    private static final String FILING_HISTORY_TYPE_CH01 = "CH01";
-    private static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
     private static final String KIND = "item#certified-copy";
     private static final String TOKEN_ETAG = "9d39ea69b64c80ca42ed72328b48c303c4445e28";
     private static final String POSTAGE_COST = "0";

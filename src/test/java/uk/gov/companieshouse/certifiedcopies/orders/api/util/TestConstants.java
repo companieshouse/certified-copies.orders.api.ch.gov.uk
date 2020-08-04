@@ -17,4 +17,6 @@ public class TestConstants {
     public static final String CERTIFIED_COPIES_URL = "/orderable/certified-copies";
     public static final ApiErrorResponsePayload FILING_NOT_FOUND =
             new ApiErrorResponsePayload(singletonList(new Error("ch:service", "filing-history-item-not-found")));
+    public static final String FILING_HISTORY_TYPE_CH01 = "CH01";
+    public static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
 }

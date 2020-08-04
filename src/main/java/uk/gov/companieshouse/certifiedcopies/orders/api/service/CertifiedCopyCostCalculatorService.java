@@ -56,7 +56,7 @@ public class CertifiedCopyCostCalculatorService {
         final int calculatedCost = cost - Integer.parseInt(DISCOUNT);
         itemCosts.setItemCost(Integer.toString(cost));
         itemCosts.setCalculatedCost(Integer.toString(calculatedCost));
-        final ProductType productType = deliveryTimescale.getProductType();
+        final ProductType productType = deliveryTimescale.getProductType(filingHistoryType);
         itemCosts.setProductType(productType);
 
         return itemCosts;
