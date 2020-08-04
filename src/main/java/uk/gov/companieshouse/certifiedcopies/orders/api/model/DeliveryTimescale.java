@@ -14,12 +14,12 @@ public enum DeliveryTimescale {
     SAME_DAY {
 
         @Override
-        public int getCertifiedCopyCost(final CostsConfig costs) {
+        protected int getCertifiedCopyCost(final CostsConfig costs) {
             return costs.getSameDayCost();
         }
 
         @Override
-        public int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
+        protected int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
             return costs.getSameDayNewIncorporationCost();
         }
 
@@ -35,7 +35,6 @@ public enum DeliveryTimescale {
 
     };
 
-    // TODO GCI-1321 Duplicates constant on CertifiedCopyCostCalculatorService
     private static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
 
     @JsonValue
@@ -43,18 +42,24 @@ public enum DeliveryTimescale {
         return EnumValueNameConverter.convertEnumValueNameToJson(this);
     }
 
-    public int getCertifiedCopyCost(final CostsConfig costs) {
-        return costs.getStandardCost();
-    }
-
-    public int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
-        return costs.getStandardNewIncorporationCost();
+    public final int getCost(final CostsConfig costs, final String filingHistoryType) {
+        return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
+                getCertifiedCopyNewIncorporationCost(costs) :
+                getCertifiedCopyCost(costs);
     }
 
     public final ProductType getProductType(final String filingHistoryType) {
         return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
                 getIncorporationProductType() :
                 getNonIncorporationProductType();
+    }
+
+    protected int getCertifiedCopyCost(final CostsConfig costs) {
+        return costs.getStandardCost();
+    }
+
+    protected int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
+        return costs.getStandardNewIncorporationCost();
     }
 
     protected ProductType getIncorporationProductType() {
