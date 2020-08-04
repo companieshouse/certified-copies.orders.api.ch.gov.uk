@@ -43,13 +43,13 @@ public enum DeliveryTimescale {
     }
 
     public final int getCost(final CostsConfig costs, final String filingHistoryType) {
-        return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
+        return isIncorporation(filingHistoryType) ?
                 getCertifiedCopyNewIncorporationCost(costs) :
                 getCertifiedCopyCost(costs);
     }
 
     public final ProductType getProductType(final String filingHistoryType) {
-        return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
+        return isIncorporation(filingHistoryType) ?
                 getIncorporationProductType() :
                 getNonIncorporationProductType();
     }
@@ -68,5 +68,9 @@ public enum DeliveryTimescale {
 
     protected ProductType getNonIncorporationProductType() {
         return CERTIFIED_COPY;
+    }
+
+    private boolean isIncorporation(final String filingHistoryType) {
+        return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC);
     }
 }
