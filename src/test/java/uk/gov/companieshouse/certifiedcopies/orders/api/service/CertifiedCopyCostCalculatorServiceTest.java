@@ -22,7 +22,7 @@ import static org.hamcrest.core.Is.is;
  * Unit/integration tests the {@link CertifiedCopyCostCalculatorService} class.
  */
 @SpringBootTest
-public class CertifiedCopyCostCalculatorServiceTest {
+class CertifiedCopyCostCalculatorServiceTest {
 
     private static final String POSTAGE_COST = "0";
     private static final String NO_DISCOUNT = "0";
