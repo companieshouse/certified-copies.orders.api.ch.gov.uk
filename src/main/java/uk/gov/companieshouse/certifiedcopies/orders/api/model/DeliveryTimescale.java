@@ -24,11 +24,15 @@ public enum DeliveryTimescale {
         }
 
         @Override
-        public ProductType getProductType(final String filingHistoryType) {
-            return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
-                    CERTIFIED_COPY_INCORPORATION_SAME_DAY :
-                    CERTIFIED_COPY_SAME_DAY;
+        protected ProductType getIncorporationProductType() {
+            return CERTIFIED_COPY_INCORPORATION_SAME_DAY;
         }
+
+        @Override
+        protected ProductType getNonIncorporationProductType() {
+            return CERTIFIED_COPY_SAME_DAY;
+        }
+
     };
 
     // TODO GCI-1321 Duplicates constant on CertifiedCopyCostCalculatorService
@@ -47,9 +51,17 @@ public enum DeliveryTimescale {
         return costs.getStandardNewIncorporationCost();
     }
 
-    public ProductType getProductType(final String filingHistoryType) {
+    public final ProductType getProductType(final String filingHistoryType) {
         return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
-                CERTIFIED_COPY_INCORPORATION :
-                CERTIFIED_COPY;
+                getIncorporationProductType() :
+                getNonIncorporationProductType();
+    }
+
+    protected ProductType getIncorporationProductType() {
+        return CERTIFIED_COPY_INCORPORATION;
+    }
+
+    protected ProductType getNonIncorporationProductType() {
+        return CERTIFIED_COPY;
     }
 }
