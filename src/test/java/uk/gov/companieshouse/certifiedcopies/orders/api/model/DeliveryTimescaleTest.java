@@ -49,18 +49,16 @@ class DeliveryTimescaleTest {
 
    @Test
     void standardTimescaleCostsAreCorrect() {
-       assertThat(STANDARD.getCertifiedCopyCost(COSTS), is(CERTIFIED_COPY_COST));
-       assertThat(STANDARD.getCertifiedCopyNewIncorporationCost(COSTS),
-               is(CERTIFIED_COPY_NEW_INCORPORATION_COST));
+       assertThat(STANDARD.getCost(COSTS, FILING_HISTORY_TYPE_CH01), is(CERTIFIED_COPY_COST));
+       assertThat(STANDARD.getCost(COSTS, FILING_HISTORY_TYPE_NEWINC), is(CERTIFIED_COPY_NEW_INCORPORATION_COST));
        assertThat(STANDARD.getProductType(FILING_HISTORY_TYPE_CH01), is(CERTIFIED_COPY));
        assertThat(STANDARD.getProductType(FILING_HISTORY_TYPE_NEWINC), is(CERTIFIED_COPY_INCORPORATION));
    }
 
     @Test
     void sameDayTimescaleCostsAreCorrect() {
-        assertThat(SAME_DAY.getCertifiedCopyCost(COSTS), is(SAME_DAY_CERTIFIED_COPY_COST));
-        assertThat(SAME_DAY.getCertifiedCopyNewIncorporationCost(COSTS),
-                is(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST));
+        assertThat(SAME_DAY.getCost(COSTS, FILING_HISTORY_TYPE_CH01), is(SAME_DAY_CERTIFIED_COPY_COST));
+        assertThat(SAME_DAY.getCost(COSTS, FILING_HISTORY_TYPE_NEWINC), is(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST));
         assertThat(SAME_DAY.getProductType(FILING_HISTORY_TYPE_CH01), is(CERTIFIED_COPY_SAME_DAY));
         assertThat(SAME_DAY.getProductType(FILING_HISTORY_TYPE_NEWINC), is(CERTIFIED_COPY_INCORPORATION_SAME_DAY));
     }
