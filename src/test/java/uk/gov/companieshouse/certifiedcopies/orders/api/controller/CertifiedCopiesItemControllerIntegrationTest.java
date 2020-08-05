@@ -300,16 +300,18 @@ class CertifiedCopiesItemControllerIntegrationTest {
 
         final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
         assertThat(retrievedCopy.getData().getItemCosts().size(), is(2));
-        final ItemCosts cost1 = retrievedCopy.getData().getItemCosts().get(0);
-        final ItemCosts cost2 = retrievedCopy.getData().getItemCosts().get(1);
-        assertThat(cost1.getDiscountApplied(), is(DISCOUNT));
-        assertThat(cost1.getItemCost(), is(Integer.toString(CERTIFIED_COPY_COST)));
-        assertThat(cost1.getCalculatedCost(), is(Integer.toString(CERTIFIED_COPY_COST)));
-        assertThat(cost1.getProductType(), is(CERTIFIED_COPY));
-        assertThat(cost2.getDiscountApplied(), is(DISCOUNT));
-        assertThat(cost2.getItemCost(), is(Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST)));
-        assertThat(cost2.getCalculatedCost(), is(Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST)));
-        assertThat(cost2.getProductType(), is(CERTIFIED_COPY_INCORPORATION));
+        org.assertj.core.api.Assertions.assertThat(retrievedCopy.getData().getItemCosts().get(0))
+                .isEqualToComparingFieldByField(new ItemCosts(
+                        DISCOUNT,
+                        Integer.toString(CERTIFIED_COPY_COST),
+                        Integer.toString(CERTIFIED_COPY_COST),
+                        CERTIFIED_COPY));
+        org.assertj.core.api.Assertions.assertThat(retrievedCopy.getData().getItemCosts().get(1))
+                .isEqualToComparingFieldByField(new ItemCosts(
+                        DISCOUNT,
+                        Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST),
+                        Integer.toString(CERTIFIED_COPY_NEW_INCORPORATION_COST),
+                        CERTIFIED_COPY_INCORPORATION));
     }
 
     @Test
