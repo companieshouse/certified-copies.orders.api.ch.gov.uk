@@ -15,7 +15,6 @@ import java.util.List;
 public class CertifiedCopyCostCalculatorService {
     private static final String POSTAGE_COST = "0";
     private static final String DISCOUNT = "0";
-    private static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
 
     private final CostsConfig costs;
 
@@ -50,13 +49,11 @@ public class CertifiedCopyCostCalculatorService {
                                                final String filingHistoryType) {
         final ItemCosts itemCosts = new ItemCosts();
         itemCosts.setDiscountApplied(DISCOUNT);
-        final int cost = filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC) ?
-                                            deliveryTimescale.getCertifiedCopyNewIncorporationCost(costs) :
-                                            deliveryTimescale.getCertifiedCopyCost(costs);
+        final int cost = deliveryTimescale.getCost(costs, filingHistoryType);
         final int calculatedCost = cost - Integer.parseInt(DISCOUNT);
         itemCosts.setItemCost(Integer.toString(cost));
         itemCosts.setCalculatedCost(Integer.toString(calculatedCost));
-        final ProductType productType = deliveryTimescale.getProductType();
+        final ProductType productType = deliveryTimescale.getProductType(filingHistoryType);
         itemCosts.setProductType(productType);
 
         return itemCosts;

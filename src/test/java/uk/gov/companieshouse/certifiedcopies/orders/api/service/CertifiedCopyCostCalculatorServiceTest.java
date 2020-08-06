@@ -22,7 +22,7 @@ import static org.hamcrest.core.Is.is;
  * Unit/integration tests the {@link CertifiedCopyCostCalculatorService} class.
  */
 @SpringBootTest
-public class CertifiedCopyCostCalculatorServiceTest {
+class CertifiedCopyCostCalculatorServiceTest {
 
     private static final String POSTAGE_COST = "0";
     private static final String NO_DISCOUNT = "0";
@@ -86,7 +86,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         assertThat(cost1.getItemCost(), is(CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost1.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost1.getCalculatedCost(), is(CERTIFIED_COPY_NEW_INC_COST));
-        assertThat(cost1.getProductType(), is(ProductType.CERTIFIED_COPY));
+        assertThat(cost1.getProductType(), is(ProductType.CERTIFIED_COPY_INCORPORATION));
         assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
         assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
     }
@@ -106,7 +106,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         assertThat(cost.getItemCost(), is(CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost.getCalculatedCost(), is(CERTIFIED_COPY_NEW_INC_COST));
-        assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY));
+        assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY_INCORPORATION));
         assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
         assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
     }
@@ -146,7 +146,7 @@ public class CertifiedCopyCostCalculatorServiceTest {
         assertThat(cost.getItemCost(), is(SAME_DAY_CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost.getCalculatedCost(), is(SAME_DAY_CERTIFIED_COPY_NEW_INC_COST));
-        assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY_SAME_DAY));
+        assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY_INCORPORATION_SAME_DAY));
         assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
         assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
     }

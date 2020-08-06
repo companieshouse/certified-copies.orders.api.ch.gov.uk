@@ -4,40 +4,73 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.converter.EnumValueNameConverter;
 
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION_SAME_DAY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_SAME_DAY;
+
 public enum DeliveryTimescale {
     STANDARD,
     SAME_DAY {
 
         @Override
-        public int getCertifiedCopyCost(final CostsConfig costs) {
+        protected int getCertifiedCopyCost(final CostsConfig costs) {
             return costs.getSameDayCost();
         }
 
         @Override
-        public int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
+        protected int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
             return costs.getSameDayNewIncorporationCost();
         }
 
         @Override
-        public ProductType getProductType() {
-            return ProductType.CERTIFIED_COPY_SAME_DAY;
+        protected ProductType getIncorporationProductType() {
+            return CERTIFIED_COPY_INCORPORATION_SAME_DAY;
         }
+
+        @Override
+        protected ProductType getNonIncorporationProductType() {
+            return CERTIFIED_COPY_SAME_DAY;
+        }
+
     };
+
+    private static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
 
     @JsonValue
     public String getJsonName() {
         return EnumValueNameConverter.convertEnumValueNameToJson(this);
     }
 
-    public int getCertifiedCopyCost(final CostsConfig costs) {
+    public final int getCost(final CostsConfig costs, final String filingHistoryType) {
+        return isIncorporation(filingHistoryType) ?
+                getCertifiedCopyNewIncorporationCost(costs) :
+                getCertifiedCopyCost(costs);
+    }
+
+    public final ProductType getProductType(final String filingHistoryType) {
+        return isIncorporation(filingHistoryType) ?
+                getIncorporationProductType() :
+                getNonIncorporationProductType();
+    }
+
+    protected int getCertifiedCopyCost(final CostsConfig costs) {
         return costs.getStandardCost();
     }
 
-    public int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
+    protected int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
         return costs.getStandardNewIncorporationCost();
     }
 
-    public ProductType getProductType() {
-        return ProductType.CERTIFIED_COPY;
+    protected ProductType getIncorporationProductType() {
+        return CERTIFIED_COPY_INCORPORATION;
+    }
+
+    protected ProductType getNonIncorporationProductType() {
+        return CERTIFIED_COPY;
+    }
+
+    private boolean isIncorporation(final String filingHistoryType) {
+        return filingHistoryType.equals(FILING_HISTORY_TYPE_NEWINC);
     }
 }
