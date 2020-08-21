@@ -93,6 +93,10 @@ class CertifiedCopiesItemControllerIntegrationTest {
     private static final String POSTAGE_COST = "0";
     private static final String DESCRIPTION = "certified copy for company 00000000";
     private static final String DESCRIPTION_IDENTIFIER = "certified-copy";
+
+    private static final String FILING_HISTORY_COST = "15";
+    private static final String FILING_HISTORY_COST_NEW_INC = "30";
+
     private static final String TOTAL_ITEM_COST = "15";
     private static final String TOTAL_ITEM_COST_SAME_DAY = "50";
     private static final String TOTAL_ITEM_COST_NEWINC = "30";
@@ -200,6 +204,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_ID)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
                         is(FILING_HISTORY_TYPE_CH01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_cost",
+                        is(FILING_HISTORY_COST)))
                 .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
                 .andExpect(jsonPath("$.kind", is(KIND)))
@@ -265,6 +271,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_ID_01)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
                         is(FILING_HISTORY_TYPE_CH01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_cost",
+                        is(FILING_HISTORY_COST)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_date",
                         is(FILING_HISTORY_DATE)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_description",
@@ -275,6 +283,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_ID_02)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_type",
                         is(FILING_HISTORY_TYPE_NEWINC)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_cost",
+                        is(FILING_HISTORY_COST_NEW_INC)))
                 .andExpect(jsonPath("$.item_costs[0].discount_applied",
                         is(DISCOUNT)))
                 .andExpect(jsonPath("$.item_costs[0].item_cost",
@@ -369,6 +379,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_ID_01)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_type",
                         is(FILING_HISTORY_TYPE_CH01)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[0].filing_history_cost",
+                        is(FILING_HISTORY_COST)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_date",
                         is(FILING_HISTORY_DATE)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_description",
@@ -379,6 +391,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
                         is(FILING_HISTORY_ID_02)))
                 .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_type",
                         is(FILING_HISTORY_TYPE_NEWINC)))
+                .andExpect(jsonPath("$.item_options.filing_history_documents[1].filing_history_cost",
+                        is(FILING_HISTORY_COST_NEW_INC)))
                 .andExpect(jsonPath("$.item_options.forename", is(FORENAME)))
                 .andExpect(jsonPath("$.item_options.surname", is(SURNAME)))
                 .andExpect(jsonPath("$.kind", is(KIND)))
@@ -680,12 +694,14 @@ class CertifiedCopiesItemControllerIntegrationTest {
         filingHistoryDocument1.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
         filingHistoryDocument1.setFilingHistoryDate(FILING_HISTORY_DATE);
         filingHistoryDocument1.setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES);
+        filingHistoryDocument1.setFilingHistoryCost(FILING_HISTORY_COST);
         FilingHistoryDocument filingHistoryDocument2 = new FilingHistoryDocument();
         filingHistoryDocument2.setFilingHistoryId(FILING_HISTORY_ID_02);
         filingHistoryDocument2.setFilingHistoryType(FILING_HISTORY_TYPE_NEWINC);
         filingHistoryDocument2.setFilingHistoryDate(FILING_HISTORY_DATE);
         filingHistoryDocument2.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
         filingHistoryDocument2.setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES);
+        filingHistoryDocument2.setFilingHistoryCost(FILING_HISTORY_COST_NEW_INC);
         List<FilingHistoryDocument> filingHistoryDocumentList = new ArrayList<>();
         filingHistoryDocumentList.add(filingHistoryDocument1);
         filingHistoryDocumentList.add(filingHistoryDocument2);
