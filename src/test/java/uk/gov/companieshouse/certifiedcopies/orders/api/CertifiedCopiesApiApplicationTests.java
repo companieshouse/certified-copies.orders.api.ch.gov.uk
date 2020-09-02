@@ -23,6 +23,8 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
@@ -46,6 +48,9 @@ class CertifiedCopiesApiApplicationTests {
 	private static final String FORENAME = "Bob";
 	private static final String SURNAME = "Jones";
 	private static final String FILING_HISTORY_ID = "1";
+	
+	private final String ITEMS_DATABASE = "ITEMS_DATABASE";
+	private final String MONGODB_URL = "MONGODB_URL";
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -146,6 +151,35 @@ class CertifiedCopiesApiApplicationTests {
 					+ "/company/00006400/filing-history/1: " + "Service Unavailable")
 			.jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
 	}
+	
+	@Test
+	@DisplayName("Checking environment variables when all variables are set should return true")
+	void checkEnvironmentVariablesAllPresentReturnsTrue() {
+	    ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
+	    ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
+	    
+	    boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
+	    assertTrue(present);
+	    ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL);
+	}
+	
+	@Test
+	@DisplayName("Checking environment variables when ITEMS_DATABASE is not set should return false")
+	void checkEnvironmentVariablesItemsDatabaseMissingReturnsFalse() {
+	    ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
+	    boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
+	    assertFalse(present);
+	    ENVIRONMENT_VARIABLES.clear(MONGODB_URL);
+	}
+	
+	@Test
+	@DisplayName("Checking environment variables when MONGODB_URL is not set should return false")
+	void checkEnvironmentVariablesMongoDbMissingReturnsFasle() {
+	    ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
+	    boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
+	    assertFalse(present);
+	    ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE);
+	}
 
 	/**
 	 * Factory method to create a valid create certified copy item request DTO for testing purposes.
@@ -175,5 +209,4 @@ class CertifiedCopiesApiApplicationTests {
 		request.setItemOptions(certifiedCopyItemOptionsDTORequest);
 		return request;
 	}
-
 }

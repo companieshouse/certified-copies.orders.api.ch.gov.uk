@@ -39,6 +39,7 @@
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<spring-boot-maven-plugin.version>2.1.15.RELEASE</spring-boot-maven-plugin.version>
+		<environment-reader-library.version>1.3.6</environment-reader-library.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -115,6 +116,11 @@
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>api-sdk-manager-java-library</artifactId>
 			<version>${api-sdk-manager-java-library.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.gov.companieshouse</groupId>
+			<artifactId>environment-reader-library</artifactId>
+			<version>${environment-reader-library.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
