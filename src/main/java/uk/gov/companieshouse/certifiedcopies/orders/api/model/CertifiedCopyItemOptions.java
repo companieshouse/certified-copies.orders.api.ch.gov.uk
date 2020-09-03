@@ -1,8 +1,13 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
+import org.springframework.data.annotation.Transient;
+
 import java.util.List;
 
 public class CertifiedCopyItemOptions {
+
+    @Transient
+    private final String type = "CertifiedCopyItemOptions";
 
     private CollectionLocation collectionLocation;
 
@@ -73,4 +78,6 @@ public class CertifiedCopyItemOptions {
     public void setSurname(String surname) {
         this.surname = surname;
     }
+
+    public String getType() { return type; }
 }
