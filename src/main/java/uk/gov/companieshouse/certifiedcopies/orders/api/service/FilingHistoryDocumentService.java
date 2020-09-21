@@ -6,11 +6,15 @@ import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.model.filinghistory.AnnotationsApi;
+import uk.gov.companieshouse.api.model.filinghistory.AssociatedFilingsApi;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
+import uk.gov.companieshouse.api.model.filinghistory.ResolutionsApi;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.logging.Logger;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,9 +81,11 @@ public class FilingHistoryDocumentService {
         final String uri = GET_FILING_HISTORY_DOCUMENT.expand(companyNumber, filingHistoryDocumentId).toString();
         try {
             final FilingApi filing = apiClient.filing().get(uri).execute().getData();
+            final String description = filing.getDescription();
+            Map<String, Object> descriptionValues = getDescriptionValues(filing, description);
             return new FilingHistoryDocument(filing.getDate().toString(),
-                        filing.getDescription(),
-                        filing.getDescriptionValues(),
+                        description,
+                        descriptionValues,
                         filing.getTransactionId(),
                         filing.getType());
         } catch (ApiErrorResponseException ex) {
@@ -92,6 +98,69 @@ public class FilingHistoryDocumentService {
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, error);
         }
 
+    }
+
+    /**
+     * Extracts description_values for non-standard filing-history types - `associated_filing`, `annotation`,
+     * `resolution`
+     * @param filing
+     * @param description
+     * @return
+     */
+    private Map<String, Object> getDescriptionValues(FilingApi filing, String description) {
+        Map<String, Object> descriptionValues = new HashMap<>();
+        if (description.equals("incorporation-company")) {
+            // associated filings
+            Map<String, Object> finalDescValues = descriptionValues;
+            List<AssociatedFilingsApi> associatedFilings = filing.getAssociatedFilings();
+            if (associatedFilings != null) {
+                associatedFilings.forEach(associatedFiling -> {
+                    if (associatedFiling.getDescriptionValues() != null) {
+                        finalDescValues.put(associatedFiling.getDescription(), associatedFiling.getDescriptionValues());
+                    } else {
+                        finalDescValues.put(associatedFiling.getDescription(), associatedFiling.getType());
+                    }
+                });
+            }
+            // annotations
+            addAnnotations(filing, finalDescValues);
+        }
+        else if (description.equals("capital-allotment-shares")) {
+            Map<String, Object> finalDescValues = descriptionValues;
+            String desc = filing.getDescription();
+            Map<String, Object> descValues = filing.getDescriptionValues();
+            if (descriptionValues != null) {
+                finalDescValues.put(desc, descValues);
+            }
+
+            // annotations
+            addAnnotations(filing, finalDescValues);
+        }
+        else if (description.equals("resolution")) {
+            List<ResolutionsApi> resolutions = filing.getResolutions();
+            Map<String, Object> finalDescValues = descriptionValues;
+            resolutions.forEach(resolution -> {
+                finalDescValues.put(resolution.getDescription(), resolution.getType());
+            });
+        }
+        else {
+            descriptionValues = filing.getDescriptionValues();
+        }
+        return descriptionValues;
+    }
+
+    private void addAnnotations(FilingApi filing, Map<String, Object> finalDescValues) {
+        List<AnnotationsApi> annotations = filing.getAnnotations();
+        if (annotations != null) {
+            annotations.forEach(annotation -> {
+                if (annotation.getDescriptionValues() != null) {
+                    finalDescValues.put(annotation.getDescription(), annotation.getDescriptionValues());
+                }
+                else {
+                    finalDescValues.put(annotation.getDescription(), annotation.getType());
+                }
+            });
+        }
     }
 
     /**
