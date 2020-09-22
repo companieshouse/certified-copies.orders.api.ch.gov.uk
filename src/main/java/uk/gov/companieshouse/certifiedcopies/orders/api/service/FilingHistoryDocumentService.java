@@ -118,7 +118,7 @@ public class FilingHistoryDocumentService {
                     if (associatedFiling.getDescriptionValues() != null) {
                         finalDescValues.put(associatedFiling.getDescription(), associatedFiling.getDescriptionValues());
                     } else {
-                        finalDescValues.put(associatedFiling.getDescription(), associatedFiling.getType());
+                        finalDescValues.put(associatedFiling.getType(), associatedFiling.getDescription());
                     }
                 });
             }
@@ -140,7 +140,7 @@ public class FilingHistoryDocumentService {
             List<ResolutionsApi> resolutions = filing.getResolutions();
             Map<String, Object> finalDescValues = descriptionValues;
             resolutions.forEach(resolution -> {
-                finalDescValues.put(resolution.getDescription(), resolution.getType());
+                finalDescValues.put(resolution.getType(), resolution.getDescription());
             });
         }
         else {
@@ -157,7 +157,7 @@ public class FilingHistoryDocumentService {
                     finalDescValues.put(annotation.getDescription(), annotation.getDescriptionValues());
                 }
                 else {
-                    finalDescValues.put(annotation.getDescription(), annotation.getType());
+                    finalDescValues.put(annotation.getType(), annotation.getDescription());
                 }
             });
         }
