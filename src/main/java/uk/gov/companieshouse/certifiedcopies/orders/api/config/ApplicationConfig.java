@@ -19,7 +19,6 @@ import uk.gov.companieshouse.api.util.security.Permission.Key;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthenticationInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthorisationInterceptor;
-import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
@@ -27,16 +26,21 @@ public class ApplicationConfig implements WebMvcConfigurer {
     private String CERTIFIED_COPIES_HOME;
 
     @Autowired
-    private CertifiedCopyItemService certifiedCopyItemService;
+    private LoggingInterceptor loggingInterceptor;
+
+    @Autowired
+    private UserAuthenticationInterceptor userAuthenticationInterceptor;
+    
+    @Autowired
+    private UserAuthorisationInterceptor userAuthorisationInterceptor;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(new LoggingInterceptor());
-        registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
-        registry.addInterceptor(new UserAuthorisationInterceptor(certifiedCopyItemService))
-                .addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
-        registry.addInterceptor(crudPermissionsInterceptor())
-                .addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
+        registry.addInterceptor(loggingInterceptor);
+        final String authPathPattern = CERTIFIED_COPIES_HOME + "/**";
+        registry.addInterceptor(userAuthenticationInterceptor).addPathPatterns(authPathPattern);
+        registry.addInterceptor(userAuthorisationInterceptor).addPathPatterns(authPathPattern);
+        registry.addInterceptor(crudPermissionsInterceptor()).addPathPatterns(authPathPattern);
     }
 
     @Bean
