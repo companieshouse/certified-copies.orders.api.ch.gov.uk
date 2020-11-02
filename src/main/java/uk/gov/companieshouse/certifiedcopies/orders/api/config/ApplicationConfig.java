@@ -23,7 +23,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthoris
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
     @Value("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
-    private String CERTIFIED_COPIES_HOME;
+    String CERTIFIED_COPIES_HOME;
 
     @Autowired
     private LoggingInterceptor loggingInterceptor;
