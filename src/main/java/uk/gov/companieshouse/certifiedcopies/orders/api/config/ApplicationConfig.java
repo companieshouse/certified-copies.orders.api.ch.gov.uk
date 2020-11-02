@@ -23,7 +23,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthoris
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
     @Value("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
-    String CERTIFIED_COPIES_HOME;
+    String certifiedCopiesHome;
 
     @Autowired
     private LoggingInterceptor loggingInterceptor;
@@ -37,7 +37,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(loggingInterceptor);
-        final String authPathPattern = CERTIFIED_COPIES_HOME + "/**";
+        final String authPathPattern = certifiedCopiesHome + "/**";
         registry.addInterceptor(userAuthenticationInterceptor).addPathPatterns(authPathPattern);
         registry.addInterceptor(userAuthorisationInterceptor).addPathPatterns(authPathPattern);
         registry.addInterceptor(crudPermissionsInterceptor()).addPathPatterns(authPathPattern);

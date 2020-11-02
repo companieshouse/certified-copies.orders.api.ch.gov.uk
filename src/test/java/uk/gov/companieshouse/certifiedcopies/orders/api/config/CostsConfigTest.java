@@ -17,7 +17,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
  * Unit tests the {@link CostsConfig} class.
  */
 @SpringBootTest
-public class CostsConfigTest {
+class CostsConfigTest {
 
     @Autowired
     private CostsConfig configUnderTest;

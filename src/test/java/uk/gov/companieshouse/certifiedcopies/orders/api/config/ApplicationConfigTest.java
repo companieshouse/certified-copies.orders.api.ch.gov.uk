@@ -44,7 +44,7 @@ class ApplicationConfigTest {
 
     @BeforeEach
     void setup() {
-        config.CERTIFIED_COPIES_HOME = CERTIFIED_COPIES_HOME;
+        config.certifiedCopiesHome = CERTIFIED_COPIES_HOME;
     }
 
     @Test
