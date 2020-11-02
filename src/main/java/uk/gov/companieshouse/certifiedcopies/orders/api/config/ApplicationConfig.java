@@ -1,21 +1,25 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import uk.gov.companieshouse.api.interceptor.CRUDAuthenticationInterceptor;
+import uk.gov.companieshouse.api.util.security.Permission.Key;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthenticationInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthorisationInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
-
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
@@ -31,6 +35,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
         registry.addInterceptor(new UserAuthenticationInterceptor()).addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
         registry.addInterceptor(new UserAuthorisationInterceptor(certifiedCopyItemService))
                 .addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
+        registry.addInterceptor(crudPermissionsInterceptor())
+                .addPathPatterns(CERTIFIED_COPIES_HOME + "/**");
     }
 
     @Bean
@@ -43,4 +49,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 .findAndRegisterModules();
     }
 
+    @Bean
+    public CRUDAuthenticationInterceptor crudPermissionsInterceptor() {
+        return new CRUDAuthenticationInterceptor(Key.USER_ORDERS);
+    }
 }
