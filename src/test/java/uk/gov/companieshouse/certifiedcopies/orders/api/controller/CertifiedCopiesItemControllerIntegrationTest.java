@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
@@ -56,6 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
+import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION;
@@ -67,11 +69,15 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_CH01;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_NEWINC;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.TOKEN_PERMISSION_VALUE;
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@TestPropertySource(properties = {"ENABLE_TOKEN_PERMISSION_AUTH=1"})
 class CertifiedCopiesItemControllerIntegrationTest {
 
+    private static final String TOKEN_PERMISSION_CREATE = String.format(TOKEN_PERMISSION_VALUE, "create");
+    private static final String TOKEN_PERMISSION_READ = String.format(TOKEN_PERMISSION_VALUE, "read");
     private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
 
     private static final String COMPANY_NUMBER = "00000000";
@@ -183,6 +189,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
@@ -250,6 +257,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
@@ -358,6 +366,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
@@ -440,6 +449,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
@@ -471,6 +481,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
@@ -503,6 +514,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isCreated())
@@ -577,6 +589,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isBadRequest());
@@ -609,6 +622,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
                 .andExpect(status().isBadRequest())
@@ -618,54 +632,51 @@ class CertifiedCopiesItemControllerIntegrationTest {
         assertItemWasNotSaved(CERTIFIED_COPY_ID);
 
     }
+    
+    @Test
+    @DisplayName("Fails to create certified copy item with wrong token permission")
+    void createCertifiedCopyUnauthorised() throws Exception {
+        final CertifiedCopyItemRequestDTO certifiedCopyItemDTORequest
+                = new CertifiedCopyItemRequestDTO();
+
+        mockMvc.perform(post(CERTIFIED_COPIES_URL)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_READ)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
+                .andExpect(status().isUnauthorized());
+
+        assertItemWasNotSaved(CERTIFIED_COPY_ID);
+    }
 
     @Test
     @DisplayName("Successfully gets a certified copy item")
     void getCertifiedCopyItemSuccessfully() throws Exception {
         // Given
         // Create certified copy item in database
-        final CertifiedCopyItemData certifiedCopyItemData = new CertifiedCopyItemData();
-        certifiedCopyItemData.setCompanyName(COMPANY_NAME);
-        certifiedCopyItemData.setCompanyNumber(COMPANY_NUMBER);
-        certifiedCopyItemData.setId(CERTIFIED_COPY_ID);
-        certifiedCopyItemData.setQuantity(QUANTITY_1);
-        certifiedCopyItemData.setCustomerReference(CUSTOMER_REFERENCE);
-        certifiedCopyItemData.setEtag(TOKEN_ETAG);
-        certifiedCopyItemData.setLinks(LINKS);
-        certifiedCopyItemData.setPostageCost(POSTAGE_COST);
-        final CertifiedCopyItem newItem = new CertifiedCopyItem();
-        newItem.setCompanyNumber(COMPANY_NUMBER);
-        newItem.setId(CERTIFIED_COPY_ID);
-        newItem.setQuantity(QUANTITY_1);
-        newItem.setUserId(ERIC_IDENTITY_VALUE);
-        newItem.setData(certifiedCopyItemData);
-        newItem.setCustomerReference(CUSTOMER_REFERENCE);
-        newItem.setEtag(TOKEN_ETAG);
-        newItem.setLinks(LINKS);
-        newItem.setPostageCost(POSTAGE_COST);
-        final CertifiedCopyItemOptions options = new CertifiedCopyItemOptions();
-        options.setFilingHistoryDocuments(singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
-                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_DESCRIPTION_VALUES, FILING_HISTORY_ID, FILING_HISTORY_TYPE_CH01)));
-        newItem.setItemOptions(options);
+        final CertifiedCopyItem newItem = createCertifiedCopyItem(CERTIFIED_COPY_ID);
         repository.save(newItem);
 
         final CertifiedCopyItemResponseDTO expectedItem = new CertifiedCopyItemResponseDTO();
-        expectedItem.setCompanyNumber(COMPANY_NUMBER);
-        expectedItem.setCompanyName(COMPANY_NAME);
-        expectedItem.setQuantity(QUANTITY_1);
-        expectedItem.setId(CERTIFIED_COPY_ID);
-        expectedItem.setCustomerReference(CUSTOMER_REFERENCE);
-        expectedItem.setEtag(TOKEN_ETAG);
-        expectedItem.setLinks(LINKS);
-        expectedItem.setPostageCost(POSTAGE_COST);
-        expectedItem.setItemOptions(options);
+        expectedItem.setCompanyNumber(newItem.getData().getCompanyNumber());
+        expectedItem.setCompanyName(newItem.getData().getCompanyName());
+        expectedItem.setQuantity(newItem.getData().getQuantity());
+        expectedItem.setId(newItem.getData().getId());
+        expectedItem.setCustomerReference(newItem.getData().getCustomerReference());
+        expectedItem.setEtag(newItem.getData().getEtag());
+        expectedItem.setLinks(newItem.getData().getLinks());
+        expectedItem.setPostageCost(newItem.getData().getPostageCost());
+        expectedItem.setItemOptions(newItem.getData().getItemOptions());
 
         // When and then
-        mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID)
+        mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + newItem.getId())
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_READ)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedItem), true))
@@ -684,6 +695,52 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
+    }
+    
+    @Test
+    @DisplayName("Returns unauthorised when not using the right token permission")
+    void getCertifiedCopyUnauthorised() throws Exception {
+        // Given
+        // Create certified copy item in database
+        final CertifiedCopyItem newItem = createCertifiedCopyItem(CERTIFIED_COPY_ID);
+        repository.save(newItem);
+        
+        // When and then
+        mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + newItem.getId())
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+                .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+                .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+    
+    private CertifiedCopyItem createCertifiedCopyItem(String id) {
+        final CertifiedCopyItemData certifiedCopyItemData = new CertifiedCopyItemData();
+        certifiedCopyItemData.setCompanyName(COMPANY_NAME);
+        certifiedCopyItemData.setCompanyNumber(COMPANY_NUMBER);
+        certifiedCopyItemData.setId("DATA_ID");
+        certifiedCopyItemData.setQuantity(QUANTITY_1);
+        certifiedCopyItemData.setCustomerReference(CUSTOMER_REFERENCE);
+        certifiedCopyItemData.setEtag(TOKEN_ETAG);
+        certifiedCopyItemData.setLinks(LINKS);
+        certifiedCopyItemData.setPostageCost(POSTAGE_COST);
+        final CertifiedCopyItem newItem = new CertifiedCopyItem();
+        newItem.setCompanyNumber(COMPANY_NUMBER);
+        newItem.setId(id);
+        newItem.setQuantity(QUANTITY_1);
+        newItem.setUserId(ERIC_IDENTITY_VALUE);
+        newItem.setData(certifiedCopyItemData);
+        newItem.setCustomerReference(CUSTOMER_REFERENCE);
+        newItem.setEtag(TOKEN_ETAG);
+        newItem.setLinks(LINKS);
+        newItem.setPostageCost(POSTAGE_COST);
+        final CertifiedCopyItemOptions options = new CertifiedCopyItemOptions();
+        options.setFilingHistoryDocuments(singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
+                FILING_HISTORY_DESCRIPTION, FILING_HISTORY_DESCRIPTION_VALUES, FILING_HISTORY_ID, FILING_HISTORY_TYPE_CH01)));
+        newItem.setItemOptions(options);
+        return newItem;
     }
 
     private List<FilingHistoryDocument> getFilingHistoryDocumentsMulti() {

@@ -12,12 +12,14 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
+import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPIES_URL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_NOT_FOUND;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.TOKEN_PERMISSION_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
 import org.junit.ClassRule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
@@ -29,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,11 +45,13 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
+@TestPropertySource(properties = {"ENABLE_TOKEN_PERMISSION_AUTH=1"})
 class CertifiedCopiesApiApplicationTests {
 
     @ClassRule
     public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
 
+    private static final String TOKEN_PERMISSION_CREATE = String.format(TOKEN_PERMISSION_VALUE, "create");
     private static final String COMPANY_NUMBER = "00006400";
     private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
     
@@ -79,6 +84,22 @@ class CertifiedCopiesApiApplicationTests {
     @Test
     void contextLoads() {
     }
+    
+    @Test
+    @DisplayName("createCertifiedCopy using wrong permission")
+    void createCertifiedCopyUnauthorised() throws JsonProcessingException {
+
+        // When and then
+        webTestClient.post().uri(CERTIFIED_COPIES_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+            .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
+            .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, "other=read")
+            .body(fromObject(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
+            .exchange()
+            .expectStatus().isUnauthorized();
+    }
 
     @Test
     @DisplayName("createCertifiedCopy propagates 400 Bad Request for an unknown company get filing request")
@@ -97,6 +118,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
             .body(fromObject(buildCreateCertifiedCopyItemRequest(UNKNOWN_COMPANY_NUMBER)))
             .exchange()
             .expectStatus().isBadRequest()
@@ -124,6 +146,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
             .body(fromObject(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
             .exchange()
             .expectStatus().is5xxServerError()
@@ -151,6 +174,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
+            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
             .body(fromObject(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
             .exchange()
             .expectStatus().is5xxServerError()
