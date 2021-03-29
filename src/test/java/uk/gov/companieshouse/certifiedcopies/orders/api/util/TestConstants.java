@@ -19,4 +19,5 @@ public class TestConstants {
             new ApiErrorResponsePayload(singletonList(new Error("ch:service", "filing-history-item-not-found")));
     public static final String FILING_HISTORY_TYPE_CH01 = "CH01";
     public static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
+    public static final String TOKEN_PERMISSION_VALUE = "user_orders=%s";
 }
