@@ -689,6 +689,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         // When and then
         mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + CERTIFIED_COPY_ID)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
+                .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_READ)
                 .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
                 .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)

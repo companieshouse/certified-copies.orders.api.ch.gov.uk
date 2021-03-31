@@ -38,9 +38,9 @@ public class ApplicationConfig implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(loggingInterceptor);
         final String authPathPattern = certifiedCopiesHome + "/**";
+        registry.addInterceptor(crudPermissionsInterceptor()).addPathPatterns(authPathPattern);
         registry.addInterceptor(userAuthenticationInterceptor).addPathPatterns(authPathPattern);
         registry.addInterceptor(userAuthorisationInterceptor).addPathPatterns(authPathPattern);
-        registry.addInterceptor(crudPermissionsInterceptor()).addPathPatterns(authPathPattern);
     }
 
     @Bean
