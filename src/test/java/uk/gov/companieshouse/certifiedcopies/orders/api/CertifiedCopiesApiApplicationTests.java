@@ -31,7 +31,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +44,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
-@TestPropertySource(properties = {"ENABLE_TOKEN_PERMISSION_AUTH=1"})
 class CertifiedCopiesApiApplicationTests {
 
     @ClassRule
