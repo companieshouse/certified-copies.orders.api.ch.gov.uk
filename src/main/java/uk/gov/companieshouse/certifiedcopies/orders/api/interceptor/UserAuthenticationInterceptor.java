@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.interceptor;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.EricHeaderHelper;
 import uk.gov.companieshouse.logging.Logger;
@@ -17,7 +18,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUt
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
 
 @Component
-public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
+public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private static final Logger LOGGER = getLogger();
 

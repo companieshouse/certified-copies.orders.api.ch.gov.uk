@@ -3,7 +3,7 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.ConverterFactory;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
@@ -29,7 +29,7 @@ public class MongoConfig {
      * the default MappingMongoConverter.
      */
     @Bean
-    public MappingMongoConverter mappingMongoConverter(final MongoDbFactory factory,
+    public MappingMongoConverter mappingMongoConverter(final MongoDatabaseFactory factory,
                                                        final MongoMappingContext context) {
         final DbRefResolver dbRefResolver = new DefaultDbRefResolver(factory);
         final MappingMongoConverter mappingConverter = new MappingMongoConverter(dbRefResolver, context);
