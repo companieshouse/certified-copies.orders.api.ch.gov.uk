@@ -77,6 +77,7 @@ public class CertifiedCopiesItemControllerTest {
     private FilingHistoryDocumentService mockFilingHistoryDocumentService;
 
     private static final String COMPANY_NUMBER = "00000000";
+    private static final String REQUEST_ID = "abcdefg12345678";
     private static final String COMPANY_NAME = "test company";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
@@ -84,6 +85,7 @@ public class CertifiedCopiesItemControllerTest {
     private static final String FORENAME = "Bob";
     private static final String SURNAME = "Jones";
     private static final String FILING_HISTORY_ID = "1";
+    private static final String FILING_HISTORY_TYPE  = "NEWINC";
 
     @Test
     @DisplayName("POST certified copy successful")
@@ -93,8 +95,8 @@ public class CertifiedCopiesItemControllerTest {
 
         List<FilingHistoryDocument> filingHistoryDocuments = new ArrayList<>();
         FilingHistoryDocument filingHistoryDocument = new FilingHistoryDocument();
-        filingHistoryDocument.setFilingHistoryId("filingHistoryId");
-        filingHistoryDocument.setFilingHistoryType("inc");
+        filingHistoryDocument.setFilingHistoryId(FILING_HISTORY_ID);
+        filingHistoryDocument.setFilingHistoryType(FILING_HISTORY_TYPE);
         filingHistoryDocuments.add(filingHistoryDocument);
 
         CertifiedCopyItemOptions itemOptions = new CertifiedCopyItemOptions();
@@ -106,7 +108,6 @@ public class CertifiedCopiesItemControllerTest {
 
         CertifiedCopyItem item = new CertifiedCopyItem();
         item.setData(data);
-
 
         when(validator.getValidationErrors(any())).thenReturn(emptyErrors);
 
@@ -123,9 +124,25 @@ public class CertifiedCopiesItemControllerTest {
 
         ResponseEntity<Object> response =
             controllerUnderTest.createCertifiedCopy
-                (buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER), mockHttpServletRequest, "");
+                (buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER), mockHttpServletRequest, REQUEST_ID);
 
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+    }
+
+    @Test
+    @DisplayName("POST certified copy returns bad request when errors returned")
+    void postCertifiedCopyReturnsBadRequest() {
+
+        List<String> errors = new ArrayList<>();
+        errors.add("error");
+
+        when(validator.getValidationErrors(any())).thenReturn(errors);
+
+        ResponseEntity<Object> response =
+            controllerUnderTest.createCertifiedCopy
+                (buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER), mockHttpServletRequest, REQUEST_ID);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
