@@ -59,21 +59,6 @@ public class CompanyServiceIntegrationTest {
     @Autowired
     private Environment environment;
 
-
-    @Test
-    void getCompanyNameGetsNameSuccessfully () throws JsonProcessingException {
-
-        // Given
-        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
-        givenThat(com.github.tomakehurst.wiremock.client.WireMock.get(urlEqualTo("/company/" + COMPANY_NUMBER))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(COMPANY_PROFILE))));
-
-        // When and then
-        assertThat(serviceUnderTest.getCompanyName(COMPANY_NUMBER), is(EXPECTED_COMPANY_NAME));
-    }
-
     @Test
     void getCompanyNameThrowsBadRequestExceptionForCompanyNotFound () throws JsonProcessingException {
 

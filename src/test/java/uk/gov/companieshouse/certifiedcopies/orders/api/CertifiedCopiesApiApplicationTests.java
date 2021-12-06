@@ -1,30 +1,11 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
-import static com.github.tomakehurst.wiremock.client.WireMock.serviceUnavailable;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.web.reactive.function.BodyInserters.fromValue;
-import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
-import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
-import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPIES_URL;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_VALUE;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_NOT_FOUND;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.TOKEN_PERMISSION_VALUE;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.http.Fault;
 import org.junit.ClassRule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
@@ -50,10 +30,6 @@ class CertifiedCopiesApiApplicationTests {
     @ClassRule
     public static final EnvironmentVariables ENVIRONMENT_VARIABLES = new EnvironmentVariables();
 
-    private static final String TOKEN_PERMISSION_CREATE = String.format(TOKEN_PERMISSION_VALUE, "create");
-    private static final String COMPANY_NUMBER = "00006400";
-    private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
-    
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
     private static final String CONTACT_NUMBER = "0123456789";
@@ -83,109 +59,7 @@ class CertifiedCopiesApiApplicationTests {
     @Test
     void contextLoads() {
     }
-    
-    @Test
-    @DisplayName("createCertifiedCopy using wrong permission")
-    void createCertifiedCopyUnauthorised() throws JsonProcessingException {
 
-        // When and then
-        webTestClient.post().uri(CERTIFIED_COPIES_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
-            .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
-            .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
-            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, "other=read")
-            .body(fromValue(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
-            .exchange()
-            .expectStatus().isUnauthorized();
-    }
-
-    @Test
-    @DisplayName("createCertifiedCopy propagates 400 Bad Request for an unknown company get filing request")
-    void createCertifiedCopyPropagatesBadRequestForUnknownCompanyFilingRequest() throws JsonProcessingException {
-
-        // Given
-        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
-        givenThat(get(urlEqualTo("/company/" + UNKNOWN_COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
-            .willReturn(badRequest()
-                    .withHeader("Content-Type", "application/json")
-                    .withBody(objectMapper.writeValueAsString(FILING_NOT_FOUND))));
-
-        // When and then
-        webTestClient.post().uri(CERTIFIED_COPIES_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
-            .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
-            .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
-            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
-            .body(fromValue(buildCreateCertifiedCopyItemRequest(UNKNOWN_COMPANY_NUMBER)))
-            .exchange()
-            .expectStatus().isBadRequest()
-            .expectBody()
-            .jsonPath("$.status").isEqualTo("400")
-            .jsonPath("$.error").isEqualTo("Bad Request")
-            .jsonPath("$.message").isEqualTo("Error getting filing history document 1 for company number 00000000.")
-            .jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
-
-    }
-
-    @Test
-    @DisplayName("createCertifiedCopy propagates 500 Internal Server Error for connection failure during get filing request")
-    void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestConnectionFailure() {
-
-        // Given
-        final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
-            .willReturn(aResponse()
-                    .withFault(Fault.CONNECTION_RESET_BY_PEER)));
-
-        // When and then
-        webTestClient.post().uri(CERTIFIED_COPIES_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
-            .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
-            .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
-            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
-            .body(fromValue(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
-            .exchange()
-            .expectStatus().is5xxServerError()
-            .expectBody()
-            .jsonPath("$.status").isEqualTo("500")
-            .jsonPath("$.error").isEqualTo("Internal Server Error")
-            .jsonPath("$.message")
-            .isEqualTo("Error sending request to http://localhost:" + wireMockPort +
-                    "/company/00006400/filing-history/1: " + "Connection reset")
-            .jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
-    }
-
-    @Test
-    @DisplayName("createCertifiedCopy propagates 500 Internal Server Error for service unavailable during get filing request")
-    void createCertifiedCopyPropagatesInternalServerErrorForFilingRequestServiceUnavailable() {
-
-        // Given
-        final String wireMockPort = givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + FILING_HISTORY_ID))
-            .willReturn(serviceUnavailable()));
-
-        // When and then
-        webTestClient.post().uri(CERTIFIED_COPIES_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
-            .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
-            .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
-            .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
-            .body(fromValue(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
-            .exchange()
-            .expectStatus().is5xxServerError()
-            .expectBody()
-            .jsonPath("$.status").isEqualTo("500")
-            .jsonPath("$.error").isEqualTo("Internal Server Error")
-            .jsonPath("$.message")
-            .isEqualTo("Error sending request to http://localhost:" + wireMockPort
-                    + "/company/00006400/filing-history/1: " + "Service Unavailable")
-            .jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
-    }
-    
     @Test
     @DisplayName("Checking environment variables when all variables are set should return true")
     void checkEnvironmentVariablesAllPresentReturnsTrue() {

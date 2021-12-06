@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
+import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -144,40 +144,6 @@ class FilingHistoryDocumentServiceIntegrationTest {
 
     @MockBean
     private CertifiedCopyCostCalculatorService certifiedCopyCostCalculatorService;
-
-    @Test
-    @DisplayName("getFilingHistoryDocuments gets the expected filing history documents successfully")
-    void getFilingHistoryDocumentsSuccessfully() throws JsonProcessingException {
-
-        // Given
-        givenSdkIsConfigured(environment, ENVIRONMENT_VARIABLES);
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_1)))));
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_2))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_2)))));
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_3))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_3)))));
-        givenThat(get(urlEqualTo("/company/" + COMPANY_NUMBER + "/filing-history/" + ID_4))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(filingApi(FILING_4)))));
-
-        // When
-        final List<FilingHistoryDocument> filings =
-                serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT);
-
-        // Then
-        assertThat(filings, is(notNullValue()));
-        assertThat(filings.size(), is(FILINGS_SOUGHT.size()));
-        assertFilingsSame(filings, FILINGS_SOUGHT);
-        assertThat(isSemanticallyEquivalent(filings, FILINGS_EXPECTED), is(true));
-    }
 
     @Test
     @DisplayName("getFilingHistoryDocuments throws 400 Bad Request for an unknown company")
