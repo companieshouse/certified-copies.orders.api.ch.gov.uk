@@ -9,10 +9,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.web.reactive.function.BodyInserters.fromObject;
+import static org.springframework.web.reactive.function.BodyInserters.fromValue;
+import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
-import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_AUTHORISED_TOKEN_PERMISSIONS;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPIES_URL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_OAUTH2_VALUE;
@@ -21,6 +21,10 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.TOKEN_PERMISSION_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.http.Fault;
 import org.junit.ClassRule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +36,6 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.http.Fault;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.FilingHistoryDocumentRequestDTO;
@@ -94,7 +95,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
             .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, "other=read")
-            .body(fromObject(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
+            .body(fromValue(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
             .exchange()
             .expectStatus().isUnauthorized();
     }
@@ -117,7 +118,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
             .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
-            .body(fromObject(buildCreateCertifiedCopyItemRequest(UNKNOWN_COMPANY_NUMBER)))
+            .body(fromValue(buildCreateCertifiedCopyItemRequest(UNKNOWN_COMPANY_NUMBER)))
             .exchange()
             .expectStatus().isBadRequest()
             .expectBody()
@@ -145,7 +146,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
             .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
-            .body(fromObject(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
+            .body(fromValue(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
             .exchange()
             .expectStatus().is5xxServerError()
             .expectBody()
@@ -173,7 +174,7 @@ class CertifiedCopiesApiApplicationTests {
             .header(ERIC_IDENTITY_TYPE, ERIC_IDENTITY_TYPE_OAUTH2_VALUE)
             .header(ERIC_IDENTITY, ERIC_IDENTITY_VALUE)
             .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
-            .body(fromObject(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
+            .body(fromValue(buildCreateCertifiedCopyItemRequest(COMPANY_NUMBER)))
             .exchange()
             .expectStatus().is5xxServerError()
             .expectBody()
