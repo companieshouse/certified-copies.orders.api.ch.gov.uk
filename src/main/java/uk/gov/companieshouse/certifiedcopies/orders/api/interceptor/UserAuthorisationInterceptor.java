@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.interceptor;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
@@ -28,7 +29,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUt
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.getLogger;
 
 @Component
-public class UserAuthorisationInterceptor extends HandlerInterceptorAdapter {
+public class UserAuthorisationInterceptor implements HandlerInterceptor {
 
     private final CertifiedCopyItemService service;
 

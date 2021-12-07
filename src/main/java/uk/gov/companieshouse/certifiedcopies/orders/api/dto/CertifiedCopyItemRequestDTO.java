@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.gson.Gson;
