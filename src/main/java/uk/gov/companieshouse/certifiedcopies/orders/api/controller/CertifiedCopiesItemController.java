@@ -1,12 +1,37 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.CERTIFIED_COPY_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.COMPANY_NUMBER_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.MESSAGE;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.PATCHED_COMPANY_NUMBER;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.USER_ID_LOG_KEY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.createLoggingDataMap;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.logApiErrorsWithStatus;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.logErrorsWithStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.json.JsonMergePatch;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.companieshouse.api.error.ApiError;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
@@ -17,28 +42,11 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CompanyService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDocumentService;
+import uk.gov.companieshouse.certifiedcopies.orders.api.util.PatchMerger;
 import uk.gov.companieshouse.certifiedcopies.orders.api.validator.CreateCertifiedCopyItemRequestValidator;
+import uk.gov.companieshouse.certifiedcopies.orders.api.validator.PatchItemRequestValidator;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.CERTIFIED_COPY_ID_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.COMPANY_NUMBER_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.REQUEST_ID_HEADER_NAME;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.USER_ID_LOG_KEY;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.createLoggingDataMap;
-import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.logErrorsWithStatus;
 
 @RestController
 public class CertifiedCopiesItemController {
@@ -50,17 +58,23 @@ public class CertifiedCopiesItemController {
     private final CertifiedCopyItemService certifiedCopyItemService;
     private final CompanyService companyService;
     private final FilingHistoryDocumentService filingHistoryDocumentService;
+    private final PatchItemRequestValidator patchItemRequestValidator;
+    private final PatchMerger patcher;
 
     public CertifiedCopiesItemController(final CreateCertifiedCopyItemRequestValidator createCertifiedCopyItemRequestValidator,
                                          final CertifiedCopyItemMapper mapper,
                                          final CertifiedCopyItemService certifiedCopyItemService,
                                          final CompanyService companyService,
-                                         final FilingHistoryDocumentService filingHistoryDocumentService) {
+                                         final FilingHistoryDocumentService filingHistoryDocumentService,
+                                         final PatchItemRequestValidator patchItemRequestValidator,
+                                         final PatchMerger patcher) {
         this.createCertifiedCopyItemRequestValidator = createCertifiedCopyItemRequestValidator;
         this.mapper = mapper;
         this.certifiedCopyItemService = certifiedCopyItemService;
         this.companyService = companyService;
         this.filingHistoryDocumentService = filingHistoryDocumentService;
+        this.patchItemRequestValidator = patchItemRequestValidator;
+        this.patcher = patcher;
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
@@ -76,7 +90,7 @@ public class CertifiedCopiesItemController {
         if (!errors.isEmpty()) {
             logErrorsWithStatus(logMap, errors, BAD_REQUEST);
             LOGGER.errorRequest(request, "create certified copy item validation errors", logMap);
-            return ResponseEntity.status(BAD_REQUEST).body(new ApiError(BAD_REQUEST, errors));
+            return ResponseEntity.status(BAD_REQUEST).body(new ApiErrors(BAD_REQUEST, errors));
         }
 
         CertifiedCopyItem certifiedCopyItem = mapper
@@ -128,8 +142,61 @@ public class CertifiedCopiesItemController {
             errors.add(errorMsg);
             logErrorsWithStatus(logMap, errors, NOT_FOUND);
             LOGGER.error(errorMsg, logMap);
-            return ResponseEntity.status(NOT_FOUND).body(new ApiError(NOT_FOUND, errors));
+            return ResponseEntity.status(NOT_FOUND).body(new ApiErrors(NOT_FOUND, errors));
         }
     }
 
+    @PatchMapping(path = "${uk.gov.companieshouse.certifiedcopies.orders.api.home}/{id}",
+            consumes = "application/merge-patch+json")
+    public ResponseEntity<Object> updateCertifiedCopyItem(
+            final @RequestBody JsonMergePatch mergePatchDocument,
+            final @PathVariable("id") String id,
+            final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId) {
+        Map<String, Object> logMap = createLoggingDataMap(requestId);
+        logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
+        LOGGER.info("update certificate item request", logMap);
+        logMap.remove(MESSAGE);
+
+        // Domain validation
+        final List<ApiError> errors = patchItemRequestValidator.getValidationErrors(mergePatchDocument);
+        if (!errors.isEmpty()) {
+            logApiErrorsWithStatus(logMap, errors, BAD_REQUEST);
+            LOGGER.error("update certificate item request had validation errors", logMap);
+            return ApiErrors.errorResponse(BAD_REQUEST, errors);
+        }
+
+        Optional<CertifiedCopyItem> certCopyRetrieved = certifiedCopyItemService.getCertifiedCopyItemById(id);
+
+        if (!certCopyRetrieved.isPresent()) {
+            logMap.put(STATUS_LOG_KEY, HttpStatus.NOT_FOUND);
+            LOGGER.error("certified copy item not found", logMap);
+            return ApiErrors.errorResponse(NOT_FOUND, ApiErrors.ERR_CERTIFIED_COPY_NOT_FOUND);
+        }
+
+        final CertifiedCopyItem itemRetrieved = certCopyRetrieved.get();
+        logMap.put(COMPANY_NUMBER_LOG_KEY, itemRetrieved.getData().getCompanyNumber());
+        logMap.put(USER_ID_LOG_KEY, itemRetrieved.getUserId());
+
+        //Apply the patch
+        final CertifiedCopyItem patchedItem = patcher.mergePatch(mergePatchDocument, itemRetrieved, CertifiedCopyItem.class);
+        logMap.put("ITEM", patchedItem);
+        LOGGER.error("patched item", logMap);
+//        // Certified Copy item options validation
+//        final List<ApiError> patchedErrors = certificateOptionsValidator.getValidationErrors(
+//                new CompanyCertificateInformation(patchedItem.getData().getItemOptions()));
+//        if (!patchedErrors.isEmpty()) {
+//            logErrorsWithStatus(logMap, patchedErrors, BAD_REQUEST);
+//            LOGGER.error("patched certificate item had validation errors", logMap);
+//            return ApiErrors.errorResponse(BAD_REQUEST, patchedErrors);
+//        }
+
+        logMap.put(PATCHED_COMPANY_NUMBER, patchedItem.getData().getCompanyNumber());
+        final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem);
+        final CertifiedCopyItemResponseDTO responseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(savedItem.getData());
+
+        logMap.put(STATUS_LOG_KEY, OK);
+        LOGGER.info("update certified copy item request completed", logMap);
+
+        return ResponseEntity.ok().body(responseDTO);
+    }
 }

@@ -611,8 +611,8 @@ class CertifiedCopiesItemControllerIntegrationTest {
 
         when(idGeneratorService.autoGenerateId()).thenReturn(CERTIFIED_COPY_ID);
 
-        final ApiError expectedValidationError =
-                new ApiError(BAD_REQUEST, asList("company_number: must not be null",
+        final ApiErrors expectedValidationError =
+                new ApiErrors(BAD_REQUEST, asList("company_number: must not be null",
                 "item_options.filing_history_documents[0].filing_history_id: must not be empty",
                 "quantity: must not be null"));
 

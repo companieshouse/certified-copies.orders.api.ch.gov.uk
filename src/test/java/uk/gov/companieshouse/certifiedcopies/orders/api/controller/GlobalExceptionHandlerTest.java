@@ -96,7 +96,7 @@ public class GlobalExceptionHandlerTest {
         final ResponseEntity<Object> response = handlerUnderTest.handleMethodArgumentNotValid(mex, headers, ORIGINAL_STATUS, request);
 
         // Then
-        final ApiError error = (ApiError) response.getBody();
+        final ApiErrors error = (ApiErrors) response.getBody();
         assertThat(error, is(notNullValue()));
         assertThat(error.getStatus(), is(HttpStatus.BAD_REQUEST));
         assertThat(error.getErrors().stream()
@@ -117,7 +117,7 @@ public class GlobalExceptionHandlerTest {
                 handlerUnderTest.handleHttpMessageNotReadable(hex, headers, ORIGINAL_STATUS, request);
 
         // Then
-        final ApiError error = (ApiError) response.getBody();
+        final ApiErrors error = (ApiErrors) response.getBody();
         assertThat(error, is(notNullValue()));
         assertThat(error.getStatus(), is(HttpStatus.BAD_REQUEST));
         assertThat(error.getErrors().get(0), is(ORIGINAL_MESSAGE));
