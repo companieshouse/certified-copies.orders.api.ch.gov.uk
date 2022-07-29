@@ -179,8 +179,7 @@ public class CertifiedCopiesItemController {
 
         //Apply the patch
         final CertifiedCopyItem patchedItem = patcher.mergePatch(mergePatchDocument, itemRetrieved, CertifiedCopyItem.class);
-        logMap.put("ITEM", patchedItem);
-        LOGGER.error("patched item", logMap);
+
 //        // Certified Copy item options validation
 //        final List<ApiError> patchedErrors = certificateOptionsValidator.getValidationErrors(
 //                new CompanyCertificateInformation(patchedItem.getData().getItemOptions()));
