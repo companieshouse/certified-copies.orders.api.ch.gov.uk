@@ -1,5 +1,21 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
+import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,24 +29,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests the {@link CertifiedCopyItemService} class.
@@ -191,6 +189,45 @@ public class CertifiedCopyItemServiceTest {
         assertThat(item.isPresent(), is(false));
     }
 
+    @Test
+    @DisplayName("saveCertifiedCopyItem saves item")
+    void saveCertifiedCopyItemUpdatesCertifiedCopyItem() {
+
+        //Given
+        final CertifiedCopyItemOptions certifiedCopyItemOptions = new CertifiedCopyItemOptions();
+        certifiedCopyItemOptions.setDeliveryMethod(DeliveryMethod.POSTAL);
+        final List<FilingHistoryDocument> filings =
+                singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
+                        FILING_HISTORY_DESCRIPTION,
+                        FILING_HISTORY_DESCRIPTION_VALUES,
+                        FILING_HISTORY_ID,
+                        FILING_HISTORY_TYPE));
+        certifiedCopyItemOptions.setFilingHistoryDocuments(filings);
+        final CertifiedCopyItem certifiedCopyItem = new CertifiedCopyItem();
+        certifiedCopyItem.setItemOptions(certifiedCopyItemOptions);
+        certifiedCopyItem.setQuantity(1);
+        certifiedCopyItem.setId(ID);
+
+        List<ItemCostCalculation> costCalculations = getItemCostCalculations();
+
+        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList())).thenReturn(costCalculations);
+        when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
+
+        final LocalDateTime intervalStart = LocalDateTime.now();
+        certifiedCopyItem.setCreatedAt(intervalStart);
+
+        //When
+        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem);
+
+        //Then
+        final LocalDateTime intervalEnd = LocalDateTime.now();
+        verifyCreationTimestampsWithinExecutionInterval(certifiedCopyItem, intervalStart, intervalEnd);
+        assertThat(certifiedCopyItem.getId(), is(ID));
+        verify(etagGenerator).generateEtag();;
+    }
+
+
+
 
     /**
      * Verifies that the item created at and updated at timestamps are within the expected interval
@@ -211,4 +248,5 @@ public class CertifiedCopyItemServiceTest {
         assertThat(itemCreated.getUpdatedAt().isBefore(intervalEnd) ||
                 itemCreated.getUpdatedAt().isEqual(intervalEnd), is(true));
     }
+
 }

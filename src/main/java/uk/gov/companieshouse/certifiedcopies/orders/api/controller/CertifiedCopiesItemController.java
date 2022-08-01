@@ -174,22 +174,14 @@ public class CertifiedCopiesItemController {
         }
 
         final CertifiedCopyItem itemRetrieved = certCopyRetrieved.get();
-        logMap.put(COMPANY_NUMBER_LOG_KEY, itemRetrieved.getData().getCompanyNumber());
+        logMap.put(COMPANY_NUMBER_LOG_KEY, itemRetrieved.getCompanyNumber());
         logMap.put(USER_ID_LOG_KEY, itemRetrieved.getUserId());
 
         //Apply the patch
         final CertifiedCopyItem patchedItem = patcher.mergePatch(mergePatchDocument, itemRetrieved, CertifiedCopyItem.class);
 
-//        // Certified Copy item options validation
-//        final List<ApiError> patchedErrors = certificateOptionsValidator.getValidationErrors(
-//                new CompanyCertificateInformation(patchedItem.getData().getItemOptions()));
-//        if (!patchedErrors.isEmpty()) {
-//            logErrorsWithStatus(logMap, patchedErrors, BAD_REQUEST);
-//            LOGGER.error("patched certificate item had validation errors", logMap);
-//            return ApiErrors.errorResponse(BAD_REQUEST, patchedErrors);
-//        }
 
-        logMap.put(PATCHED_COMPANY_NUMBER, patchedItem.getData().getCompanyNumber());
+        logMap.put(PATCHED_COMPANY_NUMBER, patchedItem.getCompanyNumber());
         final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem);
         final CertifiedCopyItemResponseDTO responseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(savedItem.getData());
 

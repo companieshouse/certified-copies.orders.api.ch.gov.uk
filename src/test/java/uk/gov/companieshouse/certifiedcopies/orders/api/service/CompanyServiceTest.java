@@ -1,8 +1,18 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromHttpResponseException;
+import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromIOException;
+
 import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
+import java.io.IOException;
+import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,18 +28,6 @@ import uk.gov.companieshouse.api.handler.company.request.CompanyGet;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
-
-import java.io.IOException;
-import java.util.HashMap;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromHttpResponseException;
-import static uk.gov.companieshouse.api.error.ApiErrorResponseException.fromIOException;
 
 @ExtendWith(MockitoExtension.class)
 @PrepareForTest(HttpResponseException.class)
@@ -128,5 +126,4 @@ public class CompanyServiceTest {
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
         assertThat(exception.getStatus(), is(BAD_REQUEST));
     }
-
 }
