@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -65,6 +66,9 @@ class JsonMergePatchHttpMessageConverterTest {
         // When
         final JsonMergePatch patch = converterUnderTest.read(JsonMergePatch.class, inputMessage);
         converterUnderTest.write(patch, SUPPORTED_MEDIA_TYPE, outputMessage);
+
+        //Then
+        assertNotNull(patch);
     }
 
 }

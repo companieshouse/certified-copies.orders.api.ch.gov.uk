@@ -27,7 +27,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 
 @ExtendWith(SpringExtension.class)
 @SpringJUnitConfig(PatchMergerTest.Config.class)
-public class PatchMergerTest {
+class PatchMergerTest {
 
     @Configuration
     static class Config {
