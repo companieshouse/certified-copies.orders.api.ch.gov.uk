@@ -115,18 +115,6 @@ public class CertifiedCopiesItemControllerTest {
 
     }
 
-//    @Test
-//    @DisplayName("Update certificate item supplied patch has validation errors")
-//    void updateCertificateItemPatchValidationErrors() {
-//
-//        when(validator.getValidationErrors(patch))
-//                .thenReturn(Collections.singletonList(ApiErrors.ERR_SURNAME_REQUIRED));
-//
-//        ResponseEntity<Object> response = controllerUnderTest.updateCertificateItem(patch, ID,
-//                REQUEST_ID_VALUE);
-//        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-//    }
-
     @Test
     @DisplayName("Update certificate item patched certificate has validation errors")
     void updateCertificateItemMergedValidationErrors() {
