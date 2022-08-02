@@ -116,8 +116,8 @@ public class CertifiedCopiesItemControllerTest {
     }
 
     @Test
-    @DisplayName("Update certificate item patched certificate has validation errors")
-    void updateCertificateItemMergedValidationErrors() {
+    @DisplayName("Update certified copy item patched certified copy has validation errors")
+    void updateCertifiedCopyItemMergedValidationErrors() {
         List<ApiError> errors = Collections.singletonList(ApiErrors.ERR_JSON_PROCESSING);
         when(validator.getValidationErrors(patch)).thenReturn(errors);
 

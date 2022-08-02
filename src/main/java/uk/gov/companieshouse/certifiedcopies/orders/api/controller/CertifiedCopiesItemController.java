@@ -180,7 +180,6 @@ public class CertifiedCopiesItemController {
         //Apply the patch
         final CertifiedCopyItem patchedItem = patcher.mergePatch(mergePatchDocument, itemRetrieved, CertifiedCopyItem.class);
 
-
         logMap.put(PATCHED_COMPANY_NUMBER, patchedItem.getCompanyNumber());
         final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem);
         final CertifiedCopyItemResponseDTO responseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(savedItem.getData());

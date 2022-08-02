@@ -60,6 +60,4 @@ public class ApiErrors {
         return ApiErrorBuilder
                 .builder(apiError).withErrorMessage(String.format(errorMessage, objects)).build();
     }
-
-
 }

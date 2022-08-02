@@ -79,7 +79,7 @@ public class CertifiedCopyItemService {
     }
 
     /**
-     * Saves the certificate item, assumed to have been updated, to the database.
+     * Saves the certified copy item, assumed to have been updated, to the database.
      *
      * @param updatedCertifiedCopyItem the certificate item to save
      * @return the latest certified copy item state resulting from the save
