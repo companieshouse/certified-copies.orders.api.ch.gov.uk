@@ -67,6 +67,10 @@ public class CertifiedCopyItem {
         data.setCompanyNumber(companyNumber);
     }
 
+    public String getCompanyNumber() {
+        return data.getCompanyNumber();
+    }
+
     public void setCustomerReference(String customerReference) {
         data.setCustomerReference(customerReference);
     }
@@ -93,6 +97,10 @@ public class CertifiedCopyItem {
 
     public void setItemOptions(CertifiedCopyItemOptions itemOptions) {
         data.setItemOptions(itemOptions);
+    }
+
+    public CertifiedCopyItemOptions getItemOptions() {
+        return data.getItemOptions();
     }
 
     public void setKind(String kind) {

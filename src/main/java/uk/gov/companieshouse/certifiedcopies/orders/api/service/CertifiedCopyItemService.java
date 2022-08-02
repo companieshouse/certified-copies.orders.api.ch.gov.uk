@@ -78,6 +78,22 @@ public class CertifiedCopyItemService {
         return repository.save(certifiedCopyItem);
     }
 
+    /**
+     * Saves the certified copy item, assumed to have been updated, to the database.
+     *
+     * @param updatedCertifiedCopyItem the certificate item to save
+     * @return the latest certified copy item state resulting from the save
+     */
+    public CertifiedCopyItem saveCertifiedCopyItem(final CertifiedCopyItem updatedCertifiedCopyItem) {
+        final LocalDateTime now = LocalDateTime.now();
+        updatedCertifiedCopyItem.setUpdatedAt(now);
+        populateDescriptions(updatedCertifiedCopyItem);
+        updatedCertifiedCopyItem.setEtag(etagGenerator.generateEtag());
+        final CertifiedCopyItem itemSaved = repository.save(updatedCertifiedCopyItem);
+        populateItemCosts(itemSaved, costCalculatorService);
+        return itemSaved;
+    }
+
     public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator) {
         CertifiedCopyItemData itemData = item.getData();
         List<FilingHistoryDocument> filingHistoryDocumentList = itemData.getItemOptions().getFilingHistoryDocuments();

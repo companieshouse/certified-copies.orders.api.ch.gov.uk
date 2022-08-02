@@ -1,14 +1,14 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.logging;
 
-import org.springframework.http.HttpStatus;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
+import static java.util.Collections.singletonList;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.singletonList;
+import org.springframework.http.HttpStatus;
+import uk.gov.companieshouse.api.error.ApiError;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 public class LoggingUtils {
 
@@ -24,6 +24,8 @@ public class LoggingUtils {
     public static final String REQUEST_ID_LOG_KEY = "request_id";
     public static final String IDENTITY_LOG_KEY = "identity";
     public static final String DESCRIPTION_LOG_KEY = "description_key";
+    public static final String MESSAGE = "message";
+    public static final String PATCHED_COMPANY_NUMBER = "patched_company_number";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
@@ -80,6 +82,19 @@ public class LoggingUtils {
                                           final String error,
                                           final HttpStatus status) {
         logMap.put(ERRORS_LOG_KEY, singletonList(error));
+        logMap.put(STATUS_LOG_KEY, status);
+    }
+
+    /**
+     * method to add errors and a bad request status to a map for logging
+     * purposes
+     *
+     * @param logMap the map of logging data
+     * @param errors a list of errors
+     */
+    public static void logApiErrorsWithStatus(Map<String, Object> logMap,
+            final List<ApiError> errors, HttpStatus status) {
+        logMap.put(ERRORS_LOG_KEY, errors);
         logMap.put(STATUS_LOG_KEY, status);
     }
 
