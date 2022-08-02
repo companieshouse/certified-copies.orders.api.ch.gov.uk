@@ -89,8 +89,9 @@ public class CertifiedCopyItemService {
         updatedCertifiedCopyItem.setUpdatedAt(now);
         populateDescriptions(updatedCertifiedCopyItem);
         updatedCertifiedCopyItem.setEtag(etagGenerator.generateEtag());
+        populateItemCosts(updatedCertifiedCopyItem, costCalculatorService);
         final CertifiedCopyItem itemSaved = repository.save(updatedCertifiedCopyItem);
-        populateItemCosts(itemSaved, costCalculatorService);
+
         return itemSaved;
     }
 
