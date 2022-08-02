@@ -29,6 +29,8 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.config.ApplicationConfig
 import uk.gov.companieshouse.certifiedcopies.orders.api.controller.ApiErrors;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.PatchValidationCertifiedCopyItemDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptionsRequest;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.TestMergePatchFactory;
@@ -99,7 +101,13 @@ class PatchItemRequestValidatorTest {
     @DisplayName("No errors")
     void getValidationErrorsReturnsNoErrors() throws IOException {
         // Given
+        CertifiedCopyItemOptionsRequest itemOptionsRequest = new CertifiedCopyItemOptionsRequest();
+
+        itemOptionsRequest.setDeliveryTimescale(DeliveryTimescale.STANDARD);
         itemUpdate.setQuantity(TOKEN_QUANTITY);
+        itemUpdate.setItemOptions(itemOptionsRequest);
+        itemUpdate.setCompanyNumber("00000001");
+        itemUpdate.setCustomerReference("ch-0001");
         final JsonMergePatch patch = patchFactory.patchFromPojo(itemUpdate);
 
         // When
@@ -107,6 +115,7 @@ class PatchItemRequestValidatorTest {
 
         // Then
         assertThat(errors, is(empty()));
+        assertThat(itemOptionsRequest.getDeliveryTimescale(), is(DeliveryTimescale.STANDARD));
     }
 
     @Test
@@ -123,19 +132,19 @@ class PatchItemRequestValidatorTest {
         assertThat(errors, contains(ApiErrors.raiseError(ApiErrors.ERR_QUANTITY_AMOUNT, "quantity: must be greater than or equal to 1")));
     }
 
-//    @Test
-//    @DisplayName("Validation error raised if unknown field specified")
-//    void getValidationErrorsRaisesErrorIfUnknownFieldSpecified() throws IOException {
-//        // Given
-//        final String jsonWithUnknownField = "{ \"idx\": \"CHS1\" }";
-//        final JsonMergePatch patch = patchFactory.patchFromJson(jsonWithUnknownField);
-//
-//        // When
-//        final List<ApiError> errors = validatorUnderTest.getValidationErrors(patch);
-//
-//        // Then
-//        assertThat(errors, contains(ApiErrors.ERR_JSON_PROCESSING));
-//    }
+    @Test
+    @DisplayName("Validation error raised if unknown field specified")
+    void getValidationErrorsRaisesErrorIfUnknownFieldSpecified() throws IOException {
+        // Given
+        final String jsonWithUnknownField = "{ \"idx\": \"CHS1\" }";
+        final JsonMergePatch patch = patchFactory.patchFromJson(jsonWithUnknownField);
+
+        // When
+        final List<ApiError> errors = validatorUnderTest.getValidationErrors(patch);
+
+        // Then
+        assertThat(errors, contains(ApiErrors.ERR_JSON_PROCESSING));
+    }
 
     /**
      * Utility method that asserts that the validator produces a "<field name>: must be null"
