@@ -143,7 +143,6 @@ public class CertifiedCopyItemMapperTest {
 
         CertifiedCopyItemData item = certifiedCopyItem.getData();
         assertThat(item.getItemOptions().getDeliveryMethod(), is(DeliveryMethod.POSTAL));
-        assertThat(item.getItemOptions().getDeliveryTimescale(), is(DeliveryTimescale.STANDARD));
     }
 
     @Test

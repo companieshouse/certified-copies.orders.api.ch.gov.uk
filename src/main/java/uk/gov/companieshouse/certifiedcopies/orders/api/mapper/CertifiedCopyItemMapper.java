@@ -28,10 +28,5 @@ public interface CertifiedCopyItemMapper {
         certifiedCopyItem.getData().getItemOptions().setDeliveryMethod(
                 deliveryMethod != null ? deliveryMethod : DeliveryMethod.POSTAL);
 
-        DeliveryTimescale deliveryTimescale = certifiedCopyItemDTO.getItemOptions()
-                .getDeliveryTimescale();
-        certifiedCopyItem.getData().getItemOptions().setDeliveryTimescale(
-                deliveryTimescale != null ? deliveryTimescale : DeliveryTimescale.STANDARD);
-
     }
 }
