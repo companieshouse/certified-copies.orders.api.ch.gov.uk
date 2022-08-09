@@ -486,8 +486,6 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.company_number", is(COMPANY_NUMBER)))
                 .andExpect(jsonPath("$.item_options.delivery_method",
                         is(DeliveryMethod.POSTAL.getJsonName())))
-                .andExpect(jsonPath("$.item_options.delivery_timescale",
-                        is(DeliveryTimescale.STANDARD.getJsonName())))
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY_1)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_NEWINC)));
