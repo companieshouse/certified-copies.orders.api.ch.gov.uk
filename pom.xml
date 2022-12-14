@@ -20,7 +20,7 @@
         <gson.version>2.8.0</gson.version>
         <guava.version>28.1-jre</guava.version>
         <commons.lang.version>2.6</commons.lang.version>
-        <snakeyaml.version>1.26</snakeyaml.version>
+        <snakeyaml.version>1.32</snakeyaml.version>
         <jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
         <javax.json-api.version>1.1.4</javax.json-api.version>
         <johnzon.version>1.2.7</johnzon.version>
