@@ -11,7 +11,8 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType
 
 public enum DeliveryTimescale {
     STANDARD,
-    SAME_DAY {
+    SAME_DAY,
+    DIGITAL{
 
         @Override
         protected int getCertifiedCopyCost(final CostsConfig costs) {
