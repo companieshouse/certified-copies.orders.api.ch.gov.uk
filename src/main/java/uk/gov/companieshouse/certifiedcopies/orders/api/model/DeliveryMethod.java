@@ -5,7 +5,8 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.converter.EnumValueNameC
 
 public enum DeliveryMethod {
     POSTAL,
-    COLLECTION;
+    COLLECTION,
+    DIGITAL;
 
     @JsonValue
     public String getJsonName() {

@@ -5,7 +5,9 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.converter.EnumValueNameConverter;
 
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_DIGITAL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION_DIGITAL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION_SAME_DAY;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_SAME_DAY;
 
@@ -32,7 +34,28 @@ public enum DeliveryTimescale {
         protected ProductType getNonIncorporationProductType() {
             return CERTIFIED_COPY_SAME_DAY;
         }
+    },
+    DIGITAL {
 
+        @Override
+        protected int getCertifiedCopyCost(final CostsConfig costs) {
+            return costs.getDigitalCost();
+        }
+
+        @Override
+        protected int getCertifiedCopyNewIncorporationCost(final CostsConfig costs) {
+            return costs.getDigitalNewIncorporationCost();
+        }
+
+        @Override
+        protected ProductType getIncorporationProductType() {
+            return CERTIFIED_COPY_INCORPORATION_DIGITAL;
+        }
+
+        @Override
+        protected ProductType getNonIncorporationProductType() {
+            return CERTIFIED_COPY_DIGITAL;
+        }
     };
 
     private static final String FILING_HISTORY_TYPE_NEWINC = "NEWINC";
