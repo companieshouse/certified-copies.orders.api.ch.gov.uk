@@ -2,21 +2,24 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.certifiedcopies.orders.api.config.CostsConfig;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale.DIGITAL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale.SAME_DAY;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale.STANDARD;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_DIGITAL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION_DIGITAL;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_INCORPORATION_SAME_DAY;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType.CERTIFIED_COPY_SAME_DAY;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPY_COST;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.CERTIFIED_COPY_NEW_INCORPORATION_COST;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.DIGITAL_CERTIFIED_COPY_COST;
+import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.DIGITAL_CERTIFIED_COPY_NEW_INCORPORATION_COST;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_CH01;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.FILING_HISTORY_TYPE_NEWINC;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.SAME_DAY_CERTIFIED_COPY_COST;
@@ -35,6 +38,8 @@ class DeliveryTimescaleTest {
         COSTS.setSameDayCost(SAME_DAY_CERTIFIED_COPY_COST);
         COSTS.setStandardNewIncorporationCost(CERTIFIED_COPY_NEW_INCORPORATION_COST);
         COSTS.setSameDayNewIncorporationCost(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST);
+        COSTS.setDigitalCost(DIGITAL_CERTIFIED_COPY_COST);
+        COSTS.setDigitalNewIncorporationCost(DIGITAL_CERTIFIED_COPY_NEW_INCORPORATION_COST);
     }
 
    @Test
@@ -42,9 +47,11 @@ class DeliveryTimescaleTest {
        final ObjectMapper mapper = new ObjectMapper();
        final String standardJson = mapper.writeValueAsString(STANDARD);
        final String sameDayJson = mapper.writeValueAsString(SAME_DAY);
+       final String digitalJson = mapper.writeValueAsString(DIGITAL);
 
        assertThat(standardJson, is("\"standard\""));
        assertThat(sameDayJson, is("\"same-day\""));
+       assertThat(digitalJson, is("\"digital\""));
    }
 
    @Test
@@ -61,5 +68,13 @@ class DeliveryTimescaleTest {
         assertThat(SAME_DAY.getCost(COSTS, FILING_HISTORY_TYPE_NEWINC), is(SAME_DAY_CERTIFIED_COPY_NEW_INCORPORATION_COST));
         assertThat(SAME_DAY.getProductType(FILING_HISTORY_TYPE_CH01), is(CERTIFIED_COPY_SAME_DAY));
         assertThat(SAME_DAY.getProductType(FILING_HISTORY_TYPE_NEWINC), is(CERTIFIED_COPY_INCORPORATION_SAME_DAY));
+    }
+
+    @Test
+    void digitalTimescaleCostsAreCorrect() {
+        assertThat(DIGITAL.getCost(COSTS, FILING_HISTORY_TYPE_CH01), is(DIGITAL_CERTIFIED_COPY_COST));
+        assertThat(DIGITAL.getCost(COSTS, FILING_HISTORY_TYPE_NEWINC), is(DIGITAL_CERTIFIED_COPY_NEW_INCORPORATION_COST));
+        assertThat(DIGITAL.getProductType(FILING_HISTORY_TYPE_CH01), is(CERTIFIED_COPY_DIGITAL));
+        assertThat(DIGITAL.getProductType(FILING_HISTORY_TYPE_NEWINC), is(CERTIFIED_COPY_INCORPORATION_DIGITAL));
     }
 }

@@ -22,6 +22,10 @@ public class CostsConfig {
     private int sameDayCost;
     @Min(1)
     private int sameDayNewIncorporationCost;
+    @Min(1)
+    private int digitalCost;
+    @Min(1)
+    private int digitalNewIncorporationCost;
 
     public int getStandardCost() {
         return standardCost;
@@ -53,5 +57,21 @@ public class CostsConfig {
 
     public void setSameDayNewIncorporationCost(int sameDayNewIncorporationCost) {
         this.sameDayNewIncorporationCost = sameDayNewIncorporationCost;
+    }
+
+    public int getDigitalCost() {
+        return digitalCost;
+    }
+
+    public void setDigitalCost(int digitalCost) {
+        this.digitalCost = digitalCost;
+    }
+
+    public int getDigitalNewIncorporationCost() {
+        return digitalNewIncorporationCost;
+    }
+
+    public void setDigitalNewIncorporationCost(int digitalNewIncorporationCost) {
+        this.digitalNewIncorporationCost = digitalNewIncorporationCost;
     }
 }
