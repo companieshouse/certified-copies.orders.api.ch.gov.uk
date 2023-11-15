@@ -194,7 +194,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(UNKNOWN_COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), Is.is(BAD_REQUEST));
         final String expectedReason = "Error getting filing history document " + ID_1 +
                 " for company number " + UNKNOWN_COMPANY_NUMBER + ".";
         assertThat(exception.getReason(), Is.is(expectedReason));
@@ -214,7 +214,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, singletonList(UNKNOWN_FILING)));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), Is.is(BAD_REQUEST));
         final String expectedReason = "Error getting filing history document " + UNKNOWN_ID +
                 " for company number " + COMPANY_NUMBER + ".";
         assertThat(exception.getReason(), Is.is(expectedReason));
@@ -233,7 +233,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason = "Error sending request to http://localhost:"
                 + wireMockPort + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
         assertThat(exception.getReason(), Is.is(expectedReason));

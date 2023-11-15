@@ -88,7 +88,7 @@ public class CompanyServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), is(BAD_REQUEST));
         assertThat(exception.getReason(), is("Error getting company name for company number 00006400"));
     }
 
@@ -104,7 +104,7 @@ public class CompanyServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         final String expectedReason = "Error sending request to http://localhost:"
                 + wireMockPort + "/company/" + COMPANY_NUMBER + ": Connection reset";
         assertThat(exception.getReason(), is(expectedReason));

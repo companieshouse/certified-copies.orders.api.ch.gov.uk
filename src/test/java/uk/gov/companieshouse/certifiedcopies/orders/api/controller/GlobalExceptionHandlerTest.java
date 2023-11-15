@@ -49,7 +49,6 @@ public class GlobalExceptionHandlerTest {
             super(converter);
         }
 
-        @Override
         protected ResponseEntity<Object> handleExceptionInternal(final Exception ex,
                                                                  final Object body,
                                                                  final HttpHeaders headers,

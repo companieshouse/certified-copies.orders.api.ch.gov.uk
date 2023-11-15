@@ -140,7 +140,7 @@ public class FilingHistoryDocumentServiceTest {
         // When and then
         final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         assertThat(exception.getReason(), is(INVALID_URI_EXPECTED_REASON));
     }
 
@@ -155,7 +155,7 @@ public class FilingHistoryDocumentServiceTest {
         // When and then
         final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         assertThat(exception.getReason(), is(IOEXCEPTION_EXPECTED_REASON));
     }
 
@@ -177,7 +177,7 @@ public class FilingHistoryDocumentServiceTest {
         // When and then
         final ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), is(BAD_REQUEST));
         assertThat(exception.getReason(), is(NOT_FOUND_EXPECTED_REASON));
     }
 

@@ -87,7 +87,7 @@ public class CompanyServiceTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         assertThat(exception.getReason(), is(INVALID_URI_EXPECTED_REASON));
     }
 
@@ -106,7 +106,7 @@ public class CompanyServiceTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         assertThat(exception.getReason(), is(IOEXCEPTION_EXPECTED_REASON));
     }
 
@@ -124,6 +124,6 @@ public class CompanyServiceTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), is(BAD_REQUEST));
     }
 }
