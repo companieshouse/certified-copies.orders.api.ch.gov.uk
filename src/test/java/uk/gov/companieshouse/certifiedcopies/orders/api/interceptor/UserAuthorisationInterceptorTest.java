@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.interceptor;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +15,8 @@ import uk.gov.companieshouse.api.util.security.SecurityConstants;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +32,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.ERIC_IDENTITY_TYPE_API_KEY_VALUE;
 
 @ExtendWith(MockitoExtension.class)
-public class UserAuthorisationInterceptorTest {
+class UserAuthorisationInterceptorTest {
 
     @InjectMocks
     private UserAuthorisationInterceptor userAuthorisationInterceptor;
@@ -65,7 +66,7 @@ public class UserAuthorisationInterceptorTest {
         doReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
         when(service.getCertifiedCopyItemById(ITEM_ID)).thenReturn(Optional.of(item));
 
-        assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
@@ -74,7 +75,7 @@ public class UserAuthorisationInterceptorTest {
         when(request.getMethod()).thenReturn(HttpMethod.POST.toString());
         when(request.getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME)).thenReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE);
 
-        assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class UserAuthorisationInterceptorTest {
         doReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
         when(service.getCertifiedCopyItemById(ITEM_ID)).thenReturn(Optional.of(item));
 
-        assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
@@ -102,7 +103,7 @@ public class UserAuthorisationInterceptorTest {
         when(request.getMethod()).thenReturn(HttpMethod.POST.toString());
         when(request.getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME)).thenReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE);
 
-        assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
@@ -117,14 +118,14 @@ public class UserAuthorisationInterceptorTest {
         doReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
         when(service.getCertifiedCopyItemById(ITEM_ID)).thenReturn(Optional.empty());
 
-        assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
     @DisplayName("Does not Authorise an external API key is used")
     public void willNotAuthoriseIfRequestIsExternalAPIKey() {
         when(request.getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME)).thenReturn(ERIC_IDENTITY_TYPE_API_KEY_VALUE);
-        assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
@@ -134,7 +135,7 @@ public class UserAuthorisationInterceptorTest {
         doReturn("request-id").when(request).getHeader("X-Request-ID");
         doReturn(ERIC_IDENTITY_TYPE_API_KEY_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
         doReturn(SecurityConstants.INTERNAL_USER_ROLE).when(request).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);
-        assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
@@ -144,13 +145,13 @@ public class UserAuthorisationInterceptorTest {
         doReturn("request-id").when(request).getHeader("X-Request-ID");
         doReturn(ERIC_IDENTITY_TYPE_API_KEY_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
         doReturn(SecurityConstants.INTERNAL_USER_ROLE).when(request).getHeader(EricConstants.ERIC_AUTHORISED_KEY_ROLES);
-        assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 
     @Test
     @DisplayName("Does not Authorise if POST and unrecognised identity type")
     public void willNotAuthoriseIfRequestIsPostAndUnrecognisedIdentity() {
         when(request.getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME)).thenReturn(INVALID_IDENTITY_TYPE_VALUE);
-        assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
+        Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }
 }

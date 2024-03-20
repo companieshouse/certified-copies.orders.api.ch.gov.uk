@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.json.JsonMergePatch;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.json.JsonMergePatch;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -123,7 +123,7 @@ public class CertifiedCopiesItemController {
     }
 
     @GetMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}/{id}")
-    public ResponseEntity<Object> getCertifiedCopy(final @PathVariable String id,
+    public ResponseEntity<Object> getCertifiedCopy(final @PathVariable("id") String id,
                                                    final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId)
     {
         final Map<String, Object> logMap = createLoggingDataMap(requestId);
@@ -167,7 +167,7 @@ public class CertifiedCopiesItemController {
 
         Optional<CertifiedCopyItem> certCopyRetrieved = certifiedCopyItemService.getCertifiedCopyItemById(id);
 
-        if (!certCopyRetrieved.isPresent()) {
+        if (certCopyRetrieved.isEmpty()) {
             logMap.put(STATUS_LOG_KEY, HttpStatus.NOT_FOUND);
             LOGGER.error("certified copy item not found", logMap);
             return ApiErrors.errorResponse(NOT_FOUND, ApiErrors.ERR_CERTIFIED_COPY_NOT_FOUND);

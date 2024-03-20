@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Returns HTTP OK response to indicate a healthy service is running
  */
 @RestController
-public class HealthcheckController {
+public class HealthCheckController {
     @GetMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.health}")
     public ResponseEntity<Void> getHealthCheck (){
         return ResponseEntity.status(HttpStatus.OK).build();

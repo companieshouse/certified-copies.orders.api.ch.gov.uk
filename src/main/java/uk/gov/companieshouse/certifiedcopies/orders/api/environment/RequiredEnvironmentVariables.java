@@ -8,7 +8,7 @@ public enum RequiredEnvironmentVariables {
     API_URL("API_URL"),
     PAYMENTS_API_URL("PAYMENTS_API_URL");
     
-    private String name;
+    private final String name;
     
     RequiredEnvironmentVariables(String name){
         this.name = name;

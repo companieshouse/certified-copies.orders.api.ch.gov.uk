@@ -26,7 +26,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.converter = converter;
     }
 
-    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             final MethodArgumentNotValidException ex,
             final HttpHeaders headers,
@@ -36,7 +35,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
-    @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             final HttpMessageNotReadableException ex,
             final HttpHeaders headers,

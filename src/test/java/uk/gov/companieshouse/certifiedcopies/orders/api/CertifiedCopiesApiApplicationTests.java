@@ -7,8 +7,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.serviceUnavailable;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.api.util.security.EricConstants.ERIC_IDENTITY_TYPE;
@@ -23,6 +21,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestUtils.givenSdkIsConfigured;
 import org.junit.ClassRule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,9 +121,9 @@ class CertifiedCopiesApiApplicationTests {
             .expectStatus().isBadRequest()
             .expectBody()
             .jsonPath("$.status").isEqualTo("400")
-            .jsonPath("$.error").isEqualTo("Bad Request")
-            .jsonPath("$.message").isEqualTo("Error getting filing history document 1 for company number 00000000.")
-            .jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
+            .jsonPath("$.title").isEqualTo("Bad Request")
+            .jsonPath("$.detail").isEqualTo("Error getting filing history document 1 for company number 00000000.")
+            .jsonPath("$.instance").isEqualTo(CERTIFIED_COPIES_URL);
 
     }
 
@@ -150,11 +149,11 @@ class CertifiedCopiesApiApplicationTests {
             .expectStatus().is5xxServerError()
             .expectBody()
             .jsonPath("$.status").isEqualTo("500")
-            .jsonPath("$.error").isEqualTo("Internal Server Error")
-            .jsonPath("$.message")
+            .jsonPath("$.title").isEqualTo("Internal Server Error")
+            .jsonPath("$.detail")
             .isEqualTo("Error sending request to http://localhost:" + wireMockPort +
                     "/company/00006400/filing-history/1: " + "Connection reset")
-            .jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
+            .jsonPath("$.instance").isEqualTo(CERTIFIED_COPIES_URL);
     }
 
     @Test
@@ -178,11 +177,11 @@ class CertifiedCopiesApiApplicationTests {
             .expectStatus().is5xxServerError()
             .expectBody()
             .jsonPath("$.status").isEqualTo("500")
-            .jsonPath("$.error").isEqualTo("Internal Server Error")
-            .jsonPath("$.message")
+            .jsonPath("$.title").isEqualTo("Internal Server Error")
+            .jsonPath("$.detail")
             .isEqualTo("Error sending request to http://localhost:" + wireMockPort
                     + "/company/00006400/filing-history/1: " + "Service Unavailable")
-            .jsonPath("$.path").isEqualTo(CERTIFIED_COPIES_URL);
+            .jsonPath("$.instance").isEqualTo(CERTIFIED_COPIES_URL);
     }
     
     @Test
@@ -193,9 +192,10 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
+
         
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        assertTrue(present);
+        Assertions.assertTrue(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
@@ -208,7 +208,7 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        assertFalse(present);
+        Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
@@ -221,7 +221,7 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        assertFalse(present);
+        Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
@@ -235,7 +235,7 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        assertFalse(present);
+        Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
@@ -249,7 +249,7 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
         
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        assertFalse(present);
+        Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, PAYMENTS_API_URL);
     }
     
@@ -263,7 +263,7 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
         
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        assertFalse(present);
+        Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY);
     }
 

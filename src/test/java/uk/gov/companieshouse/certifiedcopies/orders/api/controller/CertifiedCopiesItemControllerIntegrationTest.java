@@ -568,7 +568,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.COLLECTION);
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         final List<FilingHistoryDocument> filings =
@@ -603,7 +603,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 = new CertifiedCopyItemOptionsRequestDTO();
 
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest
                 .setItemOptions(certifiedCopyItemOptionsDTORequest);
 
@@ -621,7 +621,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().is(BAD_REQUEST.value()))
                 .andExpect(content()
                         .json(objectMapper.writeValueAsString(expectedValidationError)));
 

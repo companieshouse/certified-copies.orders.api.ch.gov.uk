@@ -12,10 +12,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith(MockitoExtension.class)
-public class HealthcheckControllerTest {
+class HealthCheckControllerTest {
 
     @InjectMocks
-    private HealthcheckController controllerUnderTest;
+    private HealthCheckController controllerUnderTest;
 
     @Test
     @DisplayName("Health check confirms health with HTTP 200")

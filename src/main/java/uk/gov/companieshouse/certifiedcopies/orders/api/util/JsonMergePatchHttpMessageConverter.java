@@ -1,14 +1,15 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.util;
 
-import javax.json.Json;
-import javax.json.JsonMergePatch;
-import javax.json.JsonReader;
-import javax.json.JsonWriter;
+import jakarta.json.Json;
+import jakarta.json.JsonMergePatch;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonWriter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 /**

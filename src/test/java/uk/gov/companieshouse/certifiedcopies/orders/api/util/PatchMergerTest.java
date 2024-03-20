@@ -117,10 +117,10 @@ class PatchMergerTest {
         // Then
         assertThat(patched.getData().getItemOptions().getDeliveryMethod(), is(DELIVERY_METHOD));
         assertThat(patched.getData().getItemOptions().getDeliveryTimescale(), is(UPDATED_DELIVERY_TIMESCALE));
-        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryId(), is(FILING_HISTORY_ID));
-        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryCost(), is(FILING_HISTORY_COST));
-        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryDescription(), is(FILING_HISTORY_DESCRIPTION));
-        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryType(), is (FILING_HISTORY_TYPE));
+        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().getFirst().getFilingHistoryId(), is(FILING_HISTORY_ID));
+        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().getFirst().getFilingHistoryCost(), is(FILING_HISTORY_COST));
+        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().getFirst().getFilingHistoryDescription(), is(FILING_HISTORY_DESCRIPTION));
+        assertThat(patched.getData().getItemOptions().getFilingHistoryDocuments().getFirst().getFilingHistoryType(), is (FILING_HISTORY_TYPE));
     }
 
     @Test

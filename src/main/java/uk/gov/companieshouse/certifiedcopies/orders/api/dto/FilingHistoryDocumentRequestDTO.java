@@ -3,7 +3,7 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 @JsonPropertyOrder(alphabetic = true)
 public class FilingHistoryDocumentRequestDTO {

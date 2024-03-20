@@ -8,7 +8,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRes
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemData;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 
 @Mapper(componentModel = "spring")
 public interface CertifiedCopyItemMapper {

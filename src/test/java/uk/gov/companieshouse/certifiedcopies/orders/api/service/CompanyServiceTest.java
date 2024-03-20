@@ -31,7 +31,7 @@ import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 
 @ExtendWith(MockitoExtension.class)
 @PrepareForTest(HttpResponseException.class)
-public class CompanyServiceTest {
+class CompanyServiceTest {
 
     private static final String COMPANY_NUMBER = "00006400";
     private static final String COMPANY_NAME = "Company Name";
@@ -60,7 +60,7 @@ public class CompanyServiceTest {
 
     @Test
     @DisplayName("getCompanyName() returns a string when api call is successful")
-    public void getCompanyNameIsValid() throws Exception {
+    void getCompanyNameIsValid() throws Exception {
 
         CompanyProfileApi companyProfileApi = new CompanyProfileApi();
         companyProfileApi.setCompanyName(COMPANY_NAME);
@@ -77,7 +77,7 @@ public class CompanyServiceTest {
 
     @Test
     @DisplayName("getCompanyName() Invalid URL reported as Internal Server Error (500)")
-    public void getCompanyNameThrowsInternalServerErrorForInvalidUri() throws Exception {
+    void getCompanyNameThrowsInternalServerErrorForInvalidUri() throws Exception {
 
         when(apiClientService.getInternalApiClient()).thenReturn(apiClient);
         when(apiClient.company()).thenReturn(handler);
@@ -87,13 +87,13 @@ public class CompanyServiceTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         assertThat(exception.getReason(), is(INVALID_URI_EXPECTED_REASON));
     }
 
     @Test
     @DisplayName("getCompanyName() ApiErrorResponseException Internal Server Error is reported as such (500)")
-    public void getCompanyNameInternalServerErrorApiExceptionIsPropagated() throws Exception {
+    void getCompanyNameInternalServerErrorApiExceptionIsPropagated() throws Exception {
 
         final IOException ioException = new IOException(IOEXCEPTION_MESSAGE);
 
@@ -106,13 +106,13 @@ public class CompanyServiceTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), is(INTERNAL_SERVER_ERROR));
         assertThat(exception.getReason(), is(IOEXCEPTION_EXPECTED_REASON));
     }
 
     @Test
     @DisplayName("getCompanyName() ApiErrorResponseException any other status code is reported as bad request (400)")
-    public void getCompanyNameInternalServerErrorApiExceptionWithAnyOtherStatusCodeIsPropagated() throws Exception {
+    void getCompanyNameInternalServerErrorApiExceptionWithAnyOtherStatusCodeIsPropagated() throws Exception {
         HttpResponseException httpResponseException = new HttpResponseException
                 .Builder(404, "Not Found", new HttpHeaders()).build();
 
@@ -124,6 +124,6 @@ public class CompanyServiceTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getCompanyName(COMPANY_NUMBER));
-        assertThat(exception.getStatus(), is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), is(BAD_REQUEST));
     }
 }

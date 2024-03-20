@@ -8,13 +8,11 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.json.JsonMergePatch;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.json.JsonMergePatch;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,10 +70,6 @@ class PatchItemRequestValidatorTest {
 
     private static final int TOKEN_QUANTITY = 2;
     private static final int INVALID_QUANTITY = 0;
-    private static final String TOKEN_STRING = "TOKEN VALUE";
-    static final Map<String, String> TOKEN_VALUES = new HashMap<>();
-    private static final ItemCosts TOKEN_ITEM_COSTS = new ItemCosts();
-    private static final boolean TOKEN_POSTAL_DELIVERY_VALUE = true;
 
     @Autowired
     private PatchItemRequestValidator validatorUnderTest;
@@ -85,15 +79,13 @@ class PatchItemRequestValidatorTest {
 
     private PatchValidationCertifiedCopyItemDTO itemUpdate;
 
-    private CertifiedCopyItemOptions certifiedCopyItemOptions;
-
     @MockBean
     private RequestValidatable requestValidatable;
 
     @BeforeEach
     void setUp() {
         itemUpdate = new PatchValidationCertifiedCopyItemDTO();
-        certifiedCopyItemOptions = new CertifiedCopyItemOptions();
+        CertifiedCopyItemOptions certifiedCopyItemOptions = new CertifiedCopyItemOptions();
         when(requestValidatable.getItemOptions()).thenReturn(certifiedCopyItemOptions);
     }
 
@@ -146,18 +138,4 @@ class PatchItemRequestValidatorTest {
         assertThat(errors, contains(ApiErrors.ERR_JSON_PROCESSING));
     }
 
-    /**
-     * Utility method that asserts that the validator produces a "<field name>: must be null"
-     * error message.
-     *
-     * @throws IOException should something unexpected happen
-     */
-    private void assertFieldMustBeNullErrorProduced(ApiError apiError) throws IOException {
-        // Given
-        final JsonMergePatch patch = patchFactory.patchFromPojo(itemUpdate);
-        // When
-        final List<ApiError> errors = validatorUnderTest.getValidationErrors(patch);
-        // Then
-        assertThat(errors, contains(apiError));
-    }
 }
