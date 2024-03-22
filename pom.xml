@@ -24,6 +24,7 @@
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <jakarta.json-api.version>2.1.3</jakarta.json-api.version>
         <johnzon.version>2.0.0</johnzon.version>
+        <jakarta.json.version>1.1.5</jakarta.json.version>
         <jackson.version>2.17.0</jackson.version>
         <hamcrest-all-version>1.3</hamcrest-all-version>
         <api-security-java.version>2.0.3</api-security-java.version>
@@ -100,12 +101,12 @@
         <dependency>
             <groupId>org.eclipse.parsson</groupId>
             <artifactId>jakarta.json</artifactId>
-            <version>1.1.5</version>
+            <version>${jakarta.json.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jakarta-jsonp</artifactId>
-            <version>2.17.0</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -284,6 +285,13 @@
                     <container>
                         <expandClasspathDependencies>true</expandClasspathDependencies>
                     </container>
+                    <from>
+                        <image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/ci-corretto-build-21:latest</image>
+                    </from>
+                    <to>
+                        //Once the pipeline is moved to shared services need to update this to image reference from shared services
+                        <image>169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/certified-copies.orders.api.ch.gov.uk:latest</image>
+                    </to>
                 </configuration>
             </plugin>
         </plugins>

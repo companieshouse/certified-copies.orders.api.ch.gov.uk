@@ -621,7 +621,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_CREATE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(certifiedCopyItemDTORequest)))
-                .andExpect(status().is(BAD_REQUEST.value()))
+                .andExpect(status().isBadRequest())
                 .andExpect(content()
                         .json(objectMapper.writeValueAsString(expectedValidationError)));
 
