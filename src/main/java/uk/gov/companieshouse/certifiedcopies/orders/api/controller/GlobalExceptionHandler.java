@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.lang.NonNull;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,20 +28,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.converter = converter;
     }
 
+    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            final MethodArgumentNotValidException ex,
-            final HttpHeaders headers,
-            final HttpStatus status,
-            final WebRequest request) {
+            @NonNull final MethodArgumentNotValidException ex,
+            @NonNull final HttpHeaders headers,
+            @NonNull final HttpStatusCode status,
+            @NonNull final WebRequest request) {
         final ApiErrors apiError = buildBadRequestApiError(ex);
         return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            final HttpMessageNotReadableException ex,
-            final HttpHeaders headers,
-            final HttpStatus status,
-            final WebRequest request) {
+            @NonNull final HttpMessageNotReadableException ex,
+            @NonNull final HttpHeaders headers,
+            @NonNull final HttpStatusCode status,
+            @NonNull final WebRequest request) {
 
         if (ex.getCause() instanceof JsonProcessingException) {
             final ApiErrors apiError = buildBadRequestApiError((JsonProcessingException) ex.getCause());
