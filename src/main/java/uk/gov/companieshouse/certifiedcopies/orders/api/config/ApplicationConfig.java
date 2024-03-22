@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.config;
 
+import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,8 +16,6 @@ import uk.gov.companieshouse.api.util.security.Permission.Key;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthenticationInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.UserAuthorisationInterceptor;
-
-import static com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {

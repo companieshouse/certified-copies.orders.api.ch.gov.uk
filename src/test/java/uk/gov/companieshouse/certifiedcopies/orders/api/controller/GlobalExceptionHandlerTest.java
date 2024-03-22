@@ -7,10 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -22,8 +19,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.MULTI_STATUS;
 
@@ -139,9 +135,7 @@ class GlobalExceptionHandlerTest {
 
         // Then
         // Note these assertions are testing behaviour implemented in the Spring framework.
-        assertThat(response.getStatusCode(), is(ORIGINAL_STATUS));
-        //body doesn't work in spring 3 in the same way
-        //assertThat(response.getBody(), is(nullValue()));
+        assertThat(response.getStatusCode(), is(ORIGINAL_STATUS));;
     }
 
 }

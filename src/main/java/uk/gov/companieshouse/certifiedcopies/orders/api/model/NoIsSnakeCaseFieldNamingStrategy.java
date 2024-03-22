@@ -4,7 +4,6 @@ import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy;
 import org.springframework.lang.NonNull;
 
-
 /**
  * Extends {@link SnakeCaseFieldNamingStrategy} to change the naming strategy for boolean fields, to remove the
  * "is_" prefix from the field name where present.
