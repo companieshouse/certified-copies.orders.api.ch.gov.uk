@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.json.JsonMergePatch;
 import jakarta.json.JsonValue;

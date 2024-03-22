@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.interceptor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -39,7 +40,7 @@ public class UserAuthorisationInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         final String identityType = EricHeaderHelper.getIdentityType(request);
         boolean isApiKeyRequest = identityType.equals(EricHeaderHelper.API_KEY_IDENTITY_TYPE);
         boolean isOAuth2Request = identityType.equals(EricHeaderHelper.OAUTH2_IDENTITY_TYPE);

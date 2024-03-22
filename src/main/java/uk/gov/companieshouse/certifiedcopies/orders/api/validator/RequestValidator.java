@@ -16,10 +16,9 @@ public class RequestValidator {
     /**
      * Validates the options provided, returning any errors found.
      * @param options the options to be validated
-     * @param converter the converter this uses to present field names as they appear in the request JSON payload
      * @return the errors found, which will be empty if the item is found to be valid
      */
-    List<String> getValidationErrors(final CertifiedCopyItemOptionsRequestDTO options, final FieldNameConverter converter) {
+    List<String> getValidationErrors(final CertifiedCopyItemOptionsRequestDTO options) {
         final List<String> errors = new ArrayList<>();
         if (options == null) {
             return errors;

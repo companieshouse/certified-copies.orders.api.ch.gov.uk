@@ -22,7 +22,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +93,7 @@ class CertifiedCopyItemMapperTest {
         final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsRequestDTO
                 = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemOptionsRequestDTO
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemOptionsRequestDTO.setContactNumber(CONTACT_NUMBER);
         certifiedCopyItemOptionsRequestDTO.setDeliveryMethod(DeliveryMethod.POSTAL);
         certifiedCopyItemOptionsRequestDTO

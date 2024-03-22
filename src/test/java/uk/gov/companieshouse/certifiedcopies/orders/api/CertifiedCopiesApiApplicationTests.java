@@ -84,7 +84,7 @@ class CertifiedCopiesApiApplicationTests {
     
     @Test
     @DisplayName("createCertifiedCopy using wrong permission")
-    void createCertifiedCopyUnauthorised() throws JsonProcessingException {
+    void createCertifiedCopyUnauthorised() {
 
         // When and then
         webTestClient.post().uri(CERTIFIED_COPIES_URL)

@@ -6,6 +6,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUt
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.STATUS_LOG_KEY;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils.getLogger;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.EricHeaderHelper;
@@ -22,7 +23,7 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     private static final Logger LOGGER = getLogger();
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         Map<String, Object> logMap = new HashMap<>();
         logMap.put(REQUEST_ID_LOG_KEY, request.getHeader(REQUEST_ID_HEADER_NAME));
         final String identityType = EricHeaderHelper.getIdentityType(request);

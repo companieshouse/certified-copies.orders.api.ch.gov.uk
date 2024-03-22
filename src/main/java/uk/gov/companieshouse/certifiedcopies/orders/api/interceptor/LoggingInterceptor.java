@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.interceptor;
 
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,15 +15,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         logStartRequestProcessing(request, LoggingUtils.getLogger());
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request,
-                           HttpServletResponse response,
-                           Object handler,
+    public void postHandle(@NonNull HttpServletRequest request,
+                           @NonNull HttpServletResponse response,
+                           @NonNull Object handler,
                            @Nullable ModelAndView modelAndView) {
 
         logEndRequestProcessing(request, response, LoggingUtils.getLogger());

@@ -29,7 +29,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.dto.PatchValidationCerti
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptionsRequest;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.TestMergePatchFactory;
 
