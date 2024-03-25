@@ -6,7 +6,8 @@ public enum RequiredEnvironmentVariables {
     MONGODB_URL("MONGODB_URL"),
     CHS_API_KEY("CHS_API_KEY"),
     API_URL("API_URL"),
-    PAYMENTS_API_URL("PAYMENTS_API_URL");
+    PAYMENTS_API_URL("PAYMENTS_API_URL"),
+    DOCUMENT_API_URL("DOCUMENT_API_URL");
     
     private final String name;
     
