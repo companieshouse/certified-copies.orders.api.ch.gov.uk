@@ -64,7 +64,6 @@ class CertifiedCopiesApiApplicationTests {
     private final String CHS_API_KEY = "CHS_API_KEY";
     private final String API_URL = "API_URL";
     private final String PAYMENTS_API_URL = "PAYMENTS_API_URL";
-    private final String DOCUMENT_API_URL = "DOCUMENT_API_URL";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -193,91 +192,71 @@ class CertifiedCopiesApiApplicationTests {
         ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
-        ENVIRONMENT_VARIABLES.set(DOCUMENT_API_URL, DOCUMENT_API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
         Assertions.assertTrue(present);
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
     @Test
     @DisplayName("Checking environment variables when ITEMS_DATABASE is not set should return false")
     void checkEnvironmentVariablesItemsDatabaseMissingReturnsFalse() {
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
         ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
-        ENVIRONMENT_VARIABLES.set(DOCUMENT_API_URL, DOCUMENT_API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
         Assertions.assertFalse(present);
-        ENVIRONMENT_VARIABLES.clear(MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
     @Test
     @DisplayName("Checking environment variables when MONGODB_URL is not set should return false")
     void checkEnvironmentVariablesMongoDbMissingReturnsFalse() {
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
         ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
-        ENVIRONMENT_VARIABLES.set(DOCUMENT_API_URL, DOCUMENT_API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
         Assertions.assertFalse(present);
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
     @Test
     @DisplayName("Checking environment variables when API_URL is not set should return false")
     void checkEnvironmentVariablesApiUrlMissingReturnsFalse() {
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
         ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
         ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
-        ENVIRONMENT_VARIABLES.set(DOCUMENT_API_URL, DOCUMENT_API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
         Assertions.assertFalse(present);
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
     
     @Test
     @DisplayName("Checking environment variables when CHS_API_KEY is not set should return false")
     void checkEnvironmentVariablesChsApiKeyMissingReturnsFalse() {
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
         ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
         ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
-        ENVIRONMENT_VARIABLES.set(DOCUMENT_API_URL, DOCUMENT_API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
         Assertions.assertFalse(present);
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, PAYMENTS_API_URL);
     }
     
     @Test
     @DisplayName("Checking environment variables when PAYMENTS_API_URL is not set should return false")
     void checkEnvironmentVariablesPaymentsApiUrlMissingReturnsFalse() {
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
+        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
         ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
         ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
         ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
         ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
-        ENVIRONMENT_VARIABLES.set(DOCUMENT_API_URL, DOCUMENT_API_URL);
-        boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
-        Assertions.assertFalse(present);
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, DOCUMENT_API_URL);
-    }
-
-    @Test
-    @DisplayName("Checking environment variables when DOCUMENT_API_URL is not set should return false")
-    void checkEnvironmentVariablesDocumentApiUrlMissingReturnsFalse() {
-        ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL, DOCUMENT_API_URL);
-        ENVIRONMENT_VARIABLES.set(ITEMS_DATABASE, ITEMS_DATABASE);
-        ENVIRONMENT_VARIABLES.set(MONGODB_URL, MONGODB_URL);
-        ENVIRONMENT_VARIABLES.set(CHS_API_KEY, CHS_API_KEY);
-        ENVIRONMENT_VARIABLES.set(API_URL, API_URL);
-        ENVIRONMENT_VARIABLES.set(PAYMENTS_API_URL, PAYMENTS_API_URL);
         boolean present = CertifiedCopiesApiApplication.checkEnvironmentVariables();
         Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY);
