@@ -4,7 +4,7 @@
 API handling CRUD operations on CH Certified Copies Ordering Service
 
 ### Requirements
-* [Java 8][1]
+* [Java 21][1]
 * [Maven][2]
 * [Git][3]
 
@@ -25,7 +25,7 @@ PAYMENTS_API_URL | Payments API URL | ✓ | chs-configs repo environment global_
 ### Endpoints
 Path | Method | Description
 --- | --- | ---
-*`/healthcheck`* | GET | Returns HTTP OK (`200`) to indicate a healthy application instance.
+*`/orderable/certified-copies/healthcheck`* | GET | Returns HTTP OK (`200`) with JSON indicating 'up' status, to indicate a healthy application instance.
 *`/orderable/certified-copies`* | POST | Returns HTTP CREATED (`201`) with created object JSON.
 *`/orderable/certified-copies/{id}`* | GET | Returns HTTP OK (`200`) and object JSON.
 

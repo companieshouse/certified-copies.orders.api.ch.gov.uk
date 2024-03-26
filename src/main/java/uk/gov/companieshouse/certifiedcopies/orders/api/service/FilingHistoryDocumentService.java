@@ -121,7 +121,7 @@ public class FilingHistoryDocumentService {
                               final List<FilingHistoryDocument> filingHistoryDocumentsRequested) {
         final List<String> filingHistoryIds = filingHistoryDocumentsRequested.stream()
                         .map(FilingHistoryDocument::getFilingHistoryId)
-                        .collect(toList());
+                        .toList();
         return filingHistoryIds.contains(filing.getTransactionId());
     }
 

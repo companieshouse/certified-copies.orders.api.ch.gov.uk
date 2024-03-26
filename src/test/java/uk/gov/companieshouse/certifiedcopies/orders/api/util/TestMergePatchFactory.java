@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.json.Json;
-import javax.json.JsonMergePatch;
-import javax.json.JsonReader;
+import jakarta.json.Json;
+import jakarta.json.JsonMergePatch;
+import jakarta.json.JsonReader;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +23,7 @@ public class TestMergePatchFactory {
     }
 
     /**
-     * Performs an equivalent conversion to that carried out by {@link JsonMergePatchHttpMessageConverter} et al to
+     * Performs an equivalent conversion to that carried out by {@link JsonMergePatchHttpMessageConverter} et al. to
      * facilitate integration testing.
      * @param pojo the POJO that represents a merge patch
      * @return the {@link JsonMergePatch} representation
@@ -39,7 +39,7 @@ public class TestMergePatchFactory {
     }
 
     /**
-     * Performs an equivalent conversion to that carried out by {@link JsonMergePatchHttpMessageConverter} et al to
+     * Performs an equivalent conversion to that carried out by {@link JsonMergePatchHttpMessageConverter} et al. to
      * facilitate integration testing.
      * @param json the JSON that represents a merge patch
      * @return the {@link JsonMergePatch} representation

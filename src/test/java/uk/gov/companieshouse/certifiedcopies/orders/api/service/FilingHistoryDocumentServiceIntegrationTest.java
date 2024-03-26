@@ -31,8 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -121,7 +121,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
                     .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
                     .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    .setPropertyNamingStrategy(SNAKE_CASE)
+                    .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
                     .findAndRegisterModules();
         }
 
@@ -194,7 +194,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(UNKNOWN_COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), Is.is(BAD_REQUEST));
         final String expectedReason = "Error getting filing history document " + ID_1 +
                 " for company number " + UNKNOWN_COMPANY_NUMBER + ".";
         assertThat(exception.getReason(), Is.is(expectedReason));
@@ -214,7 +214,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, singletonList(UNKNOWN_FILING)));
-        assertThat(exception.getStatus(), Is.is(BAD_REQUEST));
+        assertThat(exception.getStatusCode(), Is.is(BAD_REQUEST));
         final String expectedReason = "Error getting filing history document " + UNKNOWN_ID +
                 " for company number " + COMPANY_NUMBER + ".";
         assertThat(exception.getReason(), Is.is(expectedReason));
@@ -233,7 +233,7 @@ class FilingHistoryDocumentServiceIntegrationTest {
         final ResponseStatusException exception =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> serviceUnderTest.getFilingHistoryDocuments(COMPANY_NUMBER, FILINGS_SOUGHT));
-        assertThat(exception.getStatus(), Is.is(INTERNAL_SERVER_ERROR));
+        assertThat(exception.getStatusCode(), Is.is(INTERNAL_SERVER_ERROR));
         final String expectedReason = "Error sending request to http://localhost:"
                 + wireMockPort + "/company/" + COMPANY_NUMBER + "/filing-history/" + ID_1 + ": Connection reset";
         assertThat(exception.getReason(), Is.is(expectedReason));

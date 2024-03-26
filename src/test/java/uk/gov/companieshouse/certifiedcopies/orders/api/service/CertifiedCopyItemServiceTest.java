@@ -34,7 +34,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopy
  * Unit tests the {@link CertifiedCopyItemService} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class CertifiedCopyItemServiceTest {
+class CertifiedCopyItemServiceTest {
 
     private static final String ID = "CCD-123456-123456";
     private static final String COMPANY_NUMBER = "00000000";
@@ -223,7 +223,7 @@ public class CertifiedCopyItemServiceTest {
         final LocalDateTime intervalEnd = LocalDateTime.now();
         verifyCreationTimestampsWithinExecutionInterval(certifiedCopyItem, intervalStart, intervalEnd);
         assertThat(certifiedCopyItem.getId(), is(ID));
-        verify(etagGenerator).generateEtag();;
+        verify(etagGenerator).generateEtag();
     }
 
 

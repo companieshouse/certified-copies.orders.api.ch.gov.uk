@@ -52,18 +52,18 @@ class CertifiedCopyCostCalculatorServiceTest {
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
         final List<ItemCostCalculation> calculations =
                 calculatorUnderTest.calculateAllCosts(QUANTITY, DeliveryTimescale.STANDARD, filingHistoryDocumentList);
-        final List<ItemCosts> costs = calculations.get(0).getItemCosts();
+        final List<ItemCosts> costs = calculations.getFirst().itemCosts();
 
         // Then
-        final ItemCosts cost = costs.get(0);
+        final ItemCosts cost = costs.getFirst();
         assertThat(cost.getItemCost(), is(CERTIFIED_COPY_COST));
         assertThat(cost.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost.getCalculatedCost(), is(CERTIFIED_COPY_COST));
         assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY));
-        assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
-        assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+        assertThat(calculations.getFirst().postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.getFirst().totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
 
-        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.get(0);
+        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.getFirst();
         assertThat(filingHistoryDocument.getFilingHistoryCost(), is(CERTIFIED_COPY_COST));
     }
 
@@ -75,23 +75,23 @@ class CertifiedCopyCostCalculatorServiceTest {
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocumentsMulti();
         final List<ItemCostCalculation> calculations =
                 calculatorUnderTest.calculateAllCosts(QUANTITY, DeliveryTimescale.STANDARD, filingHistoryDocumentList);
-        final List<ItemCosts> costs = calculations.get(0).getItemCosts();
+        final List<ItemCosts> costs = calculations.getFirst().itemCosts();
 
         // Then
-        final ItemCosts cost0 = calculations.get(0).getItemCosts().get(0);
+        final ItemCosts cost0 = calculations.getFirst().itemCosts().getFirst();
         assertThat(cost0.getItemCost(), is(CERTIFIED_COPY_COST));
         assertThat(cost0.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost0.getCalculatedCost(), is(CERTIFIED_COPY_COST));
         assertThat(cost0.getProductType(), is(ProductType.CERTIFIED_COPY));
-        assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
-        assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
-        final ItemCosts cost1 = calculations.get(1).getItemCosts().get(0);
+        assertThat(calculations.get(0).postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.get(0).totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+        final ItemCosts cost1 = calculations.get(1).itemCosts().getFirst();
         assertThat(cost1.getItemCost(), is(CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost1.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost1.getCalculatedCost(), is(CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost1.getProductType(), is(ProductType.CERTIFIED_COPY_INCORPORATION));
-        assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
-        assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+        assertThat(calculations.getFirst().postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.getFirst().totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
 
         final FilingHistoryDocument filingHistoryDocument1 = filingHistoryDocumentList.get(0);
         assertThat(filingHistoryDocument1.getFilingHistoryCost(), is(CERTIFIED_COPY_COST));
@@ -108,18 +108,18 @@ class CertifiedCopyCostCalculatorServiceTest {
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_NEWINC);
         final List<ItemCostCalculation> calculations =
                 calculatorUnderTest.calculateAllCosts(QUANTITY, DeliveryTimescale.STANDARD, filingHistoryDocumentList);
-        final List<ItemCosts> costs = calculations.get(0).getItemCosts();
+        final List<ItemCosts> costs = calculations.getFirst().itemCosts();
 
         // Then
-        final ItemCosts cost = costs.get(0);
+        final ItemCosts cost = costs.getFirst();
         assertThat(cost.getItemCost(), is(CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost.getCalculatedCost(), is(CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY_INCORPORATION));
-        assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
-        assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+        assertThat(calculations.getFirst().postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.getFirst().totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
 
-        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.get(0);
+        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.getFirst();
         assertThat(filingHistoryDocument.getFilingHistoryCost(), is(CERTIFIED_COPY_NEW_INC_COST));
     }
 
@@ -131,18 +131,18 @@ class CertifiedCopyCostCalculatorServiceTest {
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
         final List<ItemCostCalculation> calculations =
                 calculatorUnderTest.calculateAllCosts(QUANTITY, DeliveryTimescale.SAME_DAY, filingHistoryDocumentList);
-        final List<ItemCosts> costs = calculations.get(0).getItemCosts();
+        final List<ItemCosts> costs = calculations.getFirst().itemCosts();
 
         // Then
-        final ItemCosts cost = costs.get(0);
+        final ItemCosts cost = costs.getFirst();
         assertThat(cost.getItemCost(), is(SAME_DAY_CERTIFIED_COPY_COST));
         assertThat(cost.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost.getCalculatedCost(), is(SAME_DAY_CERTIFIED_COPY_COST));
         assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY_SAME_DAY));
-        assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
-        assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+        assertThat(calculations.getFirst().postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.getFirst().totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
 
-        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.get(0);
+        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.getFirst();
         assertThat(filingHistoryDocument.getFilingHistoryCost(), is(SAME_DAY_CERTIFIED_COPY_COST));
     }
 
@@ -154,18 +154,18 @@ class CertifiedCopyCostCalculatorServiceTest {
         List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_NEWINC);
         final List<ItemCostCalculation> calculations =
                 calculatorUnderTest.calculateAllCosts(QUANTITY, DeliveryTimescale.SAME_DAY, filingHistoryDocumentList);
-        final List<ItemCosts> costs = calculations.get(0).getItemCosts();
+        final List<ItemCosts> costs = calculations.getFirst().itemCosts();
 
         // Then
-        final ItemCosts cost = costs.get(0);
+        final ItemCosts cost = costs.getFirst();
         assertThat(cost.getItemCost(), is(SAME_DAY_CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost.getDiscountApplied(), is(NO_DISCOUNT));
         assertThat(cost.getCalculatedCost(), is(SAME_DAY_CERTIFIED_COPY_NEW_INC_COST));
         assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY_INCORPORATION_SAME_DAY));
-        assertThat(calculations.get(0).getPostageCost(), is(POSTAGE_COST));
-        assertThat(calculations.get(0).getTotalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+        assertThat(calculations.getFirst().postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.getFirst().totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
 
-        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.get(0);
+        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.getFirst();
         assertThat(filingHistoryDocument.getFilingHistoryCost(), is(SAME_DAY_CERTIFIED_COPY_NEW_INC_COST));
     }
 

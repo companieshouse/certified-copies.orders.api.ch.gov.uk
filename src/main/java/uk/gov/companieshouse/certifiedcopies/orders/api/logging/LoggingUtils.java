@@ -37,8 +37,8 @@ public class LoggingUtils {
      * method to set up a map for logging purposes and add a value for the
      * request id
      *
-     * @param requestId
-     * @return
+     * @param requestId the request id to log
+     * @return the log map for use in log messages
      */
     public static Map<String, Object> createLoggingDataMap(final String requestId) {
         Map<String, Object> logMap = new HashMap<>();

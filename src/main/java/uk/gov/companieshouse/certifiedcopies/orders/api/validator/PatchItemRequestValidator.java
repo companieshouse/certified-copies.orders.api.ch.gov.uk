@@ -8,9 +8,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.json.JsonMergePatch;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.json.JsonMergePatch;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.error.ApiError;
 import uk.gov.companieshouse.certifiedcopies.orders.api.controller.ApiErrors;
@@ -19,7 +19,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.util.ApiErrorBuilder;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 
 /**
- * Implements validation of the request payload specific to the the patch item request only.
+ * Implements validation of the request payload specific to the patch item request only.
  */
 @Component
 public class PatchItemRequestValidator {

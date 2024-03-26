@@ -90,24 +90,22 @@ public class CertifiedCopyItemService {
         populateDescriptions(updatedCertifiedCopyItem);
         updatedCertifiedCopyItem.setEtag(etagGenerator.generateEtag());
         populateItemCosts(updatedCertifiedCopyItem, costCalculatorService);
-        final CertifiedCopyItem itemSaved = repository.save(updatedCertifiedCopyItem);
 
-        return itemSaved;
+        return repository.save(updatedCertifiedCopyItem);
     }
 
     public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator) {
         CertifiedCopyItemData itemData = item.getData();
         List<FilingHistoryDocument> filingHistoryDocumentList = itemData.getItemOptions().getFilingHistoryDocuments();
-        int quantity = itemData.getQuantity();
         List<ItemCostCalculation> costCalculationList = calculator.calculateAllCosts(itemData.getQuantity(),
                                                                             getOrDefaultDeliveryTimescale(item),
                                                                             filingHistoryDocumentList);
         int totalItemCost = 0;
         List<ItemCosts> itemCosts = new ArrayList<>();
         for (ItemCostCalculation costCalculation : costCalculationList) {
-            totalItemCost += Integer.parseInt(costCalculation.getTotalItemCost());
-            itemCosts.addAll(costCalculation.getItemCosts());
-            item.setPostageCost(costCalculation.getPostageCost());
+            totalItemCost += Integer.parseInt(costCalculation.totalItemCost());
+            itemCosts.addAll(costCalculation.itemCosts());
+            item.setPostageCost(costCalculation.postageCost());
         }
         item.setItemCosts(itemCosts);
         item.setTotalItemCost(totalItemCost + "");

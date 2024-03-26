@@ -26,13 +26,11 @@ public class CertifiedCopyCostCalculatorService {
                                                        final List<FilingHistoryDocument> filingHistoryDocs) {
         List<ItemCostCalculation> costCalculationList = new ArrayList<>();
 
-        for (int i = 0; i < filingHistoryDocs.size(); i++) {
-            FilingHistoryDocument filingHistoryDocument = filingHistoryDocs.get(i);
-
+        for (FilingHistoryDocument filingHistoryDocument : filingHistoryDocs) {
             ItemCostCalculation calculatedCost = calculateCosts(quantity, deliveryTimescale,
-                filingHistoryDocument.getFilingHistoryType());
+                    filingHistoryDocument.getFilingHistoryType());
 
-            filingHistoryDocument.setFilingHistoryCost(calculatedCost.getItemCosts().get(0).getCalculatedCost());
+            filingHistoryDocument.setFilingHistoryCost(calculatedCost.itemCosts().getFirst().getCalculatedCost());
 
             costCalculationList.add(calculatedCost);
         }

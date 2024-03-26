@@ -6,7 +6,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.CollectionLocation
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryMethod;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.DeliveryTimescale;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @JsonPropertyOrder(alphabetic = true)

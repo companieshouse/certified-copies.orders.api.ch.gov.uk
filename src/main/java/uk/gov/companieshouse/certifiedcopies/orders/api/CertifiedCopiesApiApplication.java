@@ -12,7 +12,7 @@ import uk.gov.companieshouse.logging.Logger;
 @SpringBootApplication
 public class CertifiedCopiesApiApplication {
     
-    private static Logger LOGGER = LoggingUtils.getLogger();
+    private static final Logger LOGGER = LoggingUtils.getLogger();
 
 	public static void main(String[] args) {
 	    if(checkEnvironmentVariables()) {	        
@@ -21,7 +21,7 @@ public class CertifiedCopiesApiApplication {
 	}
 	
 	/**
-     * Method to check if all of the required configuration variables
+     * Method to check if all the required configuration variables
      * defined in EnvironmentVariables enum have been set to a value
      */
     public static boolean checkEnvironmentVariables() {
