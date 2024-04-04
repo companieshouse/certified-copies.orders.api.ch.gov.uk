@@ -32,7 +32,7 @@
         <api-sdk-java.version>6.0.9</api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
         <powermock.version>2.0.9</powermock.version>
-        <flapdoodle.embed.mongo.version>3.0.0</flapdoodle.embed.mongo.version>
+        <flapdoodle.embed.mongo.version>4.12.2</flapdoodle.embed.mongo.version>
         <!-- system-rules: 1.17.2 is the latest version that works with JUnit
             5. See https://github.com/stefanbirkner/system-rules/issues/70 -->
         <system-rules-version>1.17.2</system-rules-version>
