@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.json.JsonMergePatch;
-import javax.json.JsonValue;
+import jakarta.json.JsonMergePatch;
+import jakarta.json.JsonValue;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItem;
 

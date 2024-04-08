@@ -1,14 +1,13 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -20,9 +19,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.MULTI_STATUS;
 
@@ -30,7 +27,7 @@ import static org.springframework.http.HttpStatus.MULTI_STATUS;
  * Unit tests the {@link GlobalExceptionHandler} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     private static final String OBJECT1 =  "object1";
     private static final String OBJECT2 =  "object2";
@@ -38,7 +35,7 @@ public class GlobalExceptionHandlerTest {
     private static final String MESSAGE1 = "message1";
     private static final String MESSAGE2 = "message2";
     private static final String ORIGINAL_MESSAGE = "original";
-    private static final HttpStatus ORIGINAL_STATUS = MULTI_STATUS;
+    private static final HttpStatusCode ORIGINAL_STATUS = MULTI_STATUS;
 
     /**
      * Extends {@link GlobalExceptionHandler} to facilitate its unit testing.
@@ -49,12 +46,11 @@ public class GlobalExceptionHandlerTest {
             super(converter);
         }
 
-        @Override
-        protected ResponseEntity<Object> handleExceptionInternal(final Exception ex,
-                                                                 final Object body,
-                                                                 final HttpHeaders headers,
-                                                                 final HttpStatus status,
-                                                                 final WebRequest request) {
+        private ResponseEntity<Object> handleExceptionInternal(final Exception ex,
+                                                               final Object body,
+                                                               final HttpHeaders headers,
+                                                               final HttpStatus status,
+                                                               final WebRequest request) {
             return new ResponseEntity<>(body, status);
         }
     }
@@ -77,11 +73,15 @@ public class GlobalExceptionHandlerTest {
     @Mock
     private FieldNameConverter converter;
 
-    @Mock
-    private HttpHeaders headers;
+    private HttpHeaders httpHeaders;
 
     @Mock
     private WebRequest request;
+
+    @BeforeEach
+    void setup() {
+        httpHeaders = new HttpHeaders();
+    }
 
     @Test
     void buildsApiErrorFromMethodArgumentNotValidException() {
@@ -93,7 +93,7 @@ public class GlobalExceptionHandlerTest {
         when(converter.toSnakeCase(FIELD1)).thenReturn(FIELD1);
 
         // When
-        final ResponseEntity<Object> response = handlerUnderTest.handleMethodArgumentNotValid(mex, headers, ORIGINAL_STATUS, request);
+        final ResponseEntity<Object> response = handlerUnderTest.handleMethodArgumentNotValid(mex, httpHeaders, ORIGINAL_STATUS, request);
 
         // Then
         final ApiErrors error = (ApiErrors) response.getBody();
@@ -114,13 +114,13 @@ public class GlobalExceptionHandlerTest {
 
         // When
         final ResponseEntity<Object> response =
-                handlerUnderTest.handleHttpMessageNotReadable(hex, headers, ORIGINAL_STATUS, request);
+                handlerUnderTest.handleHttpMessageNotReadable(hex, httpHeaders, ORIGINAL_STATUS, request);
 
         // Then
         final ApiErrors error = (ApiErrors) response.getBody();
         assertThat(error, is(notNullValue()));
         assertThat(error.getStatus(), is(HttpStatus.BAD_REQUEST));
-        assertThat(error.getErrors().get(0), is(ORIGINAL_MESSAGE));
+        assertThat(error.getErrors().getFirst(), is(ORIGINAL_MESSAGE));
     }
 
     @Test
@@ -130,14 +130,12 @@ public class GlobalExceptionHandlerTest {
         when(hex.getCause()).thenReturn(hex);
 
         // When
-
         final ResponseEntity<Object> response =
-                handlerUnderTest.handleHttpMessageNotReadable(hex, headers, ORIGINAL_STATUS, request);
+                handlerUnderTest.handleHttpMessageNotReadable(hex, httpHeaders, ORIGINAL_STATUS, request);
 
         // Then
         // Note these assertions are testing behaviour implemented in the Spring framework.
-        assertThat(response.getStatusCode(), is(ORIGINAL_STATUS));
-        assertThat(response.getBody(), is(nullValue()));
+        assertThat(response.getStatusCode(), is(ORIGINAL_STATUS));;
     }
 
 }

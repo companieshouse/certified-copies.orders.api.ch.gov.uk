@@ -4,13 +4,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import javax.json.JsonMergePatch;
+import jakarta.json.JsonMergePatch;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +68,7 @@ class JsonMergePatchHttpMessageConverterTest {
         converterUnderTest.write(patch, SUPPORTED_MEDIA_TYPE, outputMessage);
 
         //Then
-        assertNotNull(patch);
+        Assertions.assertNotNull(patch);
     }
 
 }

@@ -6,7 +6,7 @@ import org.springframework.core.env.Environment;
 public class TestUtils {
 
     /**
-     * Configures the CH Java SDKs used in WireMock based integration tests to interact with with WireMock
+     * Configures the CH Java SDKs used in WireMock based integration tests to interact with WireMock
      * stubbed/mocked API endpoints.
      * @param environment the Spring {@link Environment} the tests are run in
      * @param variables {@link EnvironmentVariables} class rule permitting environment variable manipulation
@@ -17,6 +17,7 @@ public class TestUtils {
         variables.set("CHS_API_KEY", "MGQ1MGNlYmFkYzkxZTM2MzlkNGVmMzg4ZjgxMmEz");
         variables.set("API_URL", "http://localhost:" + wireMockPort);
         variables.set("PAYMENTS_API_URL", "http://localhost:" + wireMockPort);
+        variables.set("DOCUMENT_API_LOCAL_URL", "http://localhost:8080");
         return wireMockPort;
     }
 }

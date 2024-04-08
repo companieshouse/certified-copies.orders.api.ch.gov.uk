@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
-import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ class CreateItemRequestValidatorTest {
 
     @BeforeEach
     void setUp() {
-        validatorUnderTest = new CreateCertifiedCopyItemRequestValidator(new FieldNameConverter());
+        validatorUnderTest = new CreateCertifiedCopyItemRequestValidator();
     }
 
     @Test

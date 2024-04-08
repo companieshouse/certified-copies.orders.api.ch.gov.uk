@@ -1,9 +1,8 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.Assert.assertTrue;
 
 class IdGeneratorServiceTest {
 
@@ -15,8 +14,7 @@ class IdGeneratorServiceTest {
 
         final String id = idGeneratorService.autoGenerateId();
 
-        assertTrue(id.matches("^CCD-\\d{6}-\\d{6}$")); ;
-
+        Assertions.assertTrue(id.matches("^CCD-\\d{6}-\\d{6}$"));
     }
 
 }

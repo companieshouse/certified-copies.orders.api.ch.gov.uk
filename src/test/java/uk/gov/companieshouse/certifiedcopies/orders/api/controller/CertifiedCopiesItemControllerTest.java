@@ -8,7 +8,7 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.json.JsonMergePatch;
+import jakarta.json.JsonMergePatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.validator.PatchItemReque
  * Unit tests the {@link CertifiedCopiesItemController} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class CertifiedCopiesItemControllerTest {
+class CertifiedCopiesItemControllerTest {
 
     private static final String ID = "CCD-123456-123456";
 

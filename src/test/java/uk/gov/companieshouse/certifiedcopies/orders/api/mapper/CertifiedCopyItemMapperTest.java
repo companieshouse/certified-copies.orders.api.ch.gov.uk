@@ -22,7 +22,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ExtendWith(SpringExtension.class)
 @SpringJUnitConfig(CertifiedCopyItemMapperTest.Config.class)
-public class CertifiedCopyItemMapperTest {
+class CertifiedCopyItemMapperTest {
 
     private static final String COMPANY_NUMBER = "00000000";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
@@ -94,7 +93,7 @@ public class CertifiedCopyItemMapperTest {
         final CertifiedCopyItemOptionsRequestDTO certifiedCopyItemOptionsRequestDTO
                 = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemOptionsRequestDTO
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemOptionsRequestDTO.setContactNumber(CONTACT_NUMBER);
         certifiedCopyItemOptionsRequestDTO.setDeliveryMethod(DeliveryMethod.POSTAL);
         certifiedCopyItemOptionsRequestDTO
@@ -129,8 +128,8 @@ public class CertifiedCopyItemMapperTest {
                 is(dto.getItemOptions().getCollectionLocation()));
         assertThat(item.getItemOptions().getForename(), is(dto.getItemOptions().getForename()));
         assertThat(item.getItemOptions().getSurname(), is(dto.getItemOptions().getSurname()));
-        assertThat(item.getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryId(),
-                is(dto.getItemOptions().getFilingHistoryDocuments().get(0).getFilingHistoryId()));
+        assertThat(item.getItemOptions().getFilingHistoryDocuments().getFirst().getFilingHistoryId(),
+                is(dto.getItemOptions().getFilingHistoryDocuments().getFirst().getFilingHistoryId()));
     }
 
     @Test
@@ -186,8 +185,8 @@ public class CertifiedCopyItemMapperTest {
                 is(item.getItemOptions().getDeliveryMethod()));
         assertThat(dto.getItemOptions().getDeliveryTimescale(),
                 is(item.getItemOptions().getDeliveryTimescale()));
-        assertThat(dto.getItemOptions().getFilingHistoryDocuments().get(0),
-                is(item.getItemOptions().getFilingHistoryDocuments().get(0)));
+        assertThat(dto.getItemOptions().getFilingHistoryDocuments().getFirst(),
+                is(item.getItemOptions().getFilingHistoryDocuments().getFirst()));
         assertThat(dto.getItemOptions().getForename(), is(item.getItemOptions().getForename()));
         assertThat(dto.getItemOptions().getSurname(), is(item.getItemOptions().getSurname()));
 

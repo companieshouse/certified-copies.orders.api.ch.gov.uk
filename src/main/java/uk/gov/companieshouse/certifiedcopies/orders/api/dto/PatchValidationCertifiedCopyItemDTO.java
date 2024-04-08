@@ -2,7 +2,7 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptionsRequest;
 
 /**

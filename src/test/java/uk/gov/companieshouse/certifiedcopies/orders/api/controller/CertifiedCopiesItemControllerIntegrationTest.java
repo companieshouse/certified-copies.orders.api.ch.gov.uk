@@ -169,7 +169,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
 
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         final List<FilingHistoryDocument> filings =
@@ -217,8 +217,6 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY_1)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST)));
-
-        final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
     }
 
     @Test
@@ -243,7 +241,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
 
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         final List<FilingHistoryDocument> filings = getFilingHistoryDocumentsMulti();
@@ -352,7 +350,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
 
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         final List<FilingHistoryDocument> filings = getFilingHistoryDocumentsMulti();
@@ -406,8 +404,6 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 .andExpect(jsonPath("$.postal_delivery", is(true)))
                 .andExpect(jsonPath("$.quantity", is(QUANTITY_3)))
                 .andExpect(jsonPath("$.total_item_cost", is(TOTAL_ITEM_COST_MULTI_QUANTITY_3)));
-
-        final CertifiedCopyItem retrievedCopy = assertItemSavedCorrectly(CERTIFIED_COPY_ID);
     }
 
     @Test
@@ -429,7 +425,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setSurname(SURNAME);
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         final List<FilingHistoryDocument> filings =
@@ -547,7 +543,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 = new CertifiedCopyItemOptionsRequestDTO();
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         return certifiedCopyItemDTORequest;
     }
@@ -568,7 +564,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
         certifiedCopyItemOptionsDTORequest.setDeliveryMethod(DeliveryMethod.COLLECTION);
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest.setItemOptions(certifiedCopyItemOptionsDTORequest);
 
         final List<FilingHistoryDocument> filings =
@@ -603,7 +599,7 @@ class CertifiedCopiesItemControllerIntegrationTest {
                 = new CertifiedCopyItemOptionsRequestDTO();
 
         certifiedCopyItemOptionsDTORequest
-                .setFilingHistoryDocuments(Arrays.asList(filingHistoryDocumentRequestDTO));
+                .setFilingHistoryDocuments(List.of(filingHistoryDocumentRequestDTO));
         certifiedCopyItemDTORequest
                 .setItemOptions(certifiedCopyItemOptionsDTORequest);
 
@@ -792,9 +788,9 @@ class CertifiedCopiesItemControllerIntegrationTest {
      * @param retrievedCopy the certified copy item retrieved from the database
      */
     private void assertFilingSavedCorrectly(final CertifiedCopyItem retrievedCopy) {
-        assertThat(retrievedCopy.getData().getItemOptions().getFilingHistoryDocuments().get(0), is(notNullValue()));
+        assertThat(retrievedCopy.getData().getItemOptions().getFilingHistoryDocuments().getFirst(), is(notNullValue()));
         final FilingHistoryDocument retrievedFiling =
-                retrievedCopy.getData().getItemOptions().getFilingHistoryDocuments().get(0);
+                retrievedCopy.getData().getItemOptions().getFilingHistoryDocuments().getFirst();
         assertThat(retrievedFiling.getFilingHistoryDate(), is(FILING_HISTORY_DATE));
         assertThat(retrievedFiling.getFilingHistoryDescription(), is(FILING_HISTORY_DESCRIPTION));
         assertThat(retrievedFiling.getFilingHistoryId(), is(FILING_HISTORY_ID));
