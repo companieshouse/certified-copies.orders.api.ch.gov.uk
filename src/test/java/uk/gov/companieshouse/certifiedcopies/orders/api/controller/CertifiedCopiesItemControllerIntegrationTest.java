@@ -2,6 +2,7 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import uk.gov.companieshouse.certifiedcopies.orders.api.config.AbstractMongoConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemOptionsRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemRequestDTO;
 import uk.gov.companieshouse.certifiedcopies.orders.api.dto.CertifiedCopyItemResponseDTO;
@@ -32,7 +35,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDoc
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.IdGeneratorService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,14 +72,14 @@ import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstant
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.REQUEST_ID_VALUE;
 import static uk.gov.companieshouse.certifiedcopies.orders.api.util.TestConstants.TOKEN_PERMISSION_VALUE;
 
+@Testcontainers
 @AutoConfigureMockMvc
 @SpringBootTest
-class CertifiedCopiesItemControllerIntegrationTest {
+class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
 
     private static final String TOKEN_PERMISSION_CREATE = String.format(TOKEN_PERMISSION_VALUE, "create");
     private static final String TOKEN_PERMISSION_READ = String.format(TOKEN_PERMISSION_VALUE, "read");
     private static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
-
     private static final String COMPANY_NUMBER = "00000000";
     private static final String COMPANY_NAME = "Company Name";
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
@@ -97,17 +99,14 @@ class CertifiedCopiesItemControllerIntegrationTest {
     private static final String POSTAGE_COST = "0";
     private static final String DESCRIPTION = "certified copy for company 00000000";
     private static final String DESCRIPTION_IDENTIFIER = "certified-copy";
-
     private static final String FILING_HISTORY_COST = "15";
     private static final String FILING_HISTORY_COST_NEW_INC = "30";
-
     private static final String TOTAL_ITEM_COST = "15";
     private static final String TOTAL_ITEM_COST_SAME_DAY = "50";
     private static final String TOTAL_ITEM_COST_NEWINC = "30";
     private static final String TOTAL_ITEM_COST_MULTI = "45";
     private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "135";
     private static final String DISCOUNT = "0";
-
     private static final Links LINKS;
 
     static {
@@ -141,6 +140,11 @@ class CertifiedCopiesItemControllerIntegrationTest {
 
     @MockBean
     private ApiClientService apiClientService;
+
+    @BeforeAll
+    static void setup() {
+        mongoDBContainer.start();
+    }
 
     @AfterEach
     void tearDown() {
