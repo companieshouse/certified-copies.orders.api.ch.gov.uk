@@ -9,7 +9,7 @@ locals {
   docker_repo                 = "certified-copies.orders.api.ch.gov.uk"
   kms_alias                   = "alias/${var.aws_profile}/environment-services-kms"
   lb_listener_rule_priority   = 54
-  lb_listener_paths           = ["/orderable/certified-copies.*"]
+  lb_listener_paths           = ["/orderable/certified-copies*"]
   healthcheck_path            = "/orderable/certified-copies/healthcheck" #healthcheck path for certified-copies.orders.api.ch.gov.uk
   healthcheck_matcher         = "200"
   vpc_name                    = local.stack_secrets["vpc_name"]
