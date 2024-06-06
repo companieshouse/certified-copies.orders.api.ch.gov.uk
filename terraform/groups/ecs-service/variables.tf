@@ -125,11 +125,7 @@ variable "use_set_environment_files" {
   default     = true
   description = "Toggle default global and shared  environment files"
 }
-variable "log_level" {
-  default     = "info"
-  type        = string
-  description = "The log level for services to use: trace, debug, info or error"
-}
+
 variable "certified_copies_orders_api_version" {
   type        = string
   description = "The version of the abridged.accounts.api.ch.gov.uk container to run."
