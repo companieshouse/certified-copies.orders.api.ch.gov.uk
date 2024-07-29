@@ -45,6 +45,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.service.FilingHistoryDoc
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.PatchMerger;
 import uk.gov.companieshouse.certifiedcopies.orders.api.validator.CreateCertifiedCopyItemRequestValidator;
 import uk.gov.companieshouse.certifiedcopies.orders.api.validator.PatchItemRequestValidator;
+import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.EricAuthoriser;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -60,6 +61,7 @@ public class CertifiedCopiesItemController {
     private final FilingHistoryDocumentService filingHistoryDocumentService;
     private final PatchItemRequestValidator patchItemRequestValidator;
     private final PatchMerger patcher;
+    private EricAuthoriser ericAuthoriser;
 
     public CertifiedCopiesItemController(final CreateCertifiedCopyItemRequestValidator createCertifiedCopyItemRequestValidator,
                                          final CertifiedCopyItemMapper mapper,
@@ -67,7 +69,8 @@ public class CertifiedCopiesItemController {
                                          final CompanyService companyService,
                                          final FilingHistoryDocumentService filingHistoryDocumentService,
                                          final PatchItemRequestValidator patchItemRequestValidator,
-                                         final PatchMerger patcher) {
+                                         final PatchMerger patcher,
+                                         final EricAuthoriser ericAuthoriser) {
         this.createCertifiedCopyItemRequestValidator = createCertifiedCopyItemRequestValidator;
         this.mapper = mapper;
         this.certifiedCopyItemService = certifiedCopyItemService;
@@ -75,6 +78,7 @@ public class CertifiedCopiesItemController {
         this.filingHistoryDocumentService = filingHistoryDocumentService;
         this.patchItemRequestValidator = patchItemRequestValidator;
         this.patcher = patcher;
+        this.ericAuthoriser = ericAuthoriser;
     }
 
     @PostMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}")
@@ -85,6 +89,8 @@ public class CertifiedCopiesItemController {
 
         Map<String, Object> logMap = LoggingUtils.createLoggingDataMap(requestId);
         LoggingUtils.getLogger().infoRequest(request, "create certified copy item request", logMap);
+
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
 
         final List<String> errors = createCertifiedCopyItemRequestValidator.getValidationErrors(certifiedCopyItemRequestDTO);
         if (!errors.isEmpty()) {
@@ -107,7 +113,7 @@ public class CertifiedCopiesItemController {
         certifiedCopyItem.getData().getItemOptions().setFilingHistoryDocuments(filings);
 
         CertifiedCopyItem createdCertifiedCopyItem = certifiedCopyItemService
-                .createCertifiedCopyItem(certifiedCopyItem);
+                .createCertifiedCopyItem(certifiedCopyItem, entitledToFreeCertificates);
 
         logMap.put(USER_ID_LOG_KEY, createdCertifiedCopyItem.getUserId());
         logMap.put(COMPANY_NUMBER_LOG_KEY, createdCertifiedCopyItem.getData().getCompanyNumber());
@@ -124,12 +130,14 @@ public class CertifiedCopiesItemController {
 
     @GetMapping("${uk.gov.companieshouse.certifiedcopies.orders.api.home}/{id}")
     public ResponseEntity<Object> getCertifiedCopy(final @PathVariable("id") String id,
-                                                   final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId)
+                                                   final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId,
+                                                   final HttpServletRequest request)
     {
         final Map<String, Object> logMap = createLoggingDataMap(requestId);
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
         LOGGER.info("get certified copy item request", logMap);
-        final Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemById(id);
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
+        final Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemById(id, entitledToFreeCertificates);
         if (item.isPresent()) {
             final CertifiedCopyItemResponseDTO retrievedCertifiedCopyItemDTO =
                     mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item.get().getData());
@@ -165,7 +173,7 @@ public class CertifiedCopiesItemController {
             return ApiErrors.errorResponse(BAD_REQUEST, errors);
         }
 
-        Optional<CertifiedCopyItem> certCopyRetrieved = certifiedCopyItemService.getCertifiedCopyItemById(id);
+        Optional<CertifiedCopyItem> certCopyRetrieved = certifiedCopyItemService.getCertifiedCopyItemById(id, false);
 
         if (certCopyRetrieved.isEmpty()) {
             logMap.put(STATUS_LOG_KEY, HttpStatus.NOT_FOUND);
@@ -181,7 +189,7 @@ public class CertifiedCopiesItemController {
         final CertifiedCopyItem patchedItem = patcher.mergePatch(mergePatchDocument, itemRetrieved, CertifiedCopyItem.class);
 
         logMap.put(PATCHED_COMPANY_NUMBER, patchedItem.getCompanyNumber());
-        final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem);
+        final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem, false);
         final CertifiedCopyItemResponseDTO responseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(savedItem.getData());
 
         logMap.put(STATUS_LOG_KEY, OK);

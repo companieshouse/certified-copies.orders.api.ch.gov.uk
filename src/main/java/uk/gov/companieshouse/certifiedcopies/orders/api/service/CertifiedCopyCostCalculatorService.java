@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class CertifiedCopyCostCalculatorService {
     private static final String POSTAGE_COST = "0";
-    private static final String DISCOUNT = "0";
+    // private static final String DISCOUNT = "0";
 
     private final CostsConfig costs;
 
@@ -28,7 +28,7 @@ public class CertifiedCopyCostCalculatorService {
 
         for (FilingHistoryDocument filingHistoryDocument : filingHistoryDocs) {
             ItemCostCalculation calculatedCost = calculateCosts(quantity, deliveryTimescale,
-                    filingHistoryDocument.getFilingHistoryType());
+                    filingHistoryDocument.getFilingHistoryType(), false);
 
             filingHistoryDocument.setFilingHistoryCost(calculatedCost.itemCosts().getFirst().getCalculatedCost());
 
@@ -39,11 +39,11 @@ public class CertifiedCopyCostCalculatorService {
     }
 
     private ItemCostCalculation calculateCosts(final int quantity,  final DeliveryTimescale deliveryTimescale,
-                                               final String filingHistoryType) {
+                                               final String filingHistoryType, boolean userGetsFreeCertificates) {
         checkArguments(quantity, deliveryTimescale, filingHistoryType);
         final List<ItemCosts> itemCostsList = new ArrayList<>();
         for (int i = 0; i < quantity; i++) {
-            itemCostsList.add(calculateSingleItemCosts(deliveryTimescale, filingHistoryType));
+            itemCostsList.add(calculateSingleItemCosts(deliveryTimescale, filingHistoryType, userGetsFreeCertificates));
         }
         final String totalItemCost = calculateTotalItemCost(itemCostsList, POSTAGE_COST);
 
@@ -51,13 +51,16 @@ public class CertifiedCopyCostCalculatorService {
     }
 
     private ItemCosts calculateSingleItemCosts(final DeliveryTimescale deliveryTimescale,
-                                               final String filingHistoryType) {
+                                               final String filingHistoryType, boolean userGetsFreeCertificates) {
         final ItemCosts itemCosts = new ItemCosts();
-        itemCosts.setDiscountApplied(DISCOUNT);
         final int cost = deliveryTimescale.getCost(costs, filingHistoryType);
-        final int calculatedCost = cost - Integer.parseInt(DISCOUNT);
+        final int discountApplied = userGetsFreeCertificates ? cost : 0;
+        itemCosts.setDiscountApplied(Integer.toString(discountApplied));
         itemCosts.setItemCost(Integer.toString(cost));
+        final int calculatedCost = cost - discountApplied;
+        
         itemCosts.setCalculatedCost(Integer.toString(calculatedCost));
+
         final ProductType productType = deliveryTimescale.getProductType(filingHistoryType);
         itemCosts.setProductType(productType);
 
