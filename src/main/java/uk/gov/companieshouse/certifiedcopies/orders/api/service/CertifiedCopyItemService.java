@@ -99,7 +99,7 @@ public class CertifiedCopyItemService {
         List<FilingHistoryDocument> filingHistoryDocumentList = itemData.getItemOptions().getFilingHistoryDocuments();
         List<ItemCostCalculation> costCalculationList = calculator.calculateAllCosts(itemData.getQuantity(),
                                                                             getOrDefaultDeliveryTimescale(item),
-                                                                            filingHistoryDocumentList);
+                                                                            filingHistoryDocumentList, userGetsFreeCertificates);
         int totalItemCost = 0;
         List<ItemCosts> itemCosts = new ArrayList<>();
         for (ItemCostCalculation costCalculation : costCalculationList) {

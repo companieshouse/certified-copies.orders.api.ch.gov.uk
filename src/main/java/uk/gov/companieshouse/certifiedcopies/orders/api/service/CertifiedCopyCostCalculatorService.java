@@ -23,12 +23,12 @@ public class CertifiedCopyCostCalculatorService {
     }
 
     public List<ItemCostCalculation> calculateAllCosts(final int quantity, final DeliveryTimescale deliveryTimescale,
-                                                       final List<FilingHistoryDocument> filingHistoryDocs) {
+                                                       final List<FilingHistoryDocument> filingHistoryDocs, boolean userGetsFreeCertificates) {
         List<ItemCostCalculation> costCalculationList = new ArrayList<>();
 
         for (FilingHistoryDocument filingHistoryDocument : filingHistoryDocs) {
             ItemCostCalculation calculatedCost = calculateCosts(quantity, deliveryTimescale,
-                    filingHistoryDocument.getFilingHistoryType(), false);
+                    filingHistoryDocument.getFilingHistoryType(), userGetsFreeCertificates);
 
             filingHistoryDocument.setFilingHistoryCost(calculatedCost.itemCosts().getFirst().getCalculatedCost());
 
@@ -40,7 +40,7 @@ public class CertifiedCopyCostCalculatorService {
 
     private ItemCostCalculation calculateCosts(final int quantity,  final DeliveryTimescale deliveryTimescale,
                                                final String filingHistoryType, boolean userGetsFreeCertificates) {
-        checkArguments(quantity, deliveryTimescale, filingHistoryType);
+        checkArguments(quantity, deliveryTimescale, filingHistoryType, userGetsFreeCertificates);
         final List<ItemCosts> itemCostsList = new ArrayList<>();
         for (int i = 0; i < quantity; i++) {
             itemCostsList.add(calculateSingleItemCosts(deliveryTimescale, filingHistoryType, userGetsFreeCertificates));
@@ -77,7 +77,7 @@ public class CertifiedCopyCostCalculatorService {
 
     private void checkArguments(final int quantity,
                                 final DeliveryTimescale deliveryTimescale,
-                                String filingHistoryType) {
+                                String filingHistoryType, final boolean userGetsFreeCertificates) {
         if (quantity < 1) {
             throw new IllegalArgumentException("quantity must be greater than or equal to 1!");
         }

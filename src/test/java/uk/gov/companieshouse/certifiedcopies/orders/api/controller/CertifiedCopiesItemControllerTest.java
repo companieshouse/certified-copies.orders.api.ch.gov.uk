@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import jakarta.json.JsonMergePatch;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemO
 import uk.gov.companieshouse.certifiedcopies.orders.api.service.CertifiedCopyItemService;
 import uk.gov.companieshouse.certifiedcopies.orders.api.util.PatchMerger;
 import uk.gov.companieshouse.certifiedcopies.orders.api.validator.PatchItemRequestValidator;
+import uk.gov.companieshouse.certifiedcopies.orders.api.interceptor.EricAuthoriser;
 
 /**
  * Unit tests the {@link CertifiedCopiesItemController} class.
@@ -65,13 +68,18 @@ class CertifiedCopiesItemControllerTest {
     @Mock
     private PatchItemRequestValidator validator;
 
+    @Mock
+    private EricAuthoriser EricAuthoriser;
+
+    private HttpServletRequest request;
+
     @Test
     @DisplayName("Get certified copy item resource returned")
     void getCertifiedCopyItemIsPresent() {
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.of(item));
+        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, false)).thenReturn(Optional.of(item));
         when(item.getData()).thenReturn(data);
         when(mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(data)).thenReturn(dto);
-        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE);
+        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE, request);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(), is(dto));
@@ -80,8 +88,8 @@ class CertifiedCopiesItemControllerTest {
     @Test
     @DisplayName("Get certified copy item resource returns HTTP NOT FOUND")
     void getCertifiedCopyItemNotFound() {
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.empty());
-        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE);
+        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, false)).thenReturn(Optional.empty());
+        ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE, request);
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }
@@ -90,10 +98,10 @@ class CertifiedCopiesItemControllerTest {
     @DisplayName("Update request updates successfully")
     void updateUpdatesSuccessfully() {
         // Given
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.of(item));
+        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, false)).thenReturn(Optional.of(item));
         when(merger.mergePatch(patch, item, CertifiedCopyItem.class)).thenReturn(item);
         when(item.getCompanyNumber()).thenReturn("12345678");
-        when(certifiedCopyItemService.saveCertifiedCopyItem(item)).thenReturn(item);
+        when(certifiedCopyItemService.saveCertifiedCopyItem(item, false)).thenReturn(item);
         when(mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item.getData())).thenReturn(dto);
 
         // When
@@ -108,7 +116,7 @@ class CertifiedCopiesItemControllerTest {
     @Test
     @DisplayName("Update request reports resource not found")
     void updateReportsResourceNotFound() {
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.empty());
+        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, false)).thenReturn(Optional.empty());
         final ResponseEntity<Object> response = controllerUnderTest.updateCertifiedCopyItem(patch, ID,
                 REQUEST_ID_VALUE);
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));

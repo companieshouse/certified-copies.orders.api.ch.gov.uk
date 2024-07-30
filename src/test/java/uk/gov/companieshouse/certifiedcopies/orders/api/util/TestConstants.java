@@ -10,6 +10,7 @@ public class TestConstants {
     public static final String ERIC_IDENTITY_HEADER_NAME = "ERIC-Identity";
     public static final String ERIC_IDENTITY_TYPE_HEADER_NAME = "ERIC-Identity-Type";
     public static final String ERIC_IDENTITY_TYPE_API_KEY_VALUE = "key";
+    public static final String ERIC_AUTHORISED_ROLES = "ERIC-Authorised-Roles";
     public static final int CERTIFIED_COPY_COST = 15;
     public static final int SAME_DAY_CERTIFIED_COPY_COST = 50;
     public static final int DIGITAL_CERTIFIED_COPY_COST = 9;
