@@ -136,7 +136,6 @@ public class CertifiedCopiesItemController {
         final Map<String, Object> logMap = createLoggingDataMap(requestId);
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
         LOGGER.info("get certified copy item request", logMap);
-        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
         final Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemById(id);
         if (item.isPresent()) {
             final CertifiedCopyItemResponseDTO retrievedCertifiedCopyItemDTO =
