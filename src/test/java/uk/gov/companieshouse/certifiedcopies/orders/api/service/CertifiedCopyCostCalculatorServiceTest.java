@@ -101,6 +101,29 @@ class CertifiedCopyCostCalculatorServiceTest {
     }
 
     @Test
+    @DisplayName("Calculates standard delivery certified copy cost correctly when user gets free certifified copies")
+    void calculatesCertifiedCopyCostCorrectlyWithFreeCertDocs() {
+
+        // Given and when
+        List<FilingHistoryDocument> filingHistoryDocumentList = getFilingHistoryDocuments(FILING_HISTORY_TYPE_CH01);
+        final List<ItemCostCalculation> calculations =
+                calculatorUnderTest.calculateAllCosts(QUANTITY, DeliveryTimescale.STANDARD, filingHistoryDocumentList, true);
+        final List<ItemCosts> costs = calculations.getFirst().itemCosts();
+
+        // Then
+        final ItemCosts cost = costs.getFirst();
+        assertThat(cost.getItemCost(), is(CERTIFIED_COPY_COST));
+        assertThat(cost.getDiscountApplied(), is(CERTIFIED_COPY_COST));
+        assertThat(cost.getCalculatedCost(), is("0"));
+        assertThat(cost.getProductType(), is(ProductType.CERTIFIED_COPY));
+        assertThat(calculations.getFirst().postageCost(), is(POSTAGE_COST));
+        assertThat(calculations.getFirst().totalItemCost(), is(calculateExpectedTotalItemCost(costs, POSTAGE_COST)));
+
+        final FilingHistoryDocument filingHistoryDocument = filingHistoryDocumentList.getFirst();
+        assertThat(filingHistoryDocument.getFilingHistoryCost(), is("0"));
+    }
+
+    @Test
     @DisplayName("Calculates standard delivery certified copy new incorporation cost correctly")
     void calculatesCertifiedCopyNewIncorporationCostCorrectly() {
 

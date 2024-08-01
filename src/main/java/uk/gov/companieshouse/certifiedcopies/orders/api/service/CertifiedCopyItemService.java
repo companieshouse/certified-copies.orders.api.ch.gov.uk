@@ -9,7 +9,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;

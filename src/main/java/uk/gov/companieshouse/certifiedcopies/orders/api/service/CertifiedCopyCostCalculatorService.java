@@ -7,15 +7,12 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ProductType;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CertifiedCopyCostCalculatorService {
     private static final String POSTAGE_COST = "0";
-    // private static final String DISCOUNT = "0";
-
     private final CostsConfig costs;
 
     public CertifiedCopyCostCalculatorService(CostsConfig costs) {
