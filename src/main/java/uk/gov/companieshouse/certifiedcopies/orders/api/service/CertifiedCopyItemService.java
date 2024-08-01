@@ -122,7 +122,7 @@ public class CertifiedCopyItemService {
      * @param id the ID of the certified copy item to be retrieved
      * @return the undecorated item retrieved from the DB
      */
-    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id, final boolean userGetsFreeCertificates) {
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
         return repository.findById(id);
     }
 }

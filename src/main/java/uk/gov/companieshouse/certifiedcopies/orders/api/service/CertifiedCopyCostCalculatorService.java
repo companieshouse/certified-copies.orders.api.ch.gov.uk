@@ -37,7 +37,7 @@ public class CertifiedCopyCostCalculatorService {
 
     private ItemCostCalculation calculateCosts(final int quantity,  final DeliveryTimescale deliveryTimescale,
                                                final String filingHistoryType, boolean userGetsFreeCertificates) {
-        checkArguments(quantity, deliveryTimescale, filingHistoryType, userGetsFreeCertificates);
+        checkArguments(quantity, deliveryTimescale, filingHistoryType);
         final List<ItemCosts> itemCostsList = new ArrayList<>();
         for (int i = 0; i < quantity; i++) {
             itemCostsList.add(calculateSingleItemCosts(deliveryTimescale, filingHistoryType, userGetsFreeCertificates));
@@ -74,7 +74,7 @@ public class CertifiedCopyCostCalculatorService {
 
     private void checkArguments(final int quantity,
                                 final DeliveryTimescale deliveryTimescale,
-                                String filingHistoryType, final boolean userGetsFreeCertificates) {
+                                String filingHistoryType) {
         if (quantity < 1) {
             throw new IllegalArgumentException("quantity must be greater than or equal to 1!");
         }

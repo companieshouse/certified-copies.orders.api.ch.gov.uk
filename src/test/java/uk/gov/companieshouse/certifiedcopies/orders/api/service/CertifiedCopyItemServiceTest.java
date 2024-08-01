@@ -172,7 +172,7 @@ class CertifiedCopyItemServiceTest {
         when(repository.findById(ID)).thenReturn(Optional.of(item));
 
         // When
-        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID, false);
+        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID);
 
         // Then
         verify(repository).findById(ID);
@@ -188,7 +188,7 @@ class CertifiedCopyItemServiceTest {
         when(repository.findById(ID)).thenReturn(Optional.empty());
 
         // When
-        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID, false);
+        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID);
         assertThat(item.isPresent(), is(false));
     }
 
