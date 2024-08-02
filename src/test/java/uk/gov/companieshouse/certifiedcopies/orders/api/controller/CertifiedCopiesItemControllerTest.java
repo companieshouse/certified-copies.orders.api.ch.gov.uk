@@ -73,6 +73,8 @@ class CertifiedCopiesItemControllerTest {
 
     private HttpServletRequest request;
 
+    private boolean entitledToFreeCertificates;
+
     @Test
     @DisplayName("Get certified copy item resource returned")
     void getCertifiedCopyItemIsPresent() {
@@ -101,12 +103,12 @@ class CertifiedCopiesItemControllerTest {
         when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.of(item));
         when(merger.mergePatch(patch, item, CertifiedCopyItem.class)).thenReturn(item);
         when(item.getCompanyNumber()).thenReturn("12345678");
-        when(certifiedCopyItemService.saveCertifiedCopyItem(item, false)).thenReturn(item);
+        when(certifiedCopyItemService.saveCertifiedCopyItem(item, entitledToFreeCertificates)).thenReturn(item);
         when(mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item.getData())).thenReturn(dto);
 
         // When
         final ResponseEntity<Object> response = controllerUnderTest.updateCertifiedCopyItem(patch, ID,
-                REQUEST_ID_VALUE);
+                REQUEST_ID_VALUE, request);
 
         // Then
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
@@ -118,7 +120,7 @@ class CertifiedCopiesItemControllerTest {
     void updateReportsResourceNotFound() {
         when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.empty());
         final ResponseEntity<Object> response = controllerUnderTest.updateCertifiedCopyItem(patch, ID,
-                REQUEST_ID_VALUE);
+                REQUEST_ID_VALUE, request);
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
 
     }
@@ -130,7 +132,7 @@ class CertifiedCopiesItemControllerTest {
         when(validator.getValidationErrors(patch)).thenReturn(errors);
 
         ResponseEntity<Object> response = controllerUnderTest.updateCertifiedCopyItem(patch, ID,
-                REQUEST_ID_VALUE);
+                REQUEST_ID_VALUE, request);
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 

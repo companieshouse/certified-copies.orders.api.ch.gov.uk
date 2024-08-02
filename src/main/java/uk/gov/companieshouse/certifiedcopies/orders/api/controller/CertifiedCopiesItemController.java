@@ -158,11 +158,14 @@ public class CertifiedCopiesItemController {
     public ResponseEntity<Object> updateCertifiedCopyItem(
             final @RequestBody JsonMergePatch mergePatchDocument,
             final @PathVariable("id") String id,
-            final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId) {
+            final @RequestHeader(REQUEST_ID_HEADER_NAME) String requestId,
+            HttpServletRequest request) {
         Map<String, Object> logMap = createLoggingDataMap(requestId);
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
         LOGGER.info("update certificate item request", logMap);
         logMap.remove(MESSAGE);
+
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
 
         // Domain validation
         final List<ApiError> errors = patchItemRequestValidator.getValidationErrors(mergePatchDocument);
@@ -188,7 +191,7 @@ public class CertifiedCopiesItemController {
         final CertifiedCopyItem patchedItem = patcher.mergePatch(mergePatchDocument, itemRetrieved, CertifiedCopyItem.class);
 
         logMap.put(PATCHED_COMPANY_NUMBER, patchedItem.getCompanyNumber());
-        final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem, false);
+        final CertifiedCopyItem savedItem = certifiedCopyItemService.saveCertifiedCopyItem(patchedItem, entitledToFreeCertificates);
         final CertifiedCopyItemResponseDTO responseDTO = mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(savedItem.getData());
 
         logMap.put(STATUS_LOG_KEY, OK);
