@@ -3,9 +3,9 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +29,8 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
+import static org.mockito.Mockito.eq;
+
 
 /**
  * Unit tests the {@link CertifiedCopyItemService} class.
@@ -52,6 +54,7 @@ class CertifiedCopyItemServiceTest {
     private static final String FILING_HISTORY_DESCRIPTION = "change-person-director-company-with-change-date";
     private static final Map<String, Object> FILING_HISTORY_DESCRIPTION_VALUES = new HashMap<>();
     private static final String FILING_HISTORY_TYPE = "CH01";
+    private static final boolean USER_NOT_ELIGIBLE_FOR_FREE_CERT_DOCS = false;
 
     @InjectMocks
     private CertifiedCopyItemService serviceUnderTest;
@@ -94,12 +97,12 @@ class CertifiedCopyItemServiceTest {
 
         List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList())).thenReturn(costCalculations);
+        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList(), eq(false))).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
 
-        serviceUnderTest.createCertifiedCopyItem(certifiedCopyItem);
+        serviceUnderTest.createCertifiedCopyItem(certifiedCopyItem, USER_NOT_ELIGIBLE_FOR_FREE_CERT_DOCS);
 
         final LocalDateTime intervalEnd = LocalDateTime.now();
 
@@ -131,12 +134,12 @@ class CertifiedCopyItemServiceTest {
 
         List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList())).thenReturn(costCalculations);
+        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList(), eq(false))).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
 
-        serviceUnderTest.createCertifiedCopyItem(certifiedCopyItem);
+        serviceUnderTest.createCertifiedCopyItem(certifiedCopyItem, false);
 
         final LocalDateTime intervalEnd = LocalDateTime.now();
 
@@ -210,14 +213,14 @@ class CertifiedCopyItemServiceTest {
 
         List<ItemCostCalculation> costCalculations = getItemCostCalculations();
 
-        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList())).thenReturn(costCalculations);
+        when(costCalculatorService.calculateAllCosts(anyInt(), any(), anyList(), eq(false))).thenReturn(costCalculations);
         when(repository.save(certifiedCopyItem)).thenReturn(certifiedCopyItem);
 
         final LocalDateTime intervalStart = LocalDateTime.now();
         certifiedCopyItem.setCreatedAt(intervalStart);
 
         //When
-        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem);
+        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem, false);
 
         //Then
         final LocalDateTime intervalEnd = LocalDateTime.now();
