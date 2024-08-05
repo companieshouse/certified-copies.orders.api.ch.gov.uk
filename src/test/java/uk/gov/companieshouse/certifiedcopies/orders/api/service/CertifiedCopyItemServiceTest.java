@@ -6,6 +6,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -76,6 +77,8 @@ class CertifiedCopyItemServiceTest {
 
     @Mock
     private CertifiedCopyCostCalculatorService costCalculatorService;
+
+    private boolean entitledToFreeCertificates;
 
     @Test
     @DisplayName("createCertifiedCopyItem creates and saves the certified copy item with id, timestamps, etag and links")
@@ -172,7 +175,7 @@ class CertifiedCopyItemServiceTest {
         when(repository.findById(ID)).thenReturn(Optional.of(item));
 
         // When
-        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID);
+        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID, entitledToFreeCertificates);
 
         // Then
         verify(repository).findById(ID);
@@ -188,7 +191,7 @@ class CertifiedCopyItemServiceTest {
         when(repository.findById(ID)).thenReturn(Optional.empty());
 
         // When
-        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID);
+        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID, entitledToFreeCertificates);
         assertThat(item.isPresent(), is(false));
     }
 
@@ -220,7 +223,7 @@ class CertifiedCopyItemServiceTest {
         certifiedCopyItem.setCreatedAt(intervalStart);
 
         //When
-        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem, false);
+        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem, entitledToFreeCertificates);
 
         //Then
         final LocalDateTime intervalEnd = LocalDateTime.now();

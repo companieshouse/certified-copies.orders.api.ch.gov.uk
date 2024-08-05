@@ -78,7 +78,7 @@ public class UserAuthorisationInterceptor implements HandlerInterceptor {
             final String certifiedCopyId = pathVariables.get("id");
 
             final String identity = EricHeaderHelper.getIdentity(request);
-            Optional<CertifiedCopyItem> item = service.getCertifiedCopyItemById(certifiedCopyId);
+            Optional<CertifiedCopyItem> item = service.getCertifiedCopyItemById(certifiedCopyId, false);
             Map<String, Object> logMap = new HashMap<>();
             logMap.put(CERTIFIED_COPY_ID_LOG_KEY, certifiedCopyId);
             logMap.put(REQUEST_ID_LOG_KEY, request.getHeader(REQUEST_ID_HEADER_NAME));

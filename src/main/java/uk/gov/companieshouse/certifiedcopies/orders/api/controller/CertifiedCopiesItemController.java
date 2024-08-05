@@ -136,7 +136,8 @@ public class CertifiedCopiesItemController {
         final Map<String, Object> logMap = createLoggingDataMap(requestId);
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
         LOGGER.info("get certified copy item request", logMap);
-        final Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemById(id);
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
+        final Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemById(id, entitledToFreeCertificates);
         if (item.isPresent()) {
             final CertifiedCopyItemResponseDTO retrievedCertifiedCopyItemDTO =
                     mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(item.get().getData());
@@ -175,7 +176,7 @@ public class CertifiedCopiesItemController {
             return ApiErrors.errorResponse(BAD_REQUEST, errors);
         }
 
-        Optional<CertifiedCopyItem> certCopyRetrieved = certifiedCopyItemService.getCertifiedCopyItemById(id);
+        Optional<CertifiedCopyItem> certCopyRetrieved = certifiedCopyItemService.getCertifiedCopyItemById(id, entitledToFreeCertificates);
 
         if (certCopyRetrieved.isEmpty()) {
             logMap.put(STATUS_LOG_KEY, HttpStatus.NOT_FOUND);
