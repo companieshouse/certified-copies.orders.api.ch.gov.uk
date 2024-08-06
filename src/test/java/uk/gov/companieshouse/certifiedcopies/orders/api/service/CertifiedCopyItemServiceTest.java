@@ -30,7 +30,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
-import static org.mockito.Mockito.eq;
 
 
 /**
@@ -175,7 +174,7 @@ class CertifiedCopyItemServiceTest {
         when(repository.findById(ID)).thenReturn(Optional.of(item));
 
         // When
-        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID, entitledToFreeCertificates);
+        final Optional<CertifiedCopyItem> itemRetrieved = serviceUnderTest.getCertifiedCopyItemById(ID);
 
         // Then
         verify(repository).findById(ID);
@@ -191,7 +190,7 @@ class CertifiedCopyItemServiceTest {
         when(repository.findById(ID)).thenReturn(Optional.empty());
 
         // When
-        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID, entitledToFreeCertificates);
+        final Optional<CertifiedCopyItem> item = serviceUnderTest.getCertifiedCopyItemById(ID);
         assertThat(item.isPresent(), is(false));
     }
 

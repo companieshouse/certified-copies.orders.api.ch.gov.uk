@@ -78,7 +78,7 @@ class CertifiedCopiesItemControllerTest {
     @Test
     @DisplayName("Get certified copy item resource returned")
     void getCertifiedCopyItemIsPresent() {
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, entitledToFreeCertificates)).thenReturn(Optional.of(item));
+        when(certifiedCopyItemService.getCertifiedCopyItemWithCosts(ID, entitledToFreeCertificates)).thenReturn(Optional.of(item));
         when(item.getData()).thenReturn(data);
         when(mapper.certifiedCopyItemDataToCertifiedCopyItemResponseDTO(data)).thenReturn(dto);
         ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE, request);
@@ -90,7 +90,7 @@ class CertifiedCopiesItemControllerTest {
     @Test
     @DisplayName("Get certified copy item resource returns HTTP NOT FOUND")
     void getCertifiedCopyItemNotFound() {
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, entitledToFreeCertificates)).thenReturn(Optional.empty());
+        when(certifiedCopyItemService.getCertifiedCopyItemWithCosts(ID, entitledToFreeCertificates)).thenReturn(Optional.empty());
         ResponseEntity<Object> response = controllerUnderTest.getCertifiedCopy(ID, REQUEST_ID_VALUE, request);
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
@@ -100,7 +100,7 @@ class CertifiedCopiesItemControllerTest {
     @DisplayName("Update request updates successfully")
     void updateUpdatesSuccessfully() {
         // Given
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, entitledToFreeCertificates)).thenReturn(Optional.of(item));
+        when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.of(item));
         when(merger.mergePatch(patch, item, CertifiedCopyItem.class)).thenReturn(item);
         when(item.getCompanyNumber()).thenReturn("12345678");
         when(certifiedCopyItemService.saveCertifiedCopyItem(item, entitledToFreeCertificates)).thenReturn(item);
@@ -118,7 +118,7 @@ class CertifiedCopiesItemControllerTest {
     @Test
     @DisplayName("Update request reports resource not found")
     void updateReportsResourceNotFound() {
-        when(certifiedCopyItemService.getCertifiedCopyItemById(ID, entitledToFreeCertificates)).thenReturn(Optional.empty());
+        when(certifiedCopyItemService.getCertifiedCopyItemById(ID)).thenReturn(Optional.empty());
         final ResponseEntity<Object> response = controllerUnderTest.updateCertifiedCopyItem(patch, ID,
                 REQUEST_ID_VALUE, request);
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));

@@ -44,8 +44,6 @@ class UserAuthorisationInterceptorTest {
     @Mock
     private CertifiedCopyItemService service;
 
-    private boolean entitledToFreeCertificates;
-
     private static final String ITEM_ID = "CHS00000000000000002";
     private static final String ALTERNATIVE_CREATED_BY = "xyz321";
     private static final String INVALID_IDENTITY_TYPE_VALUE = "test";
@@ -64,7 +62,7 @@ class UserAuthorisationInterceptorTest {
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(map);
         doReturn(ERIC_IDENTITY_VALUE).when(request).getHeader(ERIC_IDENTITY_HEADER_NAME);
         doReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
-        when(service.getCertifiedCopyItemById(ITEM_ID, entitledToFreeCertificates)).thenReturn(Optional.of(item));
+        when(service.getCertifiedCopyItemById(ITEM_ID)).thenReturn(Optional.of(item));
 
         Assertions.assertTrue(userAuthorisationInterceptor.preHandle(request, response, null));
     }
@@ -92,7 +90,7 @@ class UserAuthorisationInterceptorTest {
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(map);
         doReturn(ERIC_IDENTITY_VALUE).when(request).getHeader(ERIC_IDENTITY_HEADER_NAME);
         doReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
-        when(service.getCertifiedCopyItemById(ITEM_ID, entitledToFreeCertificates)).thenReturn(Optional.of(item));
+        when(service.getCertifiedCopyItemById(ITEM_ID)).thenReturn(Optional.of(item));
 
         Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }
@@ -116,7 +114,7 @@ class UserAuthorisationInterceptorTest {
         when(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)).thenReturn(map);
         doReturn(ERIC_IDENTITY_VALUE).when(request).getHeader(ERIC_IDENTITY_HEADER_NAME);
         doReturn(ERIC_IDENTITY_TYPE_OAUTH2_VALUE).when(request).getHeader(ERIC_IDENTITY_TYPE_HEADER_NAME);
-        when(service.getCertifiedCopyItemById(ITEM_ID, entitledToFreeCertificates)).thenReturn(Optional.empty());
+        when(service.getCertifiedCopyItemById(ITEM_ID)).thenReturn(Optional.empty());
 
         Assertions.assertFalse(userAuthorisationInterceptor.preHandle(request, response, null));
     }

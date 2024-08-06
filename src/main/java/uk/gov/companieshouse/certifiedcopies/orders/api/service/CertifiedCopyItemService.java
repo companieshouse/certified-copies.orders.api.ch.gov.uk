@@ -122,7 +122,16 @@ public class CertifiedCopyItemService {
      * @param id the ID of the certified copy item to be retrieved
      * @return the undecorated item retrieved from the DB
      */
-    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id, final boolean userGetsFreeCertificates) {
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
         return repository.findById(id);
     }
+
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemWithCosts(final String id, final boolean userGetsFreeCertificates) {
+        Optional<CertifiedCopyItem>  retrievedItem = repository.findById(id);
+
+        retrievedItem.ifPresent(item -> populateItemCosts(item, costCalculatorService, userGetsFreeCertificates));
+
+        return retrievedItem;
+    }
+
 }
