@@ -685,9 +685,7 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
                 .andExpect(status().isOk())
                 .andDo(result -> {
                 String actualJson = result.getResponse().getContentAsString();
-                // System.out.println("Actual JSON: " + actualJson);  // Print actual JSON to debug
                 String expectedJson = objectMapper.writeValueAsString(expectedItem);
-                // System.out.println("Expected JSON: " + expectedJson); // Print expected JSON to debug
                 JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
             })
                 .andDo(MockMvcResultHandlers.print());
