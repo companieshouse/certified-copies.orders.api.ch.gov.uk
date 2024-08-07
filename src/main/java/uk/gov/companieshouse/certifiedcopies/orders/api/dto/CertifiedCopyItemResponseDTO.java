@@ -2,6 +2,7 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
+import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 
@@ -42,6 +43,12 @@ public class CertifiedCopyItemResponseDTO {
     private Integer quantity;
 
     private String totalItemCost;
+
+    private List<FilingHistoryDocument> filingHistoryDocument;
+
+    private String filingHistoryCost;
+
+
 
     public String getId() {
         return id;
@@ -169,6 +176,22 @@ public class CertifiedCopyItemResponseDTO {
 
     public void setTotalItemCost(String totalItemCost) {
         this.totalItemCost = totalItemCost;
+    }
+
+    public List<FilingHistoryDocument> getFilingHistoryDocument() {
+        return filingHistoryDocument;
+    }
+
+    public void setFilingHistoryDocument(List<FilingHistoryDocument> filingHistoryDocument) {
+         this.filingHistoryDocument = filingHistoryDocument;
+    }
+
+    public String getFilingHistoryCost() {
+        return filingHistoryCost;
+    }
+
+    public void setFilingHistoryCost(String filingHistoryCost) {
+        this.filingHistoryCost = filingHistoryCost;
     }
 
 }
