@@ -2,7 +2,6 @@ package uk.gov.companieshouse.certifiedcopies.orders.api.dto;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.CertifiedCopyItemOptions;
-import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocument;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.Links;
 

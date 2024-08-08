@@ -53,6 +53,8 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 public class CertifiedCopiesItemController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingUtils.APPLICATION_NAMESPACE);
+    private static final String FREE_CERT_DOCS_PERMISSION = "/admin/free-cert-docs";
+
 
     private final CreateCertifiedCopyItemRequestValidator createCertifiedCopyItemRequestValidator;
     private final CertifiedCopyItemMapper mapper;
@@ -90,7 +92,7 @@ public class CertifiedCopiesItemController {
         Map<String, Object> logMap = LoggingUtils.createLoggingDataMap(requestId);
         LoggingUtils.getLogger().infoRequest(request, "create certified copy item request", logMap);
 
-        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission(FREE_CERT_DOCS_PERMISSION, request);
 
         final List<String> errors = createCertifiedCopyItemRequestValidator.getValidationErrors(certifiedCopyItemRequestDTO);
         if (!errors.isEmpty()) {
@@ -136,7 +138,7 @@ public class CertifiedCopiesItemController {
         final Map<String, Object> logMap = createLoggingDataMap(requestId);
         logMap.put(CERTIFIED_COPY_ID_LOG_KEY, id);
         LOGGER.info("get certified copy item request", logMap);
-        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission(FREE_CERT_DOCS_PERMISSION, request);
         Optional<CertifiedCopyItem> item = certifiedCopyItemService.getCertifiedCopyItemWithCosts(id, entitledToFreeCertificates);
         if (item.isPresent()) {
             final CertifiedCopyItemResponseDTO retrievedCertifiedCopyItemDTO =
@@ -166,7 +168,7 @@ public class CertifiedCopiesItemController {
         LOGGER.info("update certificate item request", logMap);
         logMap.remove(MESSAGE);
 
-        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission("/admin/free-cert-docs", request);
+        final boolean entitledToFreeCertificates = ericAuthoriser.hasPermission(FREE_CERT_DOCS_PERMISSION, request);
 
         // Domain validation
         final List<ApiError> errors = patchItemRequestValidator.getValidationErrors(mergePatchDocument);
