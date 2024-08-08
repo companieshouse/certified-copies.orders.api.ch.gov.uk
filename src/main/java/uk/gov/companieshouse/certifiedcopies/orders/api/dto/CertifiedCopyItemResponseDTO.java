@@ -44,8 +44,6 @@ public class CertifiedCopyItemResponseDTO {
 
     private String totalItemCost;
 
-    private List<FilingHistoryDocument> filingHistoryDocument;
-
     private String filingHistoryCost;
 
 
@@ -178,13 +176,6 @@ public class CertifiedCopyItemResponseDTO {
         this.totalItemCost = totalItemCost;
     }
 
-    public List<FilingHistoryDocument> getFilingHistoryDocument() {
-        return filingHistoryDocument;
-    }
-
-    public void setFilingHistoryDocument(List<FilingHistoryDocument> filingHistoryDocument) {
-         this.filingHistoryDocument = filingHistoryDocument;
-    }
 
     public String getFilingHistoryCost() {
         return filingHistoryCost;
