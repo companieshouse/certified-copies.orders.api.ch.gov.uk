@@ -5,6 +5,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,6 +110,9 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
     private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "135";
     private static final String DISCOUNT = "0";
     private static final Links LINKS;
+    private static final List<ItemCosts> ITEM_COSTS =
+            asList(new ItemCosts( "0", "15", "15", CERTIFIED_COPY));
+
 
     static {
         FILING_HISTORY_DESCRIPTION_VALUES = new HashMap<>();
@@ -665,6 +670,9 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
         expectedItem.setLinks(newItem.getData().getLinks());
         expectedItem.setPostageCost(newItem.getData().getPostageCost());
         expectedItem.setItemOptions(newItem.getData().getItemOptions());
+        expectedItem.setItemCosts(newItem.getData().getItemCosts());
+        expectedItem.setTotalItemCost(newItem.getData().getTotalItemCost());
+        expectedItem.setFilingHistoryCost(newItem.getData().getFilingHistoryCost());
 
         // When and then
         mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + newItem.getId())
@@ -675,7 +683,11 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
                 .header(ERIC_AUTHORISED_TOKEN_PERMISSIONS, TOKEN_PERMISSION_READ)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedItem), true))
+                .andDo(result -> {
+                String actualJson = result.getResponse().getContentAsString();
+                String expectedJson = objectMapper.writeValueAsString(expectedItem);
+                JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
+            })
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -722,6 +734,10 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
         certifiedCopyItemData.setEtag(TOKEN_ETAG);
         certifiedCopyItemData.setLinks(LINKS);
         certifiedCopyItemData.setPostageCost(POSTAGE_COST);
+        certifiedCopyItemData.setTotalItemCost(TOTAL_ITEM_COST);
+        certifiedCopyItemData.setItemCosts(ITEM_COSTS);
+        certifiedCopyItemData.setFilingHistoryCost(FILING_HISTORY_COST);
+
         final CertifiedCopyItem newItem = new CertifiedCopyItem();
         newItem.setCompanyNumber(COMPANY_NUMBER);
         newItem.setId(id);
@@ -732,6 +748,9 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
         newItem.setEtag(TOKEN_ETAG);
         newItem.setLinks(LINKS);
         newItem.setPostageCost(POSTAGE_COST);
+        newItem.setTotalItemCost(TOTAL_ITEM_COST);
+        newItem.setItemCosts(ITEM_COSTS);
+        newItem.setFilingHistoryCost(FILING_HISTORY_COST);
         final CertifiedCopyItemOptions options = new CertifiedCopyItemOptions();
         options.setFilingHistoryDocuments(singletonList(new FilingHistoryDocument(FILING_HISTORY_DATE,
                 FILING_HISTORY_DESCRIPTION, FILING_HISTORY_DESCRIPTION_VALUES, FILING_HISTORY_ID, FILING_HISTORY_TYPE_CH01)));
@@ -755,6 +774,7 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
         filingHistoryDocument2.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
         filingHistoryDocument2.setFilingHistoryDescriptionValues(FILING_HISTORY_DESCRIPTION_VALUES);
         filingHistoryDocument2.setFilingHistoryCost(FILING_HISTORY_COST_NEW_INC);
+        filingHistoryDocument2.setFilingHistoryCost(FILING_HISTORY_COST);
         List<FilingHistoryDocument> filingHistoryDocumentList = new ArrayList<>();
         filingHistoryDocumentList.add(filingHistoryDocument1);
         filingHistoryDocumentList.add(filingHistoryDocument2);

@@ -6,6 +6,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,7 +30,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
-import static org.mockito.Mockito.eq;
 
 
 /**
@@ -76,6 +76,8 @@ class CertifiedCopyItemServiceTest {
 
     @Mock
     private CertifiedCopyCostCalculatorService costCalculatorService;
+
+    private boolean entitledToFreeCertificates;
 
     @Test
     @DisplayName("createCertifiedCopyItem creates and saves the certified copy item with id, timestamps, etag and links")
@@ -220,7 +222,7 @@ class CertifiedCopyItemServiceTest {
         certifiedCopyItem.setCreatedAt(intervalStart);
 
         //When
-        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem, false);
+        serviceUnderTest.saveCertifiedCopyItem(certifiedCopyItem, entitledToFreeCertificates);
 
         //Then
         final LocalDateTime intervalEnd = LocalDateTime.now();

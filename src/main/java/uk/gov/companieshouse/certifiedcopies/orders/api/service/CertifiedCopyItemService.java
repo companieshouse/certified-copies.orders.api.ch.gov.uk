@@ -125,4 +125,13 @@ public class CertifiedCopyItemService {
     public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
         return repository.findById(id);
     }
+
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemWithCosts(final String id, final boolean userGetsFreeCertificates) {
+        Optional<CertifiedCopyItem>  retrievedItem = repository.findById(id);
+
+        retrievedItem.ifPresent(item -> populateItemCosts(item, costCalculatorService, userGetsFreeCertificates));
+
+        return retrievedItem;
+    }
+
 }
