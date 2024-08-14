@@ -30,6 +30,6 @@ Path | Method | Description
 *`/orderable/certified-copies/{id}`* | GET | Returns HTTP OK (`200`) and object JSON.
 
 
-[1]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[1]: https://www.oracle.com/java/technologies/downloads/#java21
 [2]: https://maven.apache.org/download.cgi
 [3]: https://git-scm.com/downloads
