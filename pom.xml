@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <structured-logging.version>3.0.3</structured-logging.version>
+        <structured-logging.version>3.0.9</structured-logging.version>
         <org.mapstruct.version>1.6.0</org.mapstruct.version>
         <gson.version>2.11.0</gson.version>
         <guava.version>33.2.1-jre</guava.version>
@@ -27,7 +27,7 @@
         <jakarta.json.version>1.1.7</jakarta.json.version>
         <jackson.version>2.17.2</jackson.version>
         <hamcrest-version>3.0</hamcrest-version>
-        <api-security-java.version>2.0.3</api-security-java.version>
+        <api-security-java.version>2.0.6</api-security-java.version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
         <api-sdk-java.version>6.0.9</api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
@@ -40,7 +40,7 @@
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
-        <test-containers.version>1.19.7</test-containers.version>
+        <test-containers.version>1.20.1</test-containers.version>
 
         <spring-boot-maven-plugin.version>3.3.2</spring-boot-maven-plugin.version>
         <spring-boot-dependencies.version>3.3.2</spring-boot-dependencies.version>
