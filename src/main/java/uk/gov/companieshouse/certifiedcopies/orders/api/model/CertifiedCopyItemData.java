@@ -39,6 +39,9 @@ public class CertifiedCopyItemData {
     private Integer quantity;
 
     private String totalItemCost;
+    
+    private String filingHistoryCost;
+
 
     public String getId() {
         return id;
@@ -166,6 +169,14 @@ public class CertifiedCopyItemData {
 
     public void setTotalItemCost(String totalItemCost) {
         this.totalItemCost = totalItemCost;
+    }
+
+    public String getFilingHistoryCost() {
+        return filingHistoryCost;
+    }
+
+    public void setFilingHistoryCost(String filingHistoryCost) {
+        this.filingHistoryCost = filingHistoryCost;
     }
 
 }

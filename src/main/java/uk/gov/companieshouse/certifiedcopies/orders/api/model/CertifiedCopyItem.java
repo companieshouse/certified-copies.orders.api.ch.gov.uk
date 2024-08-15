@@ -22,6 +22,8 @@ public class CertifiedCopyItem {
 
     private String userId;
 
+    private String filingHistoryCost;
+
     public String getId() {
         return id;
     }
@@ -126,6 +128,13 @@ public class CertifiedCopyItem {
         data.setQuantity(quantity);
     }
 
+    public String getFilingHistoryCost() {
+        return filingHistoryCost;
+    }
+
+    public void setFilingHistoryCost(String filingHistoryCost) {
+        this.filingHistoryCost = filingHistoryCost;
+    }
 
     @Override
     public String toString() { return new Gson().toJson(this); }

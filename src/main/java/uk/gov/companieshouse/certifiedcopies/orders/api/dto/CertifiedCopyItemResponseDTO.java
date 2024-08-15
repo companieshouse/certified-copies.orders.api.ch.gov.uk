@@ -43,6 +43,10 @@ public class CertifiedCopyItemResponseDTO {
 
     private String totalItemCost;
 
+    private String filingHistoryCost;
+
+
+
     public String getId() {
         return id;
     }
@@ -169,6 +173,15 @@ public class CertifiedCopyItemResponseDTO {
 
     public void setTotalItemCost(String totalItemCost) {
         this.totalItemCost = totalItemCost;
+    }
+
+
+    public String getFilingHistoryCost() {
+        return filingHistoryCost;
+    }
+
+    public void setFilingHistoryCost(String filingHistoryCost) {
+        this.filingHistoryCost = filingHistoryCost;
     }
 
 }

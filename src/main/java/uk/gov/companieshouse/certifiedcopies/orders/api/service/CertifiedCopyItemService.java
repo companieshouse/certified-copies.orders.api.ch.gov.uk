@@ -9,7 +9,6 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.model.FilingHistoryDocum
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCostCalculation;
 import uk.gov.companieshouse.certifiedcopies.orders.api.model.ItemCosts;
 import uk.gov.companieshouse.certifiedcopies.orders.api.repository.CertifiedCopyItemRepository;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +55,7 @@ public class CertifiedCopyItemService {
         certifiedCopyItem.setDescriptionValues(descriptionValues);
     }
 
-    public CertifiedCopyItem createCertifiedCopyItem(final CertifiedCopyItem certifiedCopyItem) {
+    public CertifiedCopyItem createCertifiedCopyItem(final CertifiedCopyItem certifiedCopyItem, final boolean userGetsFreeCertificates) {
         final LocalDateTime now = LocalDateTime.now();
         certifiedCopyItem.setCreatedAt(now);
         certifiedCopyItem.setUpdatedAt(now);
@@ -73,7 +72,7 @@ public class CertifiedCopyItemService {
             certifiedCopyItem.getData().setPostalDelivery(Boolean.FALSE);
         }
         certifiedCopyItem.getData().setKind(KIND);
-        populateItemCosts(certifiedCopyItem, costCalculatorService);
+        populateItemCosts(certifiedCopyItem, costCalculatorService, userGetsFreeCertificates);
 
         return repository.save(certifiedCopyItem);
     }
@@ -84,22 +83,22 @@ public class CertifiedCopyItemService {
      * @param updatedCertifiedCopyItem the certificate item to save
      * @return the latest certified copy item state resulting from the save
      */
-    public CertifiedCopyItem saveCertifiedCopyItem(final CertifiedCopyItem updatedCertifiedCopyItem) {
+    public CertifiedCopyItem saveCertifiedCopyItem(final CertifiedCopyItem updatedCertifiedCopyItem, final boolean userGetsFreeCertificates) {
         final LocalDateTime now = LocalDateTime.now();
         updatedCertifiedCopyItem.setUpdatedAt(now);
         populateDescriptions(updatedCertifiedCopyItem);
         updatedCertifiedCopyItem.setEtag(etagGenerator.generateEtag());
-        populateItemCosts(updatedCertifiedCopyItem, costCalculatorService);
+        populateItemCosts(updatedCertifiedCopyItem, costCalculatorService, userGetsFreeCertificates);
 
         return repository.save(updatedCertifiedCopyItem);
     }
 
-    public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator) {
+    public void populateItemCosts(final CertifiedCopyItem item, final CertifiedCopyCostCalculatorService calculator, final boolean userGetsFreeCertificates) {
         CertifiedCopyItemData itemData = item.getData();
         List<FilingHistoryDocument> filingHistoryDocumentList = itemData.getItemOptions().getFilingHistoryDocuments();
         List<ItemCostCalculation> costCalculationList = calculator.calculateAllCosts(itemData.getQuantity(),
                                                                             getOrDefaultDeliveryTimescale(item),
-                                                                            filingHistoryDocumentList);
+                                                                            filingHistoryDocumentList, userGetsFreeCertificates);
         int totalItemCost = 0;
         List<ItemCosts> itemCosts = new ArrayList<>();
         for (ItemCostCalculation costCalculation : costCalculationList) {
@@ -126,4 +125,13 @@ public class CertifiedCopyItemService {
     public Optional<CertifiedCopyItem> getCertifiedCopyItemById(String id) {
         return repository.findById(id);
     }
+
+    public Optional<CertifiedCopyItem> getCertifiedCopyItemWithCosts(final String id, final boolean userGetsFreeCertificates) {
+        Optional<CertifiedCopyItem>  retrievedItem = repository.findById(id);
+
+        retrievedItem.ifPresent(item -> populateItemCosts(item, costCalculatorService, userGetsFreeCertificates));
+
+        return retrievedItem;
+    }
+
 }
