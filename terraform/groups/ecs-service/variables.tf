@@ -128,7 +128,7 @@ variable "use_set_environment_files" {
 
 variable "certified_copies_orders_api_version" {
   type        = string
-  description = "The version of the abridged.accounts.api.ch.gov.uk container to run."
+  description = "The version of the certified-copies.orders.api.ch.gov.uk container to run."
 }
 
 variable "eric_version" {
