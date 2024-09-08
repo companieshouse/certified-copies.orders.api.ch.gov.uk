@@ -33,3 +33,37 @@ Path | Method | Description
 [1]: https://www.oracle.com/java/technologies/downloads/#java21
 [2]: https://maven.apache.org/download.cgi
 [3]: https://git-scm.com/downloads
+
+## What does this code do?
+
+The code present in this repository is used to define and deploy a dockerised container in AWS ECS.
+
+
+Application specific attributes | Value                                | Description
+:---------|:-----------------------------------------------------------------------------|:-----------
+**ECS Cluster**        |                                               | ECS cluster the service belongs to
+**Load balancer**      |                                               | The load balancer that sits in front of the service
+**Concourse link**     |                                               | concourse pipeline link in shared services
+**Vault link**         |                                               | vault config link
+**ECS service config** |                                               | ECS service config
+
+### Vault
+- Vault is a secrets management tool that securely stores and controls access to sensitive data.
+
+
+## Contributing, Testing, and Useful Links
+
+### Contributing
+- Please refer to the [ECS development guide](https://companieshouse.atlassian.net/wiki/spaces/~623250955/pages/4320264207/Idiot+s+guide+to+ECS+Changes) documentation for detailed information on the infrastructure being deployed.
+
+### Testing
+- Ensure the terraform runner plan executes without issues.
+- If you encounter any issues or have questions, reach out to the team on the **#platform** slack channel.
+
+### Vault Configuration Updates
+- For any updates to the Vault configuration, please consult with the **#platform** team and submit a workflow request.
+
+### Useful Links
+- [ECS service config dev repository](https://github.com/companieshouse/ecs-service-configs-dev)
+- [ECS service config production repository](https://github.com/companieshouse/ecs-service-configs-production)
+- [Terraform runners quickstart docs](https://companieshouse.atlassian.net/wiki/spaces/DEVOPS/pages/1694236886/Terraform+Runner+Quickstart)
