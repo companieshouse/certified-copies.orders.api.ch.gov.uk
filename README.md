@@ -41,11 +41,11 @@ The code present in this repository is used to define and deploy a dockerised co
 
 Application specific attributes | Value                                | Description
 :---------|:-----------------------------------------------------------------------------|:-----------
-**ECS Cluster**        |                                               | ECS cluster the service belongs to
-**Load balancer**      |                                               | The load balancer that sits in front of the service
-**Concourse link**     |                                               | concourse pipeline link in shared services
-**Vault link**         |                                               | vault config link
-**ECS service config** |                                               | ECS service config
+**ECS Cluster**        |order-service                                      | ECS cluster the service belongs to
+**Load balancer**      |{env}-apichgovuk & {env}-apichgovuk-private                                              | The load balancer that sits in front of the service
+**Concourse link**     |[pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk)                                | concourse pipeline link in shared services
+**Vault link**         |[Vault link](https://vault.platform.aws.chdev.org/ui/vault/secrets/applications/show/development-eu-west-2/cidev/order-service-stack/certified-copies-orders-api)                                              | vault config link
+
 
 ### Vault
 - Vault is a secrets management tool that securely stores and controls access to sensitive data.
