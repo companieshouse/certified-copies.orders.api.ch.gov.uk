@@ -34,9 +34,13 @@ Path | Method | Description
 [2]: https://maven.apache.org/download.cgi
 [3]: https://git-scm.com/downloads
 
+
+# Terraform ECS
+
 ## What does this code do?
 
 The code present in this repository is used to define and deploy a dockerised container in AWS ECS.
+This is done by calling a [module](https://github.com/companieshouse/terraform-modules/tree/main/aws/ecs) from terraform-modules. Application specific attributes are injected and the application is deployed using Concourse.
 
 
 Application specific attributes | Value                                | Description
@@ -49,6 +53,7 @@ Application specific attributes | Value                                | Descrip
 
 ### Vault
 - Vault is a secrets management tool that securely stores and controls access to sensitive data.
+- Secrets are populated in the Vault host and then imported into AWS SSM for the ECS task to use.
 
 
 ## Contributing, Testing, and Useful Links
