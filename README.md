@@ -47,7 +47,7 @@ Application specific attributes | Value                                | Descrip
 :---------|:-----------------------------------------------------------------------------|:-----------
 **ECS Cluster**        |order-service                                      | ECS cluster the service belongs to
 **Load balancer**      |{env}-apichgovuk & {env}-apichgovuk-private                                              | The load balancer that sits in front of the service
-**Concourse link**     |[pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk)                                | concourse pipeline link in shared services
+**Concourse link**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk)                                | concourse pipeline link in shared services
 **Vault link**         |[Vault link](https://vault.platform.aws.chdev.org/ui/vault/secrets/applications/show/development-eu-west-2/cidev/order-service-stack/certified-copies-orders-api)                                              | vault config link
 
 
@@ -62,7 +62,7 @@ Application specific attributes | Value                                | Descrip
 - Please refer to the [ECS development guide](https://companieshouse.atlassian.net/wiki/spaces/~623250955/pages/4320264207/Idiot+s+guide+to+ECS+Changes) documentation for detailed information on the infrastructure being deployed.
 
 ### Testing
-- Ensure the terraform runner plan executes without issues.
+- Ensure the terraform runner plan executes without issues. (for information on terraform runners please see [here](https://companieshouse.atlassian.net/wiki/spaces/DEVOPS/pages/1694236886/Terraform+Runner+Quickstart))
 - If you encounter any issues or have questions, reach out to the team on the **#platform** slack channel.
 
 ### Vault Configuration Updates
