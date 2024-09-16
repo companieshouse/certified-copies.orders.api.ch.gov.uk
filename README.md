@@ -45,21 +45,19 @@ This is done by calling a [module](https://github.com/companieshouse/terraform-m
 
 Application specific attributes | Value                                | Description
 :---------|:-----------------------------------------------------------------------------|:-----------
-**ECS Cluster**        |order-service                                      | ECS cluster the service belongs to
+**ECS Cluster**        |order-service                                      | ECS cluster (stack) the service belongs to
 **Load balancer**      |{env}-apichgovuk <br> {env}-apichgovuk-private                                              | The load balancer that sits in front of the service
-**Concourse link**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk)                                | concourse pipeline link in shared services
+**Concourse pipeline**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk)                                | Concourse pipeline link in shared services
 
 
-### Contributing, Testing, and Useful Links
+### Contributing
+- Please refer to the [ECS Development and Infrastructure Documentation](https://companieshouse.atlassian.net/wiki/spaces/DEVOPS/pages/4390649858/Copy+of+ECS+Development+and+Infrastructure+Documentation+Updated) for detailed information on the infrastructure being deployed.
 
-#### Contributing
-- Please refer to the [ECS development guide](https://companieshouse.atlassian.net/wiki/spaces/~623250955/pages/4320264207/Idiot+s+guide+to+ECS+Changes) documentation for detailed information on the infrastructure being deployed.
-
-#### Testing
-- Ensure the terraform runner plan executes without issues. (for information on terraform runners please see [here](https://companieshouse.atlassian.net/wiki/spaces/DEVOPS/pages/1694236886/Terraform+Runner+Quickstart))
+### Testing
+- Ensure the terraform runner local plan executes without issues. For information on terraform runners please see [here](https://companieshouse.atlassian.net/wiki/spaces/DEVOPS/pages/1694236886/Terraform+Runner+Quickstart)
 - If you encounter any issues or have questions, reach out to the team on the **#platform** slack channel.
 
-#### Vault Configuration Updates
+### Vault Configuration Updates
 - Any secrets required for this service will be stored in Vault. For any updates to the Vault configuration, please consult with the **#platform** team and submit a workflow request.
 
 ### Useful Links
