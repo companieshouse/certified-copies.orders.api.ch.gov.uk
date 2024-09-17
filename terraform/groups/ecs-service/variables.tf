@@ -77,7 +77,7 @@ variable "service_autoscale_enabled" {
 variable "service_autoscale_target_value_cpu" {
   type        = number
   description = "Target CPU percentage for the ECS Service to autoscale on"
-  default     = 50 # 100 disables autoscaling using CPU as a metric
+  default     = 80 # 100 disables autoscaling using CPU as a metric
 }
 variable "service_scaledown_schedule" {
   type        = string
@@ -128,7 +128,7 @@ variable "use_set_environment_files" {
 
 variable "certified_copies_orders_api_version" {
   type        = string
-  description = "The version of the abridged.accounts.api.ch.gov.uk container to run."
+  description = "The version of the certified-copies.orders.api.ch.gov.uk container to run."
 }
 
 variable "eric_version" {
