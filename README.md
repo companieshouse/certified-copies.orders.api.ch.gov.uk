@@ -47,7 +47,7 @@ Application specific attributes | Value                                | Descrip
 :---------|:-----------------------------------------------------------------------------|:-----------
 **ECS Cluster**        |order-service                                      | ECS cluster (stack) the service belongs to
 **Load balancer**      |{env}-apichgovuk <br> {env}-apichgovuk-private                                              | The load balancer that sits in front of the service
-**Concourse pipeline**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk)                                | Concourse pipeline link in shared services
+**Concourse pipeline**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/certified-copies.orders.api.ch.gov.uk) <br> [Pipeline code](https://github.com/companieshouse/ci-pipelines/blob/master/pipelines/ssplatform/team-development/certified-copies.orders.api.ch.gov.uk)                               | Concourse pipeline link in shared services
 
 
 ### Contributing
