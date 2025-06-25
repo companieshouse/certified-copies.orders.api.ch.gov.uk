@@ -31,11 +31,11 @@
         <api-security-java.version>2.0.8</api-security-java.version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
         <api-sdk-java.version>6.3.1</api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.7</api-sdk-manager-java-library.version>
+        <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
         <powermock.version>2.0.9</powermock.version>
         <!-- system-rules: 1.17.2 is the latest version that works with JUnit
             5. See https://github.com/stefanbirkner/system-rules/issues/70 -->
-        <system-rules-version>1.19.0</system-rules-version>
+        <system-rules-version>1.17.2</system-rules-version>
         <spring-cloud-contract-wiremock-version>4.3.0</spring-cloud-contract-wiremock-version>
         <start-class>uk.gov.companieshouse.certifiedcopies.orders.api.CertifiedCopiesApiApplication</start-class>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
@@ -188,22 +188,21 @@
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
             <exclusions>
-                <!--excluded to remove vulnerability-->
                 <exclusion>
-                    <groupId>commons-validator</groupId>
-                    <artifactId>commons-validator</artifactId>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
                 </exclusion>
             </exclusions>
+
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>environment-reader-library</artifactId>
             <version>${environment-reader-library.version}</version>
             <exclusions>
-                <!--excluded to remove vulnerability-->
                 <exclusion>
-                    <groupId>commons-validator</groupId>
-                    <artifactId>commons-validator</artifactId>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
