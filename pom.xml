@@ -42,6 +42,7 @@
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
         <test-containers.version>1.21.2</test-containers.version>
+        <open-telemetry.version>2.14.0</open-telemetry.version>
 
         <spring-boot-maven-plugin.version>3.5.3</spring-boot-maven-plugin.version>
         <spring-boot-dependencies.version>3.5.3</spring-boot-dependencies.version>
@@ -77,6 +78,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom</artifactId>
+                <version>${open-telemetry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
                 <version>${test-containers.version}</version>
@@ -94,6 +102,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-spring-boot-starter</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
