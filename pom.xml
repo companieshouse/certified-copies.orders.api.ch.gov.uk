@@ -42,7 +42,7 @@
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
         <test-containers.version>1.21.2</test-containers.version>
-        <open-telemetery.version>2.14.0</open-telemetery.version>
+        <open-telemetry.version>2.14.0</open-telemetry.version>
 
         <spring-boot-maven-plugin.version>3.5.3</spring-boot-maven-plugin.version>
         <spring-boot-dependencies.version>3.5.3</spring-boot-dependencies.version>
@@ -80,7 +80,7 @@
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
-                <version>${open-telemetery.version</version>
+                <version>${open-telemetry.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
