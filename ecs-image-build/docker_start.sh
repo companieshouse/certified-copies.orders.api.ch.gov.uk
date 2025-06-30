@@ -4,4 +4,4 @@
 
 PORT=8080
 
-exec java -jar -Dserver.port="${PORT}" "certified-copies.orders.api.ch.gov.uk.jar"
+exec java -jar -Dserver.port="${PORT}" -XX:MaxRAMPercentage=80 "certified-copies.orders.api.ch.gov.uk.jar"
