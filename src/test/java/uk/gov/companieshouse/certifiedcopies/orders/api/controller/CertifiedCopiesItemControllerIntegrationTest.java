@@ -106,8 +106,8 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
     private static final String TOTAL_ITEM_COST = "22";
     private static final String TOTAL_ITEM_COST_SAME_DAY = "65";
     private static final String TOTAL_ITEM_COST_NEWINC = "44";
-    private static final String TOTAL_ITEM_COST_MULTI = "87";
-    private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "261";
+    private static final String TOTAL_ITEM_COST_MULTI = "66";
+    private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "198";
     private static final String DISCOUNT = "0";
     private static final Links LINKS;
     private static final List<ItemCosts> ITEM_COSTS =
