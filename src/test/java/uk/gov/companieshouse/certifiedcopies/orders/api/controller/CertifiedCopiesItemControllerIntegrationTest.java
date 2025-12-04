@@ -101,17 +101,17 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
     private static final String POSTAGE_COST = "0";
     private static final String DESCRIPTION = "certified copy for company 00000000";
     private static final String DESCRIPTION_IDENTIFIER = "certified-copy";
-    private static final String FILING_HISTORY_COST = "15";
-    private static final String FILING_HISTORY_COST_NEW_INC = "30";
-    private static final String TOTAL_ITEM_COST = "15";
-    private static final String TOTAL_ITEM_COST_SAME_DAY = "50";
-    private static final String TOTAL_ITEM_COST_NEWINC = "30";
-    private static final String TOTAL_ITEM_COST_MULTI = "45";
-    private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "135";
+    private static final String FILING_HISTORY_COST = "22";
+    private static final String FILING_HISTORY_COST_NEW_INC = "44";
+    private static final String TOTAL_ITEM_COST = "22";
+    private static final String TOTAL_ITEM_COST_SAME_DAY = "65";
+    private static final String TOTAL_ITEM_COST_NEWINC = "44";
+    private static final String TOTAL_ITEM_COST_MULTI = "87";
+    private static final String TOTAL_ITEM_COST_MULTI_QUANTITY_3 = "261";
     private static final String DISCOUNT = "0";
     private static final Links LINKS;
     private static final List<ItemCosts> ITEM_COSTS =
-            asList(new ItemCosts( "0", "15", "15", CERTIFIED_COPY));
+            asList(new ItemCosts( "0", "22", "22", CERTIFIED_COPY));
 
 
     static {
