@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -14,14 +15,22 @@ import jakarta.validation.constraints.Min;
 @ConfigurationProperties(prefix = "costs")
 @Validated
 public class CostsConfig {
+    @Value("${costs.standard_cost}")
     @Min(1)
     private int standardCost;
+
+    @Value("${costs.standard_new_incorporation_cost}")
     @Min(1)
     private int standardNewIncorporationCost;
+
+    @Value("${costs.same_day_cost}")
     @Min(1)
     private int sameDayCost;
+
+    @Value("${costs.same_day_new_incorporation_cost}")
     @Min(1)
     private int sameDayNewIncorporationCost;
+
     @Min(1)
     private int digitalCost;
     @Min(1)
