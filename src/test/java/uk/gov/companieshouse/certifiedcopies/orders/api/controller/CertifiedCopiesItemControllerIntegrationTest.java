@@ -10,8 +10,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -131,19 +131,19 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
     @Autowired
     private CertifiedCopyItemRepository repository;
 
-    @MockBean
+    @MockitoBean
     private IdGeneratorService idGeneratorService;
 
-    @MockBean
+    @MockitoBean
     private CompanyService companyService;
 
-    @MockBean
+    @MockitoBean
     private FilingHistoryDocumentService filingHistoryDocumentService;
 
-    @MockBean
+    @MockitoBean
     private DescriptionProviderService descriptionProviderService;
 
-    @MockBean
+    @MockitoBean
     private ApiClientService apiClientService;
 
     @BeforeAll
@@ -633,7 +633,7 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
         assertItemWasNotSaved(CERTIFIED_COPY_ID);
 
     }
-    
+
     @Test
     @DisplayName("Fails to create certified copy item with wrong token permission")
     void createCertifiedCopyUnauthorised() throws Exception {
@@ -704,7 +704,7 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
     }
-    
+
     @Test
     @DisplayName("Returns unauthorised when not using the right token permission")
     void getCertifiedCopyUnauthorised() throws Exception {
@@ -712,7 +712,7 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
         // Create certified copy item in database
         final CertifiedCopyItem newItem = createCertifiedCopyItem(CERTIFIED_COPY_ID);
         repository.save(newItem);
-        
+
         // When and then
         mockMvc.perform(get(CERTIFIED_COPIES_URL + "/" + newItem.getId())
                 .header(REQUEST_ID_HEADER_NAME, REQUEST_ID_VALUE)
@@ -723,7 +723,7 @@ class CertifiedCopiesItemControllerIntegrationTest extends AbstractMongoConfig {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
-    
+
     private CertifiedCopyItem createCertifiedCopyItem(String id) {
         final CertifiedCopyItemData certifiedCopyItemData = new CertifiedCopyItemData();
         certifiedCopyItemData.setCompanyName(COMPANY_NAME);
