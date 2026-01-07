@@ -45,7 +45,7 @@
         <open-telemetry.version>2.14.0</open-telemetry.version>
 
         <spring-boot-maven-plugin.version>3.5.6</spring-boot-maven-plugin.version>
-        <spring-boot-dependencies.version>3.5.6</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>3.5.7</spring-boot-dependencies.version>
 
         <!-- Docker -->
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
