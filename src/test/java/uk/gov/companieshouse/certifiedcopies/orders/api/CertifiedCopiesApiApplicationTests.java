@@ -26,10 +26,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,14 +51,14 @@ class CertifiedCopiesApiApplicationTests {
     private static final String TOKEN_PERMISSION_CREATE = String.format(TOKEN_PERMISSION_VALUE, "create");
     private static final String COMPANY_NUMBER = "00006400";
     private static final String UNKNOWN_COMPANY_NUMBER = "00000000";
-    
+
     private static final String CUSTOMER_REFERENCE = "Certified Copy ordered by NJ.";
     private static final int QUANTITY = 5;
     private static final String CONTACT_NUMBER = "0123456789";
     private static final String FORENAME = "Bob";
     private static final String SURNAME = "Jones";
     private static final String FILING_HISTORY_ID = "1";
-    
+
     private final String ITEMS_DATABASE = "ITEMS_DATABASE";
     private final String MONGODB_URL = "MONGODB_URL";
     private final String CHS_API_KEY = "CHS_API_KEY";
@@ -71,7 +71,7 @@ class CertifiedCopiesApiApplicationTests {
     @Autowired
     private WebTestClient webTestClient;
 
-    @MockBean
+    @MockitoBean
     private CompanyService companyService;
 
     @Autowired
@@ -81,7 +81,7 @@ class CertifiedCopiesApiApplicationTests {
     @Test
     void contextLoads() {
     }
-    
+
     @Test
     @DisplayName("createCertifiedCopy using wrong permission")
     void createCertifiedCopyUnauthorised() {
@@ -183,7 +183,7 @@ class CertifiedCopiesApiApplicationTests {
                     + "/company/00006400/filing-history/1: " + "Service Unavailable")
             .jsonPath("$.instance").isEqualTo(CERTIFIED_COPIES_URL);
     }
-    
+
     @Test
     @DisplayName("Checking environment variables when all variables are set should return true")
     void checkEnvironmentVariablesAllPresentReturnsTrue() {
@@ -196,7 +196,7 @@ class CertifiedCopiesApiApplicationTests {
         Assertions.assertTrue(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
-    
+
     @Test
     @DisplayName("Checking environment variables when ITEMS_DATABASE is not set should return false")
     void checkEnvironmentVariablesItemsDatabaseMissingReturnsFalse() {
@@ -209,7 +209,7 @@ class CertifiedCopiesApiApplicationTests {
         Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(MONGODB_URL, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
-    
+
     @Test
     @DisplayName("Checking environment variables when MONGODB_URL is not set should return false")
     void checkEnvironmentVariablesMongoDbMissingReturnsFalse() {
@@ -222,7 +222,7 @@ class CertifiedCopiesApiApplicationTests {
         Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, API_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
-    
+
     @Test
     @DisplayName("Checking environment variables when API_URL is not set should return false")
     void checkEnvironmentVariablesApiUrlMissingReturnsFalse() {
@@ -235,7 +235,7 @@ class CertifiedCopiesApiApplicationTests {
         Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, CHS_API_KEY, PAYMENTS_API_URL);
     }
-    
+
     @Test
     @DisplayName("Checking environment variables when CHS_API_KEY is not set should return false")
     void checkEnvironmentVariablesChsApiKeyMissingReturnsFalse() {
@@ -248,7 +248,7 @@ class CertifiedCopiesApiApplicationTests {
         Assertions.assertFalse(present);
         ENVIRONMENT_VARIABLES.clear(ITEMS_DATABASE, MONGODB_URL, API_URL, PAYMENTS_API_URL);
     }
-    
+
     @Test
     @DisplayName("Checking environment variables when PAYMENTS_API_URL is not set should return false")
     void checkEnvironmentVariablesPaymentsApiUrlMissingReturnsFalse() {

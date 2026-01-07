@@ -14,12 +14,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.companieshouse.api.model.filinghistory.FilingApi;
@@ -136,13 +136,13 @@ class FilingHistoryDocumentServiceIntegrationTest {
     @Autowired
     private Environment environment;
 
-    @MockBean
+    @MockitoBean
     private CostsConfig costsConfig;
 
-    @MockBean
+    @MockitoBean
     private CertifiedCopyItemService certifiedCopyItemService;
 
-    @MockBean
+    @MockitoBean
     private CertifiedCopyCostCalculatorService certifiedCopyCostCalculatorService;
 
     @Test

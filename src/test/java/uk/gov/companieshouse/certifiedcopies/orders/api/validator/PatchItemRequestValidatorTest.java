@@ -18,10 +18,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.api.error.ApiError;
 import uk.gov.companieshouse.certifiedcopies.orders.api.config.ApplicationConfig;
 import uk.gov.companieshouse.certifiedcopies.orders.api.controller.ApiErrors;
@@ -78,7 +78,7 @@ class PatchItemRequestValidatorTest {
 
     private PatchValidationCertifiedCopyItemDTO itemUpdate;
 
-    @MockBean
+    @MockitoBean
     private RequestValidatable requestValidatable;
 
     @BeforeEach
