@@ -28,7 +28,7 @@
         <jakarta.json.version>1.1.7</jakarta.json.version>
         <jackson.version>2.19.1</jackson.version>
         <hamcrest-version>3.0</hamcrest-version>
-        <api-security-java.version>2.0.8</api-security-java.version>
+        <api-security-java.version>2.0.25</api-security-java.version>
         <api-helper-java.version>3.0.3</api-helper-java.version>
         <api-sdk-java.version>6.4.4</api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
