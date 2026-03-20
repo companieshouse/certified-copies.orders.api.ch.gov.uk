@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 

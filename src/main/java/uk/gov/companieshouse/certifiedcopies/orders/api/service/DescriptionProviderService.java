@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.certifiedcopies.orders.api.service;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.companieshouse.certifiedcopies.orders.api.logging.LoggingUtils;

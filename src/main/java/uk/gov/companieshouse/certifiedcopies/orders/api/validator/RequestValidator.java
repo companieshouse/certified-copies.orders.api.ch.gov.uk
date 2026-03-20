@@ -7,7 +7,7 @@ import uk.gov.companieshouse.certifiedcopies.orders.api.util.FieldNameConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Implements common request payload validation.
