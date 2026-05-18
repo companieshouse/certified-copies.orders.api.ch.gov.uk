@@ -28,7 +28,7 @@
         <jakarta.json.version>1.1.7</jakarta.json.version>
         <jackson.version>2.19.1</jackson.version>
         <hamcrest-version>3.0</hamcrest-version>
-        <api-security-java.version>2.0.25</api-security-java.version>
+        <api-security-java.version>2.0.26</api-security-java.version>
         <api-helper-java.version>3.0.3</api-helper-java.version>
         <api-sdk-java.version>6.4.4</api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
@@ -45,9 +45,10 @@
         <open-telemetry.version>2.25.0</open-telemetry.version>
         <commons-compress.version>1.28.0</commons-compress.version>
         <kotlin.version>2.2.21</kotlin.version>
-        <log4j.api.version>2.25.3</log4j.api.version>
-        <spring-boot-maven-plugin.version>3.5.11</spring-boot-maven-plugin.version>
-        <spring-boot-dependencies.version>3.5.11</spring-boot-dependencies.version>
+        <log4j-api.version>2.25.4</log4j-api.version>
+        <tomcat-embed-core.version>11.0.22</tomcat-embed-core.version>
+        <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
+        <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
 
         <!-- Docker -->
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
@@ -109,11 +110,22 @@
                 <artifactId>kotlin-stdlib</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
-            <!-- CVE-2025-68161(6.3) -->
+            <!-- CVE-2026-34479 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <version>${log4j.api.version}</version>
+                <version>${log4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>${log4j-api.version}</version>
+            </dependency>
+            <!--CVE-2026-41293(9.8), CVE-2026-43512(9.8), CVE-2026-43515(9.1)-->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat-embed-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
