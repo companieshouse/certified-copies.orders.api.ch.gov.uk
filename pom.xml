@@ -42,12 +42,13 @@
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <environment-reader-library.version>3.0.5</environment-reader-library.version>
         <test-containers.version>1.21.2</test-containers.version>
-        <open-telemetry.version>2.25.0</open-telemetry.version>
+        <open-telemetry.version>2.28.1</open-telemetry.version>
         <commons-compress.version>1.28.0</commons-compress.version>
         <kotlin.version>2.2.21</kotlin.version>
         <log4j-api.version>2.25.4</log4j-api.version>
         <tomcat-embed-websocket.version>11.0.22</tomcat-embed-websocket.version>
         <tomcat-embed-core.version>11.0.22</tomcat-embed-core.version>
+        <netty-codec.version>4.2.15.Final</netty-codec.version>
         <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
         <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
 
@@ -133,6 +134,11 @@
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
                 <version>${tomcat-embed-websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${netty-codec.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
