@@ -48,7 +48,7 @@
         <log4j-api.version>2.25.4</log4j-api.version>
         <tomcat-embed-websocket.version>11.0.22</tomcat-embed-websocket.version>
         <tomcat-embed-core.version>11.0.22</tomcat-embed-core.version>
-        <netty.version>4.2.15.Final</netty.version>
+        <netty.version>4.1.135.Final</netty.version>
         <plexus-utils.version>3.6.1</plexus-utils.version>
         <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
         <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
