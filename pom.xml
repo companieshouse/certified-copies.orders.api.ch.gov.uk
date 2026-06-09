@@ -48,7 +48,7 @@
         <log4j-api.version>2.25.4</log4j-api.version>
         <tomcat-embed-websocket.version>11.0.22</tomcat-embed-websocket.version>
         <tomcat-embed-core.version>11.0.22</tomcat-embed-core.version>
-        <netty-codec.version>4.2.15.Final</netty-codec.version>
+        <netty.version>4.2.15.Final</netty.version>
         <plexus-utils.version>3.6.1</plexus-utils.version>
         <spring-boot-maven-plugin.version>3.5.14</spring-boot-maven-plugin.version>
         <spring-boot-dependencies.version>3.5.14</spring-boot-dependencies.version>
@@ -102,6 +102,13 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>${commons-compress.version}</version>
@@ -135,11 +142,6 @@
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
                 <version>${tomcat-embed-websocket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec</artifactId>
-                <version>${netty-codec.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
